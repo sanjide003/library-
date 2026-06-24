@@ -302,6 +302,7 @@
             try {
                 // If input is purely numbers and looks like a phone number, query the DB to get the actual username
                 if (/^\d{4,}$/.test(loginInput)) {
+                    // Requires Firestore Rule to allow read on users collection (we updated this in the rules)
                     const userQ = query(collection(db, "users"), where("phone", "==", loginInput));
                     const userSnap = await getDocs(userQ);
                     if (!userSnap.empty) {
@@ -521,3 +522,9 @@
     </script>
 </body>
 </html>
+```
+
+### പ്രധാന ശ്രദ്ധയ്ക്ക്: ഫയർബേസ് റൂൾ അപ്ഡേറ്റ്
+ഇത് ശരിയായി വർക്ക് ചെയ്യണമെങ്കിൽ മുൻപ് മെസ്സേജിൽ ഞാൻ നൽകിയ ഏറ്റവും പുതിയ ഫയർബേസ് റൂൾ (അതായത് `match /users/{userId}` എന്ന ഭാഗം) നിങ്ങൾ ഫയർബേസിൽ അപ്ഡേറ്റ് ചെയ്തിരിക്കണം. ഫോൺ നമ്പർ വെച്ച് ലോഗിൻ ചെയ്യാൻ സിസ്റ്റത്തിന് ഡാറ്റാബേസിൽ നിന്ന് യൂസർനെയിം കണ്ടുപിടിക്കേണ്ടത് ഉള്ളതുകൊണ്ടാണ് ആ റൂൾ മാറ്റി നൽകിയത്.
+
+ഇത് ടെസ്റ്റ് ചെയ്ത് നോക്കുക. നിങ്ങളുടെ വെബ്സൈറ്റ് ഇപ്പോൾ പൂർണ്ണമായും ഒരു പ്രീമിയം ഷോപ്പിംഗ് സൈറ്റ് ലേഔട്ടിലേക്ക് മാറിയിട്ടുണ്ടാകും!
