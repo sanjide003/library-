@@ -178,7 +178,7 @@
     <!-- Main Content Area -->
     <main class="flex-grow w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 overflow-y-auto relative">
         
-        <!-- 1. Public Search View -->
+        <!-- 1. Public Search View (DEFAULT) -->
         <div id="public-view" class="view-section fade-in h-full flex flex-col">
             <div class="text-center mb-12">
                 <h1 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 drop-shadow-sm mb-4" data-i18n="searchTitle">Search Books</h1>
@@ -342,19 +342,25 @@
 
                                 <!-- Tab 2: Media (Images) -->
                                 <div id="tab-media" class="book-form-section hidden-tab flex-grow">
-                                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">Upload up to 3 images (JPG/PNG). Max 200KB per image.</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">Upload up to 3 images (JPG/PNG). Max 150KB per image.</p>
                                     <div class="space-y-4">
                                         <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
                                             <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-2">Photo 1 (Front Cover)</label>
-                                            <input type="file" id="b-photo1" accept=".jpg, .jpeg, .png" class="text-sm w-full text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-gray-800 dark:file:text-indigo-400">
+                                            <input type="file" id="b-photo1" accept=".jpg, .jpeg, .png" onchange="handleBookImageUpload(event, 'b-photo1-base64', 'b-photo1-preview', 'Photo 1')" class="text-sm w-full text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-gray-800 dark:file:text-indigo-400">
+                                            <input type="hidden" id="b-photo1-base64">
+                                            <div id="b-photo1-preview" class="mt-2"></div>
                                         </div>
                                         <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
                                             <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-2">Photo 2</label>
-                                            <input type="file" id="b-photo2" accept=".jpg, .jpeg, .png" class="text-sm w-full text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-gray-800 dark:file:text-indigo-400">
+                                            <input type="file" id="b-photo2" accept=".jpg, .jpeg, .png" onchange="handleBookImageUpload(event, 'b-photo2-base64', 'b-photo2-preview', 'Photo 2')" class="text-sm w-full text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-gray-800 dark:file:text-indigo-400">
+                                            <input type="hidden" id="b-photo2-base64">
+                                            <div id="b-photo2-preview" class="mt-2"></div>
                                         </div>
                                         <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
                                             <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-2">Photo 3</label>
-                                            <input type="file" id="b-photo3" accept=".jpg, .jpeg, .png" class="text-sm w-full text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-gray-800 dark:file:text-indigo-400">
+                                            <input type="file" id="b-photo3" accept=".jpg, .jpeg, .png" onchange="handleBookImageUpload(event, 'b-photo3-base64', 'b-photo3-preview', 'Photo 3')" class="text-sm w-full text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-gray-800 dark:file:text-indigo-400">
+                                            <input type="hidden" id="b-photo3-base64">
+                                            <div id="b-photo3-preview" class="mt-2"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -716,8 +722,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, setDoc, doc, getDoc, updateDoc, deleteDoc, query, where, onSnapshot, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        // Import Storage for Photos
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
         // --- i18n Dictionary ---
         const i18n = {
@@ -830,7 +834,7 @@
             apiKey: "AIzaSyAAvxaW7bL7S_oD_xrElO4-XvuxnhfJKxc",
             authDomain: "noorul-islam-91eae.firebaseapp.com",
             projectId: "noorul-islam-91eae",
-            storageBucket: "noorul-islam-91eae.firebasestorage.app", // Important for Photos
+            storageBucket: "noorul-islam-91eae.firebasestorage.app", // Still needed in config object, but not used for storage
             messagingSenderId: "1034149016792",
             appId: "1:1034149016792:web:befc9bf1eadcf2bd8653ad",
             measurementId: "G-ZFSQDL9MTB"
@@ -839,7 +843,6 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const storage = getStorage(app); // Storage instance
         const secondaryApp = initializeApp(firebaseConfig, "Secondary");
         const secondaryAuth = getAuth(secondaryApp);
 
@@ -1010,6 +1013,52 @@
             document.getElementById('prof-joined').innerText = formatDate(currentUserData.createdAt);
         };
 
+        // --- Base64 Image Handling Logic ---
+        
+        function renderBookImagePreview(hiddenInputId, previewId, label, imageData) {
+            const preview = document.getElementById(previewId);
+            if(!preview) return;
+            if(imageData) {
+                preview.innerHTML = `
+                    <div class="flex items-start gap-3 rounded border border-gray-200 bg-gray-50 dark:bg-gray-800 p-2 mt-2">
+                        <img src="${imageData}" alt="${label}" class="h-16 w-16 object-cover bg-white border rounded">
+                        <div class="flex-1">
+                            <div class="text-xs font-semibold text-emerald-600 dark:text-emerald-400">Ready to save</div>
+                            <button type="button" onclick="clearBookImage('${hiddenInputId}', '${previewId}', '${label}')" class="mt-1 text-xs font-bold text-red-600 hover:text-red-800">Remove</button>
+                        </div>
+                    </div>`;
+            } else {
+                preview.innerHTML = '';
+            }
+        }
+
+        window.clearBookImage = function(hiddenInputId, previewId, label) {
+            document.getElementById(hiddenInputId).value = '';
+            // Reset file input
+            const fileInputId = hiddenInputId.replace('-base64', '');
+            if(document.getElementById(fileInputId)) document.getElementById(fileInputId).value = '';
+            renderBookImagePreview(hiddenInputId, previewId, label, '');
+        };
+
+        window.handleBookImageUpload = function(event, hiddenInputId, previewId, label) {
+            const file = event.target.files?.[0];
+            if(!file) return;
+            // 150KB Limit Check
+            const maxBytes = 150 * 1024;
+            if(file.size > maxBytes) {
+                showToast(`${label} must be 150 KB or less. This file is ${(file.size / 1024).toFixed(1)} KB.`, 'error');
+                event.target.value = ''; // Reset selection
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = () => {
+                document.getElementById(hiddenInputId).value = reader.result;
+                renderBookImagePreview(hiddenInputId, previewId, label, reader.result);
+            };
+            reader.readAsDataURL(file);
+        };
+
         // --- Book Details Modal Logic ---
         window.openBookDetails = (bookId) => {
             const b = allBooks.find(book => book.id === bookId);
@@ -1165,15 +1214,6 @@
             });
         };
 
-        // Helper function for uploading images
-        const uploadImage = async (file, path) => {
-            if (!file) return null;
-            if (file.size > 200 * 1024) throw new Error(`File ${file.name} exceeds 200KB limit.`);
-            const storageRef = ref(storage, path);
-            await uploadBytes(storageRef, file);
-            return await getDownloadURL(storageRef);
-        };
-
         document.getElementById('add-book-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btn-save-book');
@@ -1182,7 +1222,7 @@
             
             btn.disabled = true;
             spinner.classList.remove('hidden');
-            btnText.innerText = "Saving & Uploading...";
+            btnText.innerText = "Saving Record...";
             
             const bookId = document.getElementById('b-id').value.toUpperCase().trim();
             
@@ -1194,21 +1234,10 @@
                     throw new Error("Exists");
                 }
 
-                // 2. Handle Image Uploads
-                const p1File = document.getElementById('b-photo1').files[0];
-                const p2File = document.getElementById('b-photo2').files[0];
-                const p3File = document.getElementById('b-photo3').files[0];
-                
-                let photo1Url = null, photo2Url = null, photo3Url = null;
-                
-                try {
-                    if (p1File) photo1Url = await uploadImage(p1File, `books/${bookId}/photo1_${Date.now()}`);
-                    if (p2File) photo2Url = await uploadImage(p2File, `books/${bookId}/photo2_${Date.now()}`);
-                    if (p3File) photo3Url = await uploadImage(p3File, `books/${bookId}/photo3_${Date.now()}`);
-                } catch (imgError) {
-                    showToast(imgError.message, "error");
-                    throw new Error("ImageUploadFailed");
-                }
+                // 2. Base64 Photos from hidden inputs
+                const photo1Url = document.getElementById('b-photo1-base64').value || null;
+                const photo2Url = document.getElementById('b-photo2-base64').value || null;
+                const photo3Url = document.getElementById('b-photo3-base64').value || null;
 
                 // 3. Digital Audit Signature
                 const adminSignature = `${currentUserData.name} (${currentUserData.username}) at ${new Date().toISOString()}`;
@@ -1241,7 +1270,7 @@
                     verificationDate: document.getElementById('b-verifydate').value,
                     remarks: document.getElementById('b-remarks').value,
                     verifiedBy: adminSignature, // Digital Audit Trail
-                    // Media
+                    // Media (Base64)
                     photo1: photo1Url,
                     photo2: photo2Url,
                     photo3: photo3Url,
@@ -1253,10 +1282,16 @@
                 await setDoc(doc(db, "books", bookId), bookData);
                 showToast(t('msgBookAdded'));
                 e.target.reset();
+                
+                // Clear Image Previews
+                clearBookImage('b-photo1-base64', 'b-photo1-preview', 'Photo 1');
+                clearBookImage('b-photo2-base64', 'b-photo2-preview', 'Photo 2');
+                clearBookImage('b-photo3-base64', 'b-photo3-preview', 'Photo 3');
+                
                 switchBookFormTab('tab-basic'); // Reset tab view
                 
             } catch (error) { 
-                if(error.message !== "Exists" && error.message !== "ImageUploadFailed") {
+                if(error.message !== "Exists") {
                     console.error(error);
                     showToast(t('msgError'), "error"); 
                 }
@@ -1301,7 +1336,6 @@
                 try { 
                     await deleteDoc(doc(db, "books", id)); 
                     showToast(t('msgBookDeleted')); 
-                    // Note: Ideally, we should also delete images from Storage here to save space.
                 } catch(e) { showToast(e.message, 'error'); }
             }
         };
