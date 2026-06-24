@@ -1,0 +1,1690 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Register</title>
+    <!-- Tailwind CSS with configuration -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Manjari', 'sans-serif'],
+                        arabic: ['Tajawal', 'sans-serif'],
+                    },
+                    colors: {
+                        glass: 'rgba(255, 255, 255, 0.2)',
+                        glassDark: 'rgba(31, 41, 55, 0.4)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manjari:wght@400;700&family=Tajawal:wght@400;700&display=swap');
+        
+        body { transition: background-color 0.5s ease, color 0.5s ease; }
+        
+        /* Glassmorphism Utilities */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        .dark .glass-panel {
+            background: rgba(17, 24, 39, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .toast { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .hidden-tab { display: none !important; }
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .dark ::-webkit-scrollbar-thumb { background: #4b5563; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* RTL Support Adjustments */
+        [dir="rtl"] { font-family: 'Tajawal', sans-serif; }
+
+        /* Custom Tabs for Add Book */
+        .add-book-tab.active {
+            border-bottom: 2px solid #4f46e5;
+            color: #4f46e5;
+            font-weight: bold;
+        }
+        .dark .add-book-tab.active {
+            border-bottom-color: #818cf8;
+            color: #818cf8;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-indigo-950 dark:to-gray-900 text-gray-800 dark:text-gray-100 antialiased h-screen flex flex-col transition-colors duration-500 overflow-hidden">
+
+    <!-- Navigation Bar -->
+    <nav class="glass-panel shadow-lg z-20 sticky top-0 border-b border-white/20 dark:border-gray-700/50 shrink-0">
+        <div class="w-full mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex items-center gap-4">
+                    <!-- Hamburger Icon -->
+                    <button onclick="toggleSidebar()" class="p-2 rounded-xl text-gray-700 dark:text-gray-200 hover:bg-white/50 dark:hover:bg-gray-800/50 transition focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    </button>
+
+                    <!-- Logo -->
+                    <div class="flex items-center cursor-pointer group" onclick="navigate('public-view')">
+                        <div class="bg-indigo-600 p-2 rounded-xl text-white group-hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/30 hidden sm:block">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                        </div>
+                        <span class="font-extrabold text-xl sm:text-2xl tracking-wide ms-2 sm:ms-3 text-indigo-900 dark:text-white drop-shadow-sm" data-i18n="appTitle">Library Register</span>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-2 sm:gap-4">
+                    <!-- Controls (Theme & Lang) -->
+                    <div class="flex items-center bg-white/50 dark:bg-gray-800/50 rounded-2xl p-1 shadow-inner border border-gray-200 dark:border-gray-700">
+                        <button onclick="toggleTheme()" class="p-2 rounded-xl hover:bg-white dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 transition-all" aria-label="Toggle Theme">
+                            <svg id="theme-icon-light" class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                            <svg id="theme-icon-dark" class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                        </button>
+                        <select id="lang-selector" onchange="changeLanguage(this.value)" class="bg-transparent border-none text-sm font-bold text-gray-700 dark:text-gray-200 focus:ring-0 cursor-pointer outline-none pe-8 ps-2 py-2">
+                            <option value="en" class="text-gray-900">EN</option>
+                            <option value="ml" class="text-gray-900">ML</option>
+                            <option value="ar" class="text-gray-900">AR</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar & Overlay -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 hidden transition-opacity" onclick="toggleSidebar()"></div>
+    <aside id="sidebar" class="fixed top-0 bottom-0 start-0 w-72 bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl z-40 transform -translate-x-full rtl:translate-x-full transition-transform duration-300 ease-in-out border-e border-white/20 dark:border-gray-700/50 shadow-2xl flex flex-col">
+        <div class="h-20 flex items-center justify-between px-6 border-b border-gray-200/50 dark:border-gray-700/50 shrink-0">
+            <span class="font-black text-xl text-indigo-700 dark:text-indigo-400">Menu</span>
+            <button onclick="toggleSidebar()" class="p-2 text-gray-500 hover:text-gray-900 dark:hover:text-white rounded-full bg-gray-100 dark:bg-gray-800 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        
+        <div class="p-4 flex flex-col gap-2 flex-grow overflow-y-auto">
+            <!-- Public / General Links -->
+            <button onclick="navigate('public-view')" class="flex items-center gap-3 w-full text-start px-4 py-3 rounded-xl hover:bg-indigo-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 font-bold transition">
+                <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <span data-i18n="navHome">Home (Search)</span>
+            </button>
+            <button id="nav-login-btn" onclick="openLoginModal()" class="flex items-center gap-3 w-full text-start px-4 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold transition shadow-md">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
+                <span data-i18n="navLogin">Login</span>
+            </button>
+            
+            <!-- Reader Links -->
+            <button id="nav-reader-btn" onclick="navigate('reader-view')" class="hidden flex items-center gap-3 w-full text-start px-4 py-3 rounded-xl hover:bg-indigo-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 font-bold transition">
+                <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                <span data-i18n="navReader">My Books</span>
+            </button>
+
+            <!-- Admin specific Links -->
+            <div id="admin-nav-group" class="hidden flex-col gap-2 mt-2 pt-2 border-t border-gray-200/50 dark:border-gray-700/50">
+                <p class="px-4 text-xs font-black uppercase text-gray-400 tracking-wider mb-1" data-i18n="adminPanelTitle">Admin Controls</p>
+                
+                <button onclick="navigate('admin-add-book-view')" class="flex items-center gap-3 w-full text-start px-4 py-3 rounded-xl hover:bg-amber-50 dark:hover:bg-amber-900/20 text-gray-700 dark:text-gray-200 font-bold transition">
+                    <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    <span data-i18n="navAddBook">Add New Book</span>
+                </button>
+                <button onclick="navigate('admin-registry-view')" class="flex items-center gap-3 w-full text-start px-4 py-3 rounded-xl hover:bg-amber-50 dark:hover:bg-amber-900/20 text-gray-700 dark:text-gray-200 font-bold transition">
+                    <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    <span data-i18n="navRegistry">Books Registry</span>
+                </button>
+                <button onclick="navigate('admin-bulk-view')" class="flex items-center gap-3 w-full text-start px-4 py-3 rounded-xl hover:bg-amber-50 dark:hover:bg-amber-900/20 text-gray-700 dark:text-gray-200 font-bold transition">
+                    <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    <span data-i18n="navBulk">Bulk Import</span>
+                </button>
+                <button onclick="navigate('admin-issue-view')" class="flex items-center gap-3 w-full text-start px-4 py-3 rounded-xl hover:bg-amber-50 dark:hover:bg-amber-900/20 text-gray-700 dark:text-gray-200 font-bold transition">
+                    <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                    <span data-i18n="navIssue">Issue / Return</span>
+                </button>
+                <button onclick="navigate('admin-users-view')" class="flex items-center gap-3 w-full text-start px-4 py-3 rounded-xl hover:bg-amber-50 dark:hover:bg-amber-900/20 text-gray-700 dark:text-gray-200 font-bold transition">
+                    <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <span data-i18n="navUsers">Users</span>
+                </button>
+            </div>
+
+            <!-- Profile & Logout (For all logged in users) -->
+            <div id="auth-nav-group" class="hidden flex-col gap-2 mt-auto pt-4 border-t border-gray-200/50 dark:border-gray-700/50">
+                <button id="nav-profile-btn" onclick="navigate('profile-view')" class="flex items-center gap-3 w-full text-start px-4 py-3 rounded-xl hover:bg-indigo-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 font-bold transition">
+                    <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    <span data-i18n="navProfile">Profile</span>
+                </button>
+                <button id="nav-logout-btn" class="flex items-center justify-center gap-2 w-full bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-500 hover:text-white px-4 py-3 rounded-xl font-bold transition border border-red-200 dark:border-red-800/50">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                    <span data-i18n="navLogout">Logout</span>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Login Modal (Pop-up) -->
+    <div id="login-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-md transition-opacity" onclick="closeLoginModal()"></div>
+        <div class="relative glass-panel w-full max-w-md p-8 sm:p-10 rounded-3xl shadow-2xl border border-white/40 dark:border-gray-600 fade-in">
+            <button onclick="closeLoginModal()" class="absolute top-4 end-4 p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <div class="mb-8 text-center">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 mb-4 shadow-inner">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8V7a4 4 0 00-8 0v4h8z"></path></svg>
+                </div>
+                <h2 class="text-3xl font-black text-gray-900 dark:text-white" data-i18n="loginTitle">Sign In</h2>
+            </div>
+            <form id="login-form" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2" data-i18n="usernameLbl">Username</label>
+                    <input type="text" id="login-username" required class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-shadow text-start">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2" data-i18n="passwordLbl">Password</label>
+                    <input type="password" id="login-password" required class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-shadow text-start">
+                </div>
+                <button type="submit" id="login-submit-btn" class="w-full flex justify-center py-3.5 px-4 rounded-xl shadow-lg text-sm font-black text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500/50 transition-all transform hover:-translate-y-0.5">
+                    <span data-i18n="loginBtn">Login</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Custom Confirm Modal -->
+    <div id="confirm-modal" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity"></div>
+        <div class="relative bg-white dark:bg-gray-800 w-full max-w-sm p-6 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 fade-in text-center">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/30 mb-4">
+                <svg class="h-6 w-6 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            </div>
+            <h3 class="text-lg leading-6 font-black text-gray-900 dark:text-white mb-2" id="confirm-title">Please Confirm</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-6" id="confirm-message">Are you sure you want to proceed?</p>
+            <div class="flex flex-col-reverse sm:flex-row gap-3">
+                <button type="button" id="confirm-cancel-btn" class="w-full inline-flex justify-center rounded-xl border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2.5 bg-white dark:bg-gray-700 text-base font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none transition sm:text-sm">Cancel</button>
+                <button type="button" id="confirm-ok-btn" class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-4 py-2.5 bg-red-600 text-base font-bold text-white hover:bg-red-700 focus:outline-none transition sm:text-sm">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 overflow-y-auto relative">
+        
+        <!-- 1. Public Search View (DEFAULT) -->
+        <div id="public-view" class="view-section fade-in h-full flex flex-col">
+            <div class="text-center mb-12">
+                <h1 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 drop-shadow-sm mb-4" data-i18n="searchTitle">Search Books</h1>
+                <p class="max-w-2xl mx-auto text-lg text-gray-600 dark:text-gray-400 font-medium" data-i18n="searchSubtitle">Find available books and their shelf numbers here</p>
+            </div>
+            
+            <div class="w-full lg:w-3/4 mx-auto mb-10">
+                <div class="relative group">
+                    <div class="absolute inset-y-0 start-0 ps-5 flex items-center pointer-events-none">
+                        <svg class="w-6 h-6 text-indigo-400 group-focus-within:text-indigo-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                    <input type="text" id="public-search-input" data-i18n-placeholder="searchPlaceholder" placeholder="Book name, author or category..." class="w-full ps-14 pe-6 py-4 rounded-2xl glass-panel text-lg text-gray-800 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/30 transition-all shadow-xl dark:shadow-none placeholder-gray-400 dark:placeholder-gray-500">
+                </div>
+            </div>
+
+            <div class="w-full glass-panel rounded-3xl overflow-hidden shadow-2xl border border-white/40 dark:border-gray-700/50 flex flex-col flex-grow">
+                <div class="overflow-x-auto flex-grow">
+                    <table class="min-w-full divide-y divide-gray-200/50 dark:divide-gray-700/50">
+                        <thead class="bg-gray-50/50 dark:bg-gray-800/50 backdrop-blur-md">
+                            <tr>
+                                <th scope="col" class="px-6 py-4 text-start text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider" data-i18n="thBook">Book & Author</th>
+                                <th scope="col" class="px-6 py-4 text-start text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider" data-i18n="thCategory">Category</th>
+                                <th scope="col" class="px-6 py-4 text-start text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider" data-i18n="thShelf">Shelf No</th>
+                                <th scope="col" class="px-6 py-4 text-start text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider" data-i18n="thStatus">Availability</th>
+                            </tr>
+                        </thead>
+                        <tbody id="public-books-list" class="divide-y divide-gray-100 dark:divide-gray-800/50 text-start">
+                            <!-- Books dynamically injected -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="public-loading" class="text-center py-16 text-gray-500 dark:text-gray-400 hidden font-bold animate-pulse" data-i18n="loading">Loading data...</div>
+                <div id="public-no-results" class="text-center py-16 text-gray-500 dark:text-gray-400 hidden font-bold" data-i18n="noBooksFound">No books found.</div>
+            </div>
+        </div>
+
+        <!-- 2. Profile View -->
+        <div id="profile-view" class="view-section hidden-tab fade-in max-w-3xl mx-auto w-full pt-10">
+            <div class="glass-panel p-8 sm:p-12 rounded-3xl shadow-2xl border border-white/40 dark:border-gray-700/50 text-center relative overflow-hidden">
+                <div class="absolute top-0 start-0 w-full h-32 bg-gradient-to-r from-indigo-500 to-purple-600 opacity-20"></div>
+                <div class="relative z-10">
+                    <div class="w-24 h-24 mx-auto bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 rounded-full flex items-center justify-center shadow-inner mb-6 border-4 border-white dark:border-gray-800">
+                        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    </div>
+                    <h2 class="text-3xl font-black text-gray-900 dark:text-white mb-2" id="prof-name">Name</h2>
+                    <p class="text-indigo-600 dark:text-indigo-400 font-bold mb-8">@<span id="prof-username">username</span></p>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-start">
+                        <div class="bg-white/50 dark:bg-gray-800/50 p-4 rounded-2xl border border-gray-100 dark:border-gray-700">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase mb-1" data-i18n="phonePassLbl">Phone Number</p>
+                            <p class="text-lg font-black text-gray-800 dark:text-white" id="prof-phone">-</p>
+                        </div>
+                        <div class="bg-white/50 dark:bg-gray-800/50 p-4 rounded-2xl border border-gray-100 dark:border-gray-700">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase mb-1" data-i18n="roleLbl">Role</p>
+                            <p class="text-lg font-black text-gray-800 dark:text-white capitalize" id="prof-role">-</p>
+                        </div>
+                        <div class="bg-white/50 dark:bg-gray-800/50 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 sm:col-span-2">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase mb-1" data-i18n="joinedLbl">Joined Date</p>
+                            <p class="text-lg font-black text-gray-800 dark:text-white" id="prof-joined">-</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Admin View: Add New Book -->
+        <div id="admin-add-book-view" class="view-section hidden-tab fade-in h-full flex flex-col items-center">
+            <div class="glass-panel w-full max-w-4xl rounded-3xl flex flex-col overflow-hidden h-[calc(100vh-100px)]">
+                <div class="p-6 border-b border-gray-200/50 dark:border-gray-700/50 shrink-0 bg-white/30 dark:bg-gray-800/30">
+                    <h3 class="text-xl font-black text-gray-800 dark:text-white flex items-center gap-2">
+                        <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                        <span data-i18n="addBookTitle">Add New Book</span>
+                    </h3>
+                    <!-- Form Navigation Tabs -->
+                    <div class="flex flex-wrap gap-4 mt-6 border-b border-gray-200 dark:border-gray-700">
+                        <button type="button" onclick="switchBookFormTab('tab-basic')" class="add-book-tab active pb-2 text-sm transition-colors" data-i18n="tabBasic">Basic Info</button>
+                        <button type="button" onclick="switchBookFormTab('tab-media')" class="add-book-tab pb-2 text-sm text-gray-500 dark:text-gray-400 transition-colors" data-i18n="tabMedia">Media</button>
+                        <button type="button" onclick="switchBookFormTab('tab-financial')" class="add-book-tab pb-2 text-sm text-gray-500 dark:text-gray-400 transition-colors" data-i18n="tabFinancial">Financials</button>
+                        <button type="button" onclick="switchBookFormTab('tab-audit')" class="add-book-tab pb-2 text-sm text-gray-500 dark:text-gray-400 transition-colors" data-i18n="tabAudit">Stock/Audit</button>
+                    </div>
+                </div>
+
+                <div class="flex-grow overflow-y-auto p-6 md:p-8">
+                    <form id="add-book-form" class="space-y-6 h-full flex flex-col">
+                        
+                        <!-- Tab 1: Basic Info -->
+                        <div id="tab-basic" class="book-form-section flex-grow">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Serial No.</label>
+                                    <input type="text" id="b-serial" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2.5 px-4 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-indigo-600 dark:text-indigo-400 mb-1">Accession No.*</label>
+                                    <input type="text" id="b-id" required class="w-full bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-700 rounded-lg py-2.5 px-4 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white font-bold">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Call No / Class No</label>
+                                    <input type="text" id="b-callno" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2.5 px-4 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Section / Division</label>
+                                    <input type="text" id="b-section" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2.5 px-4 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                                </div>
+                            </div>
+                            <div class="mb-6">
+                                <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Book Title*</label>
+                                <input type="text" id="b-title" required class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2.5 px-4 focus:ring-2 focus:ring-indigo-500 outline-none text-base font-bold dark:text-white">
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Author / Translator</label>
+                                    <input type="text" id="b-author" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2.5 px-4 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Publisher</label>
+                                    <input type="text" id="b-publisher" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2.5 px-4 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-6 mb-6">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Year</label>
+                                    <input type="text" id="b-year" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2.5 px-4 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Edition</label>
+                                    <input type="text" id="b-edition" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2.5 px-4 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Language</label>
+                                    <input type="text" id="b-lang" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2.5 px-4 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Category / Subject</label>
+                                    <input type="text" id="b-category" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2.5 px-4 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">ISBN</label>
+                                    <input type="text" id="b-isbn" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2.5 px-4 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab 2: Media (Images) -->
+                        <div id="tab-media" class="book-form-section hidden-tab flex-grow">
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-6">Upload up to 3 images (JPG/PNG). Max 150KB per image. These will be converted securely.</p>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-4 bg-white/20 dark:bg-gray-800/20">
+                                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Photo 1 (Front Cover)</label>
+                                    <input type="file" id="b-photo1" accept=".jpg, .jpeg, .png" onchange="handleBookImageUpload(event, 'b-photo1-base64', 'b-photo1-preview', 'Photo 1')" class="text-sm w-full text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-gray-800 dark:file:text-indigo-400 cursor-pointer">
+                                    <input type="hidden" id="b-photo1-base64">
+                                    <div id="b-photo1-preview" class="mt-4"></div>
+                                </div>
+                                <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-4 bg-white/20 dark:bg-gray-800/20">
+                                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Photo 2</label>
+                                    <input type="file" id="b-photo2" accept=".jpg, .jpeg, .png" onchange="handleBookImageUpload(event, 'b-photo2-base64', 'b-photo2-preview', 'Photo 2')" class="text-sm w-full text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-gray-800 dark:file:text-indigo-400 cursor-pointer">
+                                    <input type="hidden" id="b-photo2-base64">
+                                    <div id="b-photo2-preview" class="mt-4"></div>
+                                </div>
+                                <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-4 bg-white/20 dark:bg-gray-800/20">
+                                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Photo 3</label>
+                                    <input type="file" id="b-photo3" accept=".jpg, .jpeg, .png" onchange="handleBookImageUpload(event, 'b-photo3-base64', 'b-photo3-preview', 'Photo 3')" class="text-sm w-full text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-gray-800 dark:file:text-indigo-400 cursor-pointer">
+                                    <input type="hidden" id="b-photo3-base64">
+                                    <div id="b-photo3-preview" class="mt-4"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab 3: Financials -->
+                        <div id="tab-financial" class="book-form-section hidden-tab flex-grow">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Price (₹)</label>
+                                    <input type="number" id="b-price" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2.5 px-4 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Date of Purchase</label>
+                                    <input type="date" id="b-purchasedate" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2.5 px-4 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white cursor-pointer">
+                                </div>
+                            </div>
+                            <div class="mb-6">
+                                <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Grant / Budget Head</label>
+                                <input type="text" id="b-budget" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2.5 px-4 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                            </div>
+                            <div class="mb-6">
+                                <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Supplier / Vendor</label>
+                                <input type="text" id="b-vendor" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2.5 px-4 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                            </div>
+                        </div>
+
+                        <!-- Tab 4: Stock & Audit -->
+                        <div id="tab-audit" class="book-form-section hidden-tab flex-grow">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Shelf No.</label>
+                                    <input type="text" id="b-shelf" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2.5 px-4 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Book Condition</label>
+                                    <select id="b-condition" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2.5 px-4 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white cursor-pointer">
+                                        <option value="Good">Good</option>
+                                        <option value="Fair">Fair</option>
+                                        <option value="Poor">Poor</option>
+                                        <option value="Damaged">Damaged</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Status</label>
+                                    <select id="b-status" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2.5 px-4 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white cursor-pointer">
+                                        <option value="Available">Available</option>
+                                        <option value="Issued">Issued</option>
+                                        <option value="Lost">Lost</option>
+                                        <option value="Withdrawn">Withdrawn (Condemned)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Verification Date</label>
+                                    <input type="date" id="b-verifydate" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2.5 px-4 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white cursor-pointer">
+                                </div>
+                            </div>
+                            <div class="mb-6">
+                                <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Remarks</label>
+                                <textarea id="b-remarks" rows="3" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2.5 px-4 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white"></textarea>
+                            </div>
+                            <!-- Auto Signature Note -->
+                            <div class="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl p-4 flex items-start gap-3">
+                                <svg class="w-5 h-5 text-indigo-500 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <p class="text-xs text-indigo-700 dark:text-indigo-300 leading-relaxed font-medium">
+                                    Saving this record will automatically capture your Digital Signature (Admin Name & Timestamp) for Audit and Verification purposes.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="mt-auto shrink-0 pt-6 border-t border-gray-200 dark:border-gray-700">
+                            <button type="submit" id="btn-save-book" class="w-full bg-indigo-600 text-white rounded-xl py-4 text-sm font-black hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-500/30 flex items-center justify-center gap-2">
+                                <svg class="w-5 h-5 hidden animate-spin" id="save-spinner" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                <span id="save-btn-text" data-i18n="saveBtn">Save Book Record</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Admin View: Books Registry -->
+        <div id="admin-registry-view" class="view-section hidden-tab fade-in h-full flex flex-col">
+            <div class="w-full glass-panel rounded-3xl flex flex-col h-[calc(100vh-100px)] overflow-hidden shadow-2xl">
+                <div class="p-6 border-b border-gray-200/50 dark:border-gray-700/50 bg-white/30 dark:bg-gray-800/30 flex flex-col sm:flex-row justify-between items-center gap-4 shrink-0">
+                    <h3 class="text-2xl font-black text-gray-800 dark:text-white flex items-center gap-2">
+                        <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        <span data-i18n="navRegistry">Books Registry</span>
+                    </h3>
+                    <input type="text" id="admin-book-search" data-i18n-placeholder="searchPlaceholder" placeholder="Search ID or Title..." class="bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-700 rounded-xl py-2 px-5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white w-full sm:w-1/3 min-w-[250px] shadow-sm">
+                </div>
+                <div class="overflow-y-auto flex-grow p-0">
+                    <table class="min-w-full divide-y divide-gray-200/50 dark:divide-gray-700/50">
+                        <thead class="bg-gray-50/50 dark:bg-gray-800/50 sticky top-0 backdrop-blur-md z-10">
+                            <tr>
+                                <th class="px-6 py-4 text-start text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider">Accession No</th>
+                                <th class="px-6 py-4 text-start text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider" data-i18n="thBook">Title & Author</th>
+                                <th class="px-6 py-4 text-start text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider">Category</th>
+                                <th class="px-6 py-4 text-start text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider">Condition</th>
+                                <th class="px-6 py-4 text-start text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider" data-i18n="thStatus">Status</th>
+                                <th class="px-6 py-4 text-end text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider" data-i18n="actionLbl">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-books-list" class="divide-y divide-gray-100 dark:divide-gray-800/50 text-sm text-start">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Admin View: Bulk Import -->
+        <div id="admin-bulk-view" class="view-section hidden-tab fade-in h-full flex flex-col items-center">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 h-full w-full max-w-6xl">
+                <!-- Instructions & Upload -->
+                <div class="glass-panel p-8 md:p-10 rounded-3xl border-t-4 border-t-indigo-500 flex flex-col shadow-2xl h-[calc(100vh-100px)]">
+                    <h3 class="text-3xl font-black mb-4 text-indigo-700 dark:text-indigo-400" data-i18n="bulkTitle">Bulk Import Books (CSV)</h3>
+                    <p class="text-base text-gray-600 dark:text-gray-400 mb-8 leading-relaxed" data-i18n="bulkDesc">Upload an Excel (.csv) file to add multiple books at once. Make sure your file matches the template structure exactly. Existing Book IDs will be skipped to prevent duplicates.</p>
+                    
+                    <div class="mb-8">
+                        <button onclick="downloadCSVTemplate()" class="inline-flex items-center gap-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 px-5 py-3 rounded-xl font-bold transition-colors text-sm shadow-sm">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            <span data-i18n="btnTemplate">Download CSV Template</span>
+                        </button>
+                    </div>
+
+                    <div class="bg-gray-50/50 dark:bg-gray-800/50 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-10 text-center flex-grow flex flex-col items-center justify-center transition-colors cursor-pointer hover:bg-white/50 dark:hover:bg-gray-700/50" id="drop-zone" onclick="document.getElementById('csv-file-input').click()">
+                        <div class="bg-indigo-100 dark:bg-indigo-900/50 p-4 rounded-full mb-4">
+                            <svg class="w-10 h-10 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                        </div>
+                        <p class="text-base text-gray-700 dark:text-gray-300 font-bold mb-2" data-i18n="dragDropMsg">Click or Drag to Select a CSV file</p>
+                        <input type="file" id="csv-file-input" accept=".csv" class="hidden" onchange="handleFileSelect(event)">
+                        <p id="file-name-display" class="mt-4 text-sm font-bold text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/30 px-3 py-1 rounded-lg hidden"></p>
+                    </div>
+                </div>
+
+                <!-- Preview & Process -->
+                <div class="glass-panel p-8 rounded-3xl flex flex-col h-[calc(100vh-100px)] overflow-hidden relative shadow-2xl">
+                    <div class="flex justify-between items-center mb-6 shrink-0">
+                        <h3 class="text-2xl font-black text-gray-800 dark:text-white" data-i18n="previewTitle">Data Preview</h3>
+                        <button id="btn-process-csv" onclick="processBulkImport()" class="hidden bg-green-500 hover:bg-green-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-green-500/30 transition-transform hover:-translate-y-0.5" data-i18n="btnUploadBooks">Upload Data</button>
+                    </div>
+                    
+                    <div id="bulk-processing-overlay" class="absolute inset-0 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md z-10 hidden flex-col items-center justify-center rounded-3xl">
+                        <svg class="animate-spin h-12 w-12 text-indigo-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        <p class="text-indigo-800 dark:text-indigo-300 font-bold text-lg" id="bulk-progress-text">Processing...</p>
+                    </div>
+
+                    <div class="overflow-y-auto flex-grow border border-gray-200 dark:border-gray-700 rounded-2xl bg-white/30 dark:bg-gray-800/30">
+                        <table class="min-w-full divide-y divide-gray-200/50 dark:divide-gray-700/50">
+                            <thead class="bg-gray-100/80 dark:bg-gray-800/90 sticky top-0 backdrop-blur-sm">
+                                <tr>
+                                    <th class="px-5 py-3 text-start text-xs font-black text-gray-500 uppercase tracking-wider">Book ID</th>
+                                    <th class="px-5 py-3 text-start text-xs font-black text-gray-500 uppercase tracking-wider">Title</th>
+                                    <th class="px-5 py-3 text-start text-xs font-black text-gray-500 uppercase tracking-wider">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="csv-preview-list" class="divide-y divide-gray-100 dark:divide-gray-800/50 text-sm text-start">
+                                <tr><td colspan="3" class="px-5 py-10 text-center text-gray-500 font-medium" data-i18n="noPreviewMsg">No file selected for preview.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. Admin View: Issue / Return -->
+        <div id="admin-issue-view" class="view-section hidden-tab fade-in h-full flex flex-col items-center">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 h-full w-full max-w-6xl">
+                <!-- Issue Form -->
+                <div class="glass-panel p-8 md:p-10 rounded-3xl border-t-4 border-t-indigo-500 flex flex-col justify-center shadow-2xl h-[calc(100vh-100px)]">
+                    <h3 class="text-3xl font-black mb-8 text-indigo-700 dark:text-indigo-400" data-i18n="issueBookTitle">Issue Book</h3>
+                    <form id="issue-book-form" class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2" data-i18n="phoneFirstLbl">Phone Number (Type first)</label>
+                            <div class="relative">
+                                <input type="tel" id="issue-phone" required autocomplete="off" placeholder="10 Digits" class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3.5 focus:ring-2 focus:ring-indigo-500 outline-none font-bold tracking-widest text-lg dark:text-white text-start">
+                                <span id="issue-user-badge" class="absolute end-3 top-3.5 bg-green-100 text-green-800 text-xs font-bold px-3 py-1.5 rounded-lg hidden shadow-sm border border-green-200">Registered</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2" data-i18n="readerNameLbl">Reader Name</label>
+                            <input type="text" id="issue-name" required class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3.5 focus:ring-2 focus:ring-indigo-500 outline-none font-bold dark:text-white transition-colors text-start">
+                        </div>
+                        <div class="relative">
+                            <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2" data-i18n="selectBookLbl">Select Book (Search by ID or Title)</label>
+                            <input type="text" id="issue-book-search" autocomplete="off" data-i18n-placeholder="searchPlaceholder" placeholder="Search..." class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3.5 focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white mb-1 text-start shadow-sm">
+                            <select id="issue-book-select" required size="5" class="absolute z-10 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl shadow-2xl p-2 focus:ring-2 focus:ring-indigo-500 outline-none text-sm hidden dark:text-white mt-2 max-h-48 text-start">
+                                <!-- Options injected -->
+                            </select>
+                            <input type="hidden" id="issue-book-id">
+                        </div>
+                        <button type="submit" class="w-full bg-indigo-600 text-white rounded-xl py-4 text-base font-black hover:bg-indigo-700 shadow-xl shadow-indigo-500/30 mt-6 transition-transform hover:-translate-y-0.5" data-i18n="recordIssueBtn">Record Issue</button>
+                    </form>
+                </div>
+
+                <!-- Active Issues List -->
+                <div class="glass-panel p-8 rounded-3xl flex flex-col h-[calc(100vh-100px)] overflow-hidden shadow-2xl">
+                    <div class="flex justify-between items-center mb-6 border-b border-gray-200/50 dark:border-gray-700/50 pb-4 shrink-0">
+                        <h3 class="text-2xl font-black text-gray-800 dark:text-white" data-i18n="activeIssuesTitle">Active Issues</h3>
+                        <span class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1.5 rounded-full animate-pulse flex items-center gap-1.5 border border-amber-300">
+                            <span class="w-2 h-2 rounded-full bg-amber-500"></span> Live
+                        </span>
+                    </div>
+                    <div class="overflow-y-auto flex-grow pe-2">
+                        <ul id="active-issues-list" class="space-y-4 text-start">
+                            <!-- Transactions injected here -->
+                        </ul>
+                        <div id="no-active-issues" class="text-center py-20 text-gray-500 dark:text-gray-400 hidden font-bold flex flex-col items-center justify-center h-full">
+                            <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-full mb-4">
+                                <svg class="w-10 h-10 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <span class="text-lg" data-i18n="noIssuesFound">No active issued books.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. Admin View: Users -->
+        <div id="admin-users-view" class="view-section hidden-tab fade-in h-full flex flex-col items-center">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 h-full w-full max-w-6xl">
+                <!-- Add User Form -->
+                <div class="glass-panel p-8 md:p-10 rounded-3xl lg:col-span-1 flex flex-col justify-center shadow-2xl h-fit lg:sticky lg:top-20">
+                    <h3 class="text-2xl font-black mb-8 text-gray-800 dark:text-white flex items-center gap-2">
+                        <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+                        <span data-i18n="addReaderTitle">Add Reader</span>
+                    </h3>
+                    <form id="add-user-form" class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1" data-i18n="usernameLbl">Username</label>
+                            <input type="text" id="u-username" required class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white text-start font-medium">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1" data-i18n="phonePassLbl">Phone (Used as Password)</label>
+                            <input type="tel" id="u-phone" required pattern="[0-9]{10}" class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white text-start font-medium tracking-wide">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1" data-i18n="fullNameLbl">Full Name</label>
+                            <input type="text" id="u-name" required class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white text-start font-bold">
+                        </div>
+                        <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white rounded-xl py-4 text-sm font-black shadow-lg shadow-green-500/30 transition-transform hover:-translate-y-0.5 mt-6" data-i18n="createAccBtn">Create Account</button>
+                    </form>
+                </div>
+                
+                <!-- Users List -->
+                <div class="glass-panel rounded-3xl lg:col-span-2 overflow-hidden flex flex-col h-[calc(100vh-100px)] shadow-2xl">
+                    <div class="p-6 border-b border-gray-200/50 dark:border-gray-700/50 bg-white/30 dark:bg-gray-800/30 shrink-0">
+                        <h3 class="text-2xl font-black text-gray-800 dark:text-white flex items-center gap-2">
+                            <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                            <span data-i18n="regReadersTitle">Registered Readers</span>
+                        </h3>
+                    </div>
+                    <div class="overflow-y-auto flex-grow p-0">
+                        <table class="min-w-full divide-y divide-gray-200/50 dark:divide-gray-700/50">
+                            <thead class="bg-gray-50/50 dark:bg-gray-800/50 backdrop-blur-md sticky top-0 z-10">
+                                <tr>
+                                    <th class="px-6 py-4 text-start text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider" data-i18n="nameLbl">Name</th>
+                                    <th class="px-6 py-4 text-start text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider" data-i18n="contactLbl">Phone & Username</th>
+                                    <th class="px-6 py-4 text-start text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider" data-i18n="joinedLbl">Joined Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-users-list" class="divide-y divide-gray-100 dark:divide-gray-800/50 text-sm text-start">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Full Book Details Modal (View Only) -->
+    <div id="book-details-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-gray-900/80 backdrop-blur-md transition-opacity" onclick="closeBookDetailsModal()"></div>
+        <div class="relative glass-panel w-full max-w-2xl max-h-[90vh] flex flex-col rounded-3xl shadow-2xl border border-white/40 dark:border-gray-600 fade-in">
+            <button onclick="closeBookDetailsModal()" class="absolute top-4 end-4 p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition z-10 focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 rounded-t-3xl shrink-0">
+                <div class="flex items-start gap-4">
+                    <div class="bg-indigo-100 dark:bg-indigo-900/50 p-3 rounded-xl text-indigo-600 dark:text-indigo-400">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-black text-gray-900 dark:text-white" id="modal-b-title">Book Title</h2>
+                        <p class="text-indigo-600 dark:text-indigo-400 font-bold" id="modal-b-author">Author Name</p>
+                    </div>
+                </div>
+            </div>
+            <div class="p-6 overflow-y-auto flex-grow text-start">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <!-- Identity -->
+                    <div class="space-y-3">
+                        <h4 class="font-bold text-gray-800 dark:text-gray-200 border-b border-gray-200 dark:border-gray-700 pb-1">Identity & Location</h4>
+                        <div class="grid grid-cols-2 gap-x-2 gap-y-3 text-sm">
+                            <span class="text-gray-500">Accession No:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-id">-</span>
+                            <span class="text-gray-500">Call No:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-callno">-</span>
+                            <span class="text-gray-500">Shelf No:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-shelf">-</span>
+                            <span class="text-gray-500">Section:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-section">-</span>
+                            <span class="text-gray-500">Status:</span> <span class="font-bold px-2 py-0.5 rounded text-xs inline-block" id="modal-b-status">-</span>
+                        </div>
+                    </div>
+                    <!-- Publication -->
+                    <div class="space-y-3">
+                        <h4 class="font-bold text-gray-800 dark:text-gray-200 border-b border-gray-200 dark:border-gray-700 pb-1">Publication Details</h4>
+                        <div class="grid grid-cols-2 gap-x-2 gap-y-3 text-sm">
+                            <span class="text-gray-500">Publisher:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-publisher">-</span>
+                            <span class="text-gray-500">Year/Edition:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-yearedition">-</span>
+                            <span class="text-gray-500">Language:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-lang">-</span>
+                            <span class="text-gray-500">Category:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-category">-</span>
+                            <span class="text-gray-500">ISBN:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-isbn">-</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6 space-y-3">
+                    <h4 class="font-bold text-gray-800 dark:text-gray-200 border-b border-gray-200 dark:border-gray-700 pb-1">Audit & Condition</h4>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-x-2 gap-y-3 text-sm bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
+                        <span class="text-gray-500">Condition:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-condition">-</span>
+                        <span class="text-gray-500">Verified On:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-verifydate">-</span>
+                        <span class="text-gray-500 col-span-2">Verified By:</span> <span class="font-bold text-indigo-600 dark:text-indigo-400 col-span-2 text-xs" id="modal-b-verifiedby">-</span>
+                    </div>
+                </div>
+
+                <div class="mt-6 space-y-3">
+                    <h4 class="font-bold text-gray-800 dark:text-gray-200 border-b border-gray-200 dark:border-gray-700 pb-1">Media / Photos</h4>
+                    <div class="flex gap-4" id="modal-b-photos">
+                        <!-- Photos will be injected here -->
+                        <span class="text-sm text-gray-500">No photos available.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Premium Toast Container -->
+    <div id="toast-container" class="fixed bottom-6 end-6 sm:bottom-10 sm:end-10 z-50 flex flex-col gap-3"></div>
+
+    <!-- Firebase Scripts -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, setDoc, doc, getDoc, updateDoc, deleteDoc, query, where, onSnapshot, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- i18n Dictionary ---
+        const i18n = {
+            en: {
+                appTitle: "Library Register", navHome: "Home", navLogin: "Login", navReader: "My Books", navProfile: "Profile", navLogout: "Logout",
+                adminPanelTitle: "Admin Controls", navAddBook: "Add New Book", navRegistry: "Books Registry", navBulk: "Bulk Import", navIssue: "Issue / Return", navUsers: "Users",
+                searchTitle: "Search Books", searchSubtitle: "Find available books and their shelf numbers here", searchPlaceholder: "Book name, author or category...",
+                thBook: "Book & Author", thCategory: "Category", thShelf: "Shelf No", thStatus: "Availability",
+                statusAvailable: "Available", statusIssued: "Issued", loading: "Loading data...", noBooksFound: "No books found.",
+                loginTitle: "Sign In", usernameLbl: "Username", passwordLbl: "Password", loginBtn: "Login", roleLbl: "Role",
+                addBookTitle: "Add New Book", bookIdLbl: "Accession No (Book ID)", bookTitleLbl: "Book Title", bookAuthorLbl: "Author / Translator", priceLbl: "Price (₹)", saveBtn: "Save Book Record",
+                tabBasic: "Basic Info", tabMedia: "Media", tabFinancial: "Financials", tabAudit: "Stock/Audit",
+                registryTitle: "Books Registry", actionLbl: "Action",
+                bulkTitle: "Bulk Import Books (CSV)", bulkDesc: "Upload an Excel (.csv) file to add multiple books at once. Make sure your file matches the template structure exactly. Existing Book IDs will be skipped to prevent duplicates.", btnTemplate: "Download CSV Template", dragDropMsg: "Click or Drag to Select a CSV file", btnBrowse: "Browse File", previewTitle: "Data Preview", btnUploadBooks: "Upload Data", noPreviewMsg: "No file selected for preview.",
+                issueBookTitle: "Issue Book", phoneFirstLbl: "Phone Number (Type first)", readerNameLbl: "Reader Name", selectBookLbl: "Select Book (Search)", recordIssueBtn: "Record Issue",
+                activeIssuesTitle: "Active Issues", noIssuesFound: "No active issued books.", btnReturn: "Return Book",
+                addReaderTitle: "Add New Reader", phonePassLbl: "Phone Number (Used as Password)", fullNameLbl: "Full Name", createAccBtn: "Create Account", regReadersTitle: "Registered Readers", nameLbl: "Name", contactLbl: "Phone & Username", joinedLbl: "Joined Date",
+                greeting: "Hello, ", readerSubtitle: "Your reading history is below.", totalReadLbl: "Total Read", myHistoryTitle: "My Books (History)", noHistoryFound: "You haven't borrowed any books yet.",
+                msgLoginFail: "Login failed. Check credentials.", msgWelcome: "Welcome", msgLogout: "Logged out successfully.", msgBookAdded: "Book added successfully.", msgBookExists: "Accession ID already exists!", msgBookDeleted: "Book deleted.", msgUserAdded: "Reader added successfully.", msgUserExists: "Username/Phone combination already exists.", msgSelectBook: "Please select a book.", msgIssued: "Book issued successfully.", msgReturned: "Book returned successfully.", msgError: "An error occurred.", msgBulkSuccess: "Books uploaded successfully!", msgBulkEmpty: "No valid new books found to upload."
+            },
+            ml: {
+                appTitle: "ലൈബ്രറി രജിസ്റ്റർ", navHome: "ഹോം (സെർച്ച്)", navLogin: "ലോഗിൻ", navReader: "എന്റെ പുസ്തകങ്ങൾ", navProfile: "പ്രൊഫൈൽ", navLogout: "ലോഗൗട്ട്",
+                adminPanelTitle: "അഡ്മിൻ പാനൽ", navAddBook: "പുതിയ പുസ്തകം ചേർക്കുക", navRegistry: "രജിസ്റ്ററിലെ പുസ്തകങ്ങൾ", navBulk: "ബൾക്ക് ഇമ്പോർട്ട് (CSV)", navIssue: "ഇഷ്യൂ / റിട്ടേൺ", navUsers: "വായനക്കാർ (Users)",
+                searchTitle: "പുസ്തകങ്ങൾ തിരയുക", searchSubtitle: "ലഭ്യമായ പുസ്തകങ്ങളും അവയുടെ ഷെൽഫ് നമ്പറും ഇവിടെ കണ്ടെത്താം", searchPlaceholder: "പുസ്തകത്തിന്റെ പേര്, ഗ്രന്ഥകർത്താവ് അല്ലെങ്കിൽ കാറ്റഗറി...",
+                thBook: "പുസ്തകം & ഗ്രന്ഥകർത്താവ്", thCategory: "കാറ്റഗറി", thShelf: "ഷെൽഫ് നമ്പർ", thStatus: "ലഭ്യത",
+                statusAvailable: "ലഭ്യമാണ്", statusIssued: "നൽകിയിരിക്കുന്നു", loading: "ഡാറ്റ ലോഡ് ചെയ്യുന്നു...", noBooksFound: "പുസ്തകങ്ങൾ ഒന്നും കണ്ടെത്തിയില്ല.",
+                loginTitle: "ലോഗിൻ ചെയ്യുക", usernameLbl: "യൂസർ നെയിം", passwordLbl: "പാസ്‌വേർഡ്", loginBtn: "ലോഗിൻ", roleLbl: "റോൾ",
+                addBookTitle: "പുതിയ പുസ്തകം ചേർക്കുക", bookIdLbl: "അക്സഷൻ നമ്പർ (Book ID)", bookTitleLbl: "പുസ്തകത്തിന്റെ പേര്", bookAuthorLbl: "ഗ്രന്ഥകർത്താവ് / വിവർത്തകൻ", priceLbl: "വില (₹)", saveBtn: "സേവ് ചെയ്യുക",
+                tabBasic: "വിവരങ്ങൾ", tabMedia: "ഫോട്ടോകൾ", tabFinancial: "സാമ്പത്തികം", tabAudit: "സ്റ്റോക്ക് & ഓഡിറ്റ്",
+                registryTitle: "രജിസ്റ്ററിലെ പുസ്തകങ്ങൾ", actionLbl: "Action",
+                bulkTitle: "ഒന്നിച്ച് പുസ്തകങ്ങൾ ചേർക്കുക (CSV)", bulkDesc: "നിരവധി പുസ്തകങ്ങൾ ഒന്നിച്ച് അപ്‌ലോഡ് ചെയ്യാൻ CSV ഫയൽ ഉപയോഗിക്കുക. ടെംപ്ലേറ്റ് ഡൗൺലോഡ് ചെയ്ത് അതേ ഫോർമാറ്റിൽ ഡാറ്റ നൽകുക. നിലവിലുള്ള ബുക്ക് ഐഡികൾ ഒഴിവാക്കപ്പെടും.", btnTemplate: "CSV ടെംപ്ലേറ്റ് ഡൗൺലോഡ്", dragDropMsg: "അപ്‌ലോഡ് ചെയ്യാൻ ഒരു CSV ഫയൽ തിരഞ്ഞെടുക്കുക", btnBrowse: "ഫയൽ എടുക്കുക", previewTitle: "ഡാറ്റ പ്രിവ്യൂ", btnUploadBooks: "അപ്‌ലോഡ് ചെയ്യുക", noPreviewMsg: "പ്രിവ്യൂ കാണാൻ ഫയൽ തിരഞ്ഞെടുക്കുക.",
+                issueBookTitle: "പുസ്തകം നൽകുക (Issue)", phoneFirstLbl: "ഫോൺ നമ്പർ (ആദ്യം നൽകുക)", readerNameLbl: "വായനക്കാരന്റെ പേര്", selectBookLbl: "പുസ്തകം തിരഞ്ഞെടുക്കുക", recordIssueBtn: "ഇഷ്യൂ റെക്കോർഡ് ചെയ്യുക",
+                activeIssuesTitle: "നൽകിയിട്ടുള്ള പുസ്തകങ്ങൾ", noIssuesFound: "നിലവിൽ നൽകിയ പുസ്തകങ്ങൾ ഒന്നുമില്ല.", btnReturn: "മടക്കി നൽകുക",
+                addReaderTitle: "പുതിയ വായനക്കാരനെ ചേർക്കുക", phonePassLbl: "ഫോൺ നമ്പർ (പാസ്‌വേർഡും ഇതാണ്)", fullNameLbl: "മുഴുവൻ പേര്", createAccBtn: "അക്കൗണ്ട് നിർമ്മിക്കുക", regReadersTitle: "രജിസ്റ്റർ ചെയ്ത വായനക്കാർ", nameLbl: "പേര്", contactLbl: "ഫോൺ & യൂസർനെയിം", joinedLbl: "ചേർന്ന തിയ്യതി",
+                greeting: "നമസ്കാരം, ", readerSubtitle: "നിങ്ങളുടെ വായനാ വിവരങ്ങൾ താഴെ കാണാം.", totalReadLbl: "ആകെ വായിച്ചവ", myHistoryTitle: "എന്റെ പുസ്തകങ്ങൾ (History)", noHistoryFound: "നിങ്ങൾ ഇതുവരെ പുസ്തകങ്ങൾ ഒന്നും എടുത്തിട്ടില്ല.",
+                msgLoginFail: "ലോഗിൻ പരാജയപ്പെട്ടു. വിവരങ്ങൾ പരിശോധിക്കുക.", msgWelcome: "സ്വാഗതം", msgLogout: "ലോഗൗട്ട് ചെയ്തു", msgBookAdded: "പുസ്തകം വിജയകരമായി ചേർത്തു", msgBookExists: "ഈ അക്സഷൻ നമ്പർ നിലവിലുണ്ട്!", msgBookDeleted: "പുസ്തകം നീക്കം ചെയ്തു", msgUserAdded: "പുതിയ വായനക്കാരനെ വിജയകരമായി ചേർത്തു", msgUserExists: "ഈ യൂസർനെയിം/ഫോൺ നിലവിലുണ്ട്", msgSelectBook: "ദയവായി ഒരു പുസ്തകം തിരഞ്ഞെടുക്കുക", msgIssued: "പുസ്തകം വിജയകരമായി ഇഷ്യൂ ചെയ്തു", msgReturned: "പുസ്തകം മടക്കി നൽകൽ പൂർത്തിയായി", msgError: "ഒരു പിശക് സംഭവിച്ചു", msgBulkSuccess: "പുസ്തകങ്ങൾ വിജയകരമായി അപ്‌ലോഡ് ചെയ്തു!", msgBulkEmpty: "അപ്‌ലോഡ് ചെയ്യാൻ പുതിയ പുസ്തകങ്ങൾ കണ്ടെത്തിയില്ല."
+            },
+            ar: {
+                appTitle: "سجل المكتبة", navHome: "الرئيسية", navLogin: "دخول", navReader: "كتبي", navProfile: "الملف الشخصي", navLogout: "خروج",
+                adminPanelTitle: "لوحة الإدارة", navAddBook: "إضافة كتاب جديد", navRegistry: "سجل الكتب", navBulk: "استيراد جماعي", navIssue: "إعارة / إرجاع", navUsers: "المستخدمون",
+                searchTitle: "البحث عن الكتب", searchSubtitle: "ابحث عن الكتب المتوفرة وأرقام رفوفها هنا", searchPlaceholder: "اسم الكتاب، المؤلف أو الفئة...",
+                thBook: "الكتاب والمؤلف", thCategory: "الفئة", thShelf: "رقم الرف", thStatus: "التوفر",
+                statusAvailable: "متاح", statusIssued: "مُعار", loading: "جاري التحميل...", noBooksFound: "لم يتم العثور على كتب.",
+                loginTitle: "تسجيل الدخول", usernameLbl: "اسم المستخدم", passwordLbl: "كلمة المرور", loginBtn: "تسجيل الدخول", roleLbl: "وظيفة",
+                addBookTitle: "إضافة كتاب جديد", bookIdLbl: "رقم الكتاب (ID)", bookTitleLbl: "عنوان الكتاب", bookAuthorLbl: "المؤلف / المترجم", priceLbl: "السعر (₹)", saveBtn: "حفظ السجل",
+                tabBasic: "المعلومات", tabMedia: "الوسائط", tabFinancial: "المالية", tabAudit: "المراجعة",
+                registryTitle: "سجل الكتب", actionLbl: "إجراء",
+                bulkTitle: "استيراد الكتب (CSV)", bulkDesc: "قم بتحميل ملف CSV لإضافة كتب متعددة. تأكد من مطابقة القالب. سيتم تخطي أرقام الكتب الموجودة.", btnTemplate: "تنزيل قالب CSV", dragDropMsg: "اختر ملف CSV للتحميل", btnBrowse: "تصفح الملف", previewTitle: "معاينة البيانات", btnUploadBooks: "تحميل البيانات", noPreviewMsg: "لم يتم تحديد ملف للمعاينة.",
+                issueBookTitle: "إعارة كتاب", phoneFirstLbl: "رقم الهاتف (اكتب أولاً)", readerNameLbl: "اسم القارئ", selectBookLbl: "اختر كتاباً", recordIssueBtn: "تسجيل الإعارة",
+                activeIssuesTitle: "الإعارات النشطة", noIssuesFound: "لا توجد كتب معارة حالياً.", btnReturn: "إرجاع الكتاب",
+                addReaderTitle: "إضافة قارئ جديد", phonePassLbl: "رقم الهاتف (يستخدم ككلمة مرور)", fullNameLbl: "الاسم الكامل", createAccBtn: "إنشاء حساب", regReadersTitle: "القراء المسجلون", nameLbl: "الاسم", contactLbl: "الهاتف واسم المستخدم", joinedLbl: "تاريخ الانضمام",
+                greeting: "مرحباً، ", readerSubtitle: "تاريخ القراءة الخاص بك أدناه.", totalReadLbl: "إجمالي القراءة", myHistoryTitle: "كتبي (السجل)", noHistoryFound: "لم تقم باستعارة أي كتب بعد.",
+                msgLoginFail: "فشل تسجيل الدخول. تحقق من بياناتك.", msgWelcome: "مرحباً", msgLogout: "تم تسجيل الخروج بنجاح.", msgBookAdded: "تمت إضافة الكتاب بنجاح.", msgBookExists: "رقم الكتاب موجود مسبقاً!", msgBookDeleted: "تم حذف الكتاب.", msgUserAdded: "تمت إضافة القارئ بنجاح.", msgUserExists: "اسم المستخدم/الهاتف موجود مسبقاً.", msgSelectBook: "الرجاء تحديد كتاب.", msgIssued: "تمت إعارة الكتاب بنجاح.", msgReturned: "تم إرجاع الكتاب بنجاح.", msgError: "حدث خطأ.", msgBulkSuccess: "تم تحميل الكتب بنجاح!", msgBulkEmpty: "لم يتم العثور على كتب جديدة للتحميل."
+            }
+        };
+
+        // Theme Logic
+        let currentLang = localStorage.getItem('appLang') || 'en';
+        let currentTheme = localStorage.getItem('appTheme') || 'light';
+        
+        const applyTheme = () => {
+            if (currentTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        };
+        
+        window.toggleTheme = () => {
+            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+            localStorage.setItem('appTheme', currentTheme);
+            applyTheme();
+        };
+
+        // Language Logic
+        window.t = (key) => i18n[currentLang][key] || key;
+
+        window.changeLanguage = (lang) => {
+            currentLang = lang;
+            localStorage.setItem('appLang', lang);
+            document.getElementById('lang-selector').value = lang;
+            
+            // RTL support for Arabic
+            document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+            document.documentElement.setAttribute('lang', lang);
+
+            // Update all static data-i18n tags
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if(i18n[lang][key]) el.innerText = i18n[lang][key];
+            });
+
+            // Update placeholders
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if(i18n[lang][key]) el.setAttribute('placeholder', i18n[lang][key]);
+            });
+
+            // Re-render dynamic lists to translate statuses
+            if(!document.getElementById('public-view').classList.contains('hidden-tab')) renderPublicBooks();
+            if(currentUserData && currentUserData.role === 'admin') renderAdminBooks();
+        };
+
+        // Initialize Theme & Lang
+        applyTheme();
+        window.onload = () => { changeLanguage(currentLang); navigate('public-view'); };
+
+        // --- Firebase Configuration ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyAAvxaW7bL7S_oD_xrElO4-XvuxnhfJKxc",
+            authDomain: "noorul-islam-91eae.firebaseapp.com",
+            projectId: "noorul-islam-91eae",
+            storageBucket: "noorul-islam-91eae.firebasestorage.app",
+            messagingSenderId: "1034149016792",
+            appId: "1:1034149016792:web:befc9bf1eadcf2bd8653ad",
+            measurementId: "G-ZFSQDL9MTB"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const secondaryApp = initializeApp(firebaseConfig, "Secondary");
+        const secondaryAuth = getAuth(secondaryApp);
+
+        // Global State
+        let currentUserData = null;
+        let allBooks = [];
+        let allUsers = [];
+        let allTransactions = [];
+        let parsedCSVData = []; 
+        let unsubBooks, unsubUsers, unsubTransactions;
+
+        // Custom Confirm Logic to avoid standard confirm()
+        window.showConfirm = function(title, message) {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('confirm-modal');
+                document.getElementById('confirm-title').innerText = title;
+                document.getElementById('confirm-message').innerText = message;
+                modal.classList.remove('hidden');
+
+                const cleanup = () => {
+                    modal.classList.add('hidden');
+                    document.getElementById('confirm-ok-btn').onclick = null;
+                    document.getElementById('confirm-cancel-btn').onclick = null;
+                };
+
+                document.getElementById('confirm-ok-btn').onclick = () => { cleanup(); resolve(true); };
+                document.getElementById('confirm-cancel-btn').onclick = () => { cleanup(); resolve(false); };
+            });
+        };
+
+        // UI Utils - Routing & Modals
+        const viewIds = ['public-view', 'profile-view', 'reader-view', 'admin-add-book-view', 'admin-registry-view', 'admin-bulk-view', 'admin-issue-view', 'admin-users-view'];
+        
+        window.navigate = (viewId) => {
+            viewIds.forEach(v => {
+                const el = document.getElementById(v);
+                if(el) el.classList.add('hidden-tab');
+            });
+            const target = document.getElementById(viewId);
+            if(target) target.classList.remove('hidden-tab');
+            
+            // Close sidebar if open on mobile
+            if(!document.getElementById('sidebar').classList.contains('-translate-x-full') && !document.getElementById('sidebar').classList.contains('rtl:translate-x-full')){
+                toggleSidebar();
+            }
+            
+            // Trigger specific renders
+            if (viewId === 'public-view') renderPublicBooks();
+            if (viewId === 'profile-view') renderProfile();
+            if (viewId === 'admin-registry-view' && currentUserData?.role === 'admin') renderAdminBooks();
+        };
+
+        window.toggleSidebar = () => {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('-translate-x-full');
+            sidebar.classList.toggle('rtl:translate-x-full');
+            overlay.classList.toggle('hidden');
+        };
+
+        window.openLoginModal = () => {
+            if(!document.getElementById('sidebar').classList.contains('-translate-x-full') && !document.getElementById('sidebar').classList.contains('rtl:translate-x-full')){
+                toggleSidebar(); 
+            }
+            document.getElementById('login-modal').classList.remove('hidden');
+            // Slight delay to focus
+            setTimeout(() => document.getElementById('login-username').focus(), 100);
+        };
+
+        window.closeLoginModal = () => {
+            document.getElementById('login-modal').classList.add('hidden');
+            document.getElementById('login-form').reset();
+        };
+
+        // Add Book Form Tabs Logic
+        window.switchBookFormTab = (tabId) => {
+            document.querySelectorAll('.book-form-section').forEach(el => el.classList.add('hidden-tab'));
+            document.querySelectorAll('.add-book-tab').forEach(el => {
+                el.classList.remove('active', 'text-indigo-600', 'dark:text-indigo-400');
+                el.classList.add('text-gray-500', 'dark:text-gray-400');
+            });
+            document.getElementById(tabId).classList.remove('hidden-tab');
+            event.target.classList.remove('text-gray-500', 'dark:text-gray-400');
+            event.target.classList.add('active');
+        };
+
+        const showToast = (message, type = 'success') => {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const color = type === 'success' ? 'bg-green-500/90 dark:bg-green-600/90 border-green-400' : (type === 'error' ? 'bg-red-500/90 dark:bg-red-600/90 border-red-400' : 'bg-indigo-500/90 dark:bg-indigo-600/90 border-indigo-400');
+            toast.className = `${color} backdrop-blur-md text-white px-6 py-3 rounded-2xl shadow-xl border-t border-s transform transition-all duration-300 translate-y-0 opacity-100 font-bold text-sm flex items-center gap-2 z-50`;
+            toast.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${type==='success'?'M5 13l4 4L19 7':'M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'}"></path></svg> ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-4');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        };
+
+        const formatDate = (timestamp) => {
+            if (!timestamp) return '-';
+            const d = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            return d.toLocaleDateString(currentLang === 'ml' ? 'ml-IN' : 'en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+        };
+
+        // --- Authentication Logic---
+        onAuthStateChanged(auth, async (user) => {
+            const loginBtn = document.getElementById('nav-login-btn');
+            const authGroup = document.getElementById('auth-nav-group');
+            const adminGroup = document.getElementById('admin-nav-group');
+            const readerBtn = document.getElementById('nav-reader-btn');
+
+            if (user) {
+                try {
+                    const userDoc = await getDoc(doc(db, "users", user.uid));
+                    if (userDoc.exists()) {
+                        currentUserData = userDoc.data();
+                        
+                        loginBtn.classList.add('hidden');
+                        authGroup.classList.remove('hidden');
+                        authGroup.classList.add('flex');
+
+                        if (currentUserData.role === 'admin') {
+                            adminGroup.classList.remove('hidden');
+                            adminGroup.classList.add('flex');
+                            readerBtn.classList.add('hidden');
+                            setupAdminListeners();
+                            navigate('admin-registry-view'); // Default admin view
+                        } else {
+                            adminGroup.classList.add('hidden');
+                            adminGroup.classList.remove('flex');
+                            readerBtn.classList.remove('hidden');
+                            document.getElementById('reader-welcome-name').innerText = currentUserData.name;
+                            setupReaderListeners(currentUserData.phone);
+                            navigate('reader-view'); // Default reader view
+                        }
+                        showToast(`${t('msgWelcome')} ${currentUserData.name}`);
+                    } else {
+                        showToast("Error: User details not found in database.", "error");
+                        auth.signOut();
+                    }
+                } catch (error) { 
+                    console.error("Auth error:", error); 
+                    showToast("Database Permission Error. Please check Firestore Rules.", "error");
+                    auth.signOut(); 
+                }
+            } else {
+                currentUserData = null;
+                loginBtn.classList.remove('hidden');
+                authGroup.classList.add('hidden');
+                authGroup.classList.remove('flex');
+                adminGroup.classList.add('hidden');
+                adminGroup.classList.remove('flex');
+                readerBtn.classList.add('hidden');
+                
+                if(unsubBooks) unsubBooks(); if(unsubUsers) unsubUsers(); if(unsubTransactions) unsubTransactions();
+                navigate('public-view');
+            }
+        });
+
+        document.getElementById('nav-logout-btn').addEventListener('click', async () => {
+            const confirmed = await showConfirm('Logout', 'Are you sure you want to log out?');
+            if(confirmed) {
+                toggleSidebar(); 
+                signOut(auth).then(() => { showToast(t('msgLogout')); }).catch(e => showToast(e.message, 'error'));
+            }
+        });
+
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('login-submit-btn');
+            btn.disabled = true; btn.style.opacity = '0.7';
+            
+            const username = document.getElementById('login-username').value.trim().toLowerCase();
+            const password = document.getElementById('login-password').value;
+            const pseudoEmail = `${username}@noorulislam.local`;
+
+            try {
+                await signInWithEmailAndPassword(auth, pseudoEmail, password);
+                closeLoginModal();
+            } catch (error) {
+                showToast(t('msgLoginFail'), "error");
+            } finally {
+                btn.disabled = false; btn.style.opacity = '1';
+            }
+        });
+
+        const renderProfile = () => {
+            if(!currentUserData) return;
+            document.getElementById('prof-name').innerText = currentUserData.name;
+            document.getElementById('prof-username').innerText = currentUserData.username;
+            document.getElementById('prof-phone').innerText = currentUserData.phone || '-';
+            document.getElementById('prof-role').innerText = currentUserData.role;
+            document.getElementById('prof-joined').innerText = formatDate(currentUserData.createdAt);
+        };
+
+        // --- Base64 Image Handling Logic ---
+        
+        function renderBookImagePreview(hiddenInputId, previewId, label, imageData) {
+            const preview = document.getElementById(previewId);
+            if(!preview) return;
+            if(imageData) {
+                preview.innerHTML = `
+                    <div class="flex items-start gap-3 rounded border border-gray-200 bg-gray-50 dark:bg-gray-800 p-2 mt-2">
+                        <img src="${imageData}" alt="${label}" class="h-16 w-16 object-cover bg-white border rounded">
+                        <div class="flex-1">
+                            <div class="text-xs font-semibold text-emerald-600 dark:text-emerald-400">Ready to save</div>
+                            <button type="button" onclick="clearBookImage('${hiddenInputId}', '${previewId}', '${label}')" class="mt-1 text-xs font-bold text-red-600 hover:text-red-800">Remove</button>
+                        </div>
+                    </div>`;
+            } else {
+                preview.innerHTML = '';
+            }
+        }
+
+        window.clearBookImage = function(hiddenInputId, previewId, label) {
+            document.getElementById(hiddenInputId).value = '';
+            const fileInputId = hiddenInputId.replace('-base64', '');
+            if(document.getElementById(fileInputId)) document.getElementById(fileInputId).value = '';
+            renderBookImagePreview(hiddenInputId, previewId, label, '');
+        };
+
+        window.handleBookImageUpload = function(event, hiddenInputId, previewId, label) {
+            const file = event.target.files?.[0];
+            if(!file) return;
+            // 150KB Limit Check
+            const maxBytes = 150 * 1024;
+            if(file.size > maxBytes) {
+                showToast(`${label} must be 150 KB or less. This file is ${(file.size / 1024).toFixed(1)} KB.`, 'error');
+                event.target.value = '';
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = () => {
+                document.getElementById(hiddenInputId).value = reader.result;
+                renderBookImagePreview(hiddenInputId, previewId, label, reader.result);
+            };
+            reader.readAsDataURL(file);
+        };
+
+        // --- Book Details Modal Logic ---
+        window.openBookDetails = (bookId) => {
+            const b = allBooks.find(book => book.id === bookId);
+            if(!b) return;
+
+            document.getElementById('modal-b-title').innerText = b.title;
+            document.getElementById('modal-b-author').innerText = b.author || 'Unknown Author';
+            
+            document.getElementById('modal-b-id').innerText = b.id;
+            document.getElementById('modal-b-callno').innerText = b.callNumber || '-';
+            document.getElementById('modal-b-shelf').innerText = b.shelfLocation || '-';
+            document.getElementById('modal-b-section').innerText = b.sectionCode || '-';
+            
+            const statusBadge = document.getElementById('modal-b-status');
+            statusBadge.innerText = b.status;
+            statusBadge.className = `font-bold px-2 py-0.5 rounded text-xs inline-block ${b.status === 'Available' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
+            
+            document.getElementById('modal-b-publisher').innerText = b.publisher || '-';
+            document.getElementById('modal-b-yearedition').innerText = `${b.year || '-'} / ${b.edition || '-'}`;
+            document.getElementById('modal-b-lang').innerText = b.language || '-';
+            document.getElementById('modal-b-category').innerText = b.category || '-';
+            document.getElementById('modal-b-isbn').innerText = b.isbn || '-';
+
+            document.getElementById('modal-b-condition').innerText = b.condition || '-';
+            document.getElementById('modal-b-verifydate').innerText = b.verificationDate || '-';
+            document.getElementById('modal-b-verifiedby').innerText = b.verifiedBy || '-';
+
+            const photosContainer = document.getElementById('modal-b-photos');
+            photosContainer.innerHTML = '';
+            let hasPhotos = false;
+            if(b.photo1) { photosContainer.innerHTML += `<img src="${b.photo1}" class="h-20 w-16 object-cover rounded shadow border border-gray-200 cursor-pointer hover:opacity-80" onclick="window.open('${b.photo1}', '_blank')">`; hasPhotos = true; }
+            if(b.photo2) { photosContainer.innerHTML += `<img src="${b.photo2}" class="h-20 w-16 object-cover rounded shadow border border-gray-200 cursor-pointer hover:opacity-80" onclick="window.open('${b.photo2}', '_blank')">`; hasPhotos = true; }
+            if(b.photo3) { photosContainer.innerHTML += `<img src="${b.photo3}" class="h-20 w-16 object-cover rounded shadow border border-gray-200 cursor-pointer hover:opacity-80" onclick="window.open('${b.photo3}', '_blank')">`; hasPhotos = true; }
+            
+            if(!hasPhotos) photosContainer.innerHTML = '<span class="text-sm text-gray-500">No photos available.</span>';
+
+            document.getElementById('book-details-modal').classList.remove('hidden');
+        };
+
+        window.closeBookDetailsModal = () => {
+            document.getElementById('book-details-modal').classList.add('hidden');
+        };
+
+        // --- Public Portal Logic ---
+        const fetchPublicBooks = () => {
+            document.getElementById('public-loading').classList.remove('hidden');
+            const q = query(collection(db, "books"));
+            onSnapshot(q, (snapshot) => {
+                allBooks = [];
+                snapshot.forEach(doc => allBooks.push({ id: doc.id, ...doc.data() }));
+                renderPublicBooks();
+                if(currentUserData && currentUserData.role === 'admin') {
+                    renderAdminBooks(); populateIssueBookSelect();
+                }
+                document.getElementById('public-loading').classList.add('hidden');
+            }, (error) => { console.error(error); });
+        };
+        fetchPublicBooks();
+
+        const renderPublicBooks = () => {
+            const searchTerm = document.getElementById('public-search-input').value.toLowerCase();
+            const tbody = document.getElementById('public-books-list');
+            const noRes = document.getElementById('public-no-results');
+            tbody.innerHTML = '';
+            
+            const filtered = allBooks.filter(b => 
+                b.title.toLowerCase().includes(searchTerm) || 
+                (b.author && b.author.toLowerCase().includes(searchTerm)) || 
+                (b.category && b.category.toLowerCase().includes(searchTerm))
+            );
+
+            if(filtered.length === 0 && allBooks.length > 0) {
+                noRes.classList.remove('hidden');
+            } else {
+                noRes.classList.add('hidden');
+                filtered.forEach(b => {
+                    const statusClass = b.status === 'Available' ? 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300 border border-green-200 dark:border-green-800' : 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300 border border-red-200 dark:border-red-800';
+                    const statusText = b.status === 'Available' ? t('statusAvailable') : t('statusIssued');
+                    
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-white/40 dark:hover:bg-gray-800/40 transition-colors group cursor-pointer';
+                    tr.onclick = () => openBookDetails(b.id);
+                    tr.innerHTML = `
+                        <td class="px-6 py-4">
+                            <div class="text-sm font-black text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">${b.title}</div>
+                            <div class="text-xs text-gray-500 dark:text-gray-400 font-medium">${b.author || '-'} <span class="opacity-50">(ID: ${b.id})</span></div>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300 font-medium">${b.category || '-'}</td>
+                        <td class="px-6 py-4">
+                            <span class="px-3 py-1 inline-flex text-xs font-black rounded-lg bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">${b.shelfLocation || '-'}</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="px-3 py-1 inline-flex text-xs font-black rounded-lg ${statusClass}">${statusText}</span>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        };
+
+        document.getElementById('public-search-input').addEventListener('input', renderPublicBooks);
+
+        // --- Admin Portal Logic ---
+        const setupAdminListeners = () => {
+            unsubUsers = onSnapshot(collection(db, "users"), (snapshot) => {
+                allUsers = [];
+                const tbody = document.getElementById('admin-users-list');
+                tbody.innerHTML = '';
+                snapshot.forEach(doc => {
+                    const u = doc.data();
+                    allUsers.push(u);
+                    if(u.role !== 'admin') {
+                        tbody.innerHTML += `
+                            <tr class="hover:bg-white/30 dark:hover:bg-gray-800/30">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-black dark:text-white">${u.name}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-600 dark:text-gray-400 font-medium">${u.phone}<br><span class="text-indigo-500">@${u.username}</span></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-500 dark:text-gray-500">${formatDate(u.createdAt)}</td>
+                            </tr>
+                        `;
+                    }
+                });
+            });
+
+            const qTrans = query(collection(db, "transactions"), where("status", "==", "Active"));
+            unsubTransactions = onSnapshot(qTrans, (snapshot) => {
+                allTransactions = [];
+                const ul = document.getElementById('active-issues-list');
+                ul.innerHTML = '';
+                snapshot.forEach(docSnap => {
+                    const tData = { id: docSnap.id, ...docSnap.data() };
+                    allTransactions.push(tData);
+                    const li = document.createElement('li');
+                    li.className = 'p-4 bg-white/50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow flex justify-between items-center gap-4';
+                    li.innerHTML = `
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-black text-gray-900 dark:text-white truncate">${tData.bookTitle} <span class="text-xs text-gray-500 font-normal">(${tData.bookId})</span></p>
+                            <p class="text-xs text-gray-600 dark:text-gray-400 mt-1 truncate"><span class="font-bold text-indigo-600 dark:text-indigo-400">${tData.userName}</span> (${tData.userPhone})</p>
+                            <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">${formatDate(tData.issueDate)}</p>
+                        </div>
+                        <button onclick="returnBook('${tData.id}', '${tData.bookId}')" class="shrink-0 bg-green-500/10 text-green-600 dark:text-green-400 hover:bg-green-500 hover:text-white border border-green-200 dark:border-green-800 px-4 py-2 rounded-xl text-xs font-black transition-colors">${t('btnReturn')}</button>
+                    `;
+                    ul.appendChild(li);
+                });
+                if(allTransactions.length === 0) document.getElementById('no-active-issues').classList.remove('hidden');
+                else document.getElementById('no-active-issues').classList.add('hidden');
+            });
+        };
+
+        document.getElementById('add-book-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-save-book');
+            const spinner = document.getElementById('save-spinner');
+            const btnText = document.getElementById('save-btn-text');
+            
+            btn.disabled = true;
+            spinner.classList.remove('hidden');
+            btnText.innerText = "Saving Record...";
+            
+            const bookId = document.getElementById('b-id').value.toUpperCase().trim();
+            
+            try {
+                const docSnap = await getDoc(doc(db, "books", bookId));
+                if(docSnap.exists()) {
+                    showToast(t('msgBookExists'), "error");
+                    throw new Error("Exists");
+                }
+
+                const photo1Url = document.getElementById('b-photo1-base64').value || null;
+                const photo2Url = document.getElementById('b-photo2-base64').value || null;
+                const photo3Url = document.getElementById('b-photo3-base64').value || null;
+                const adminSignature = `${currentUserData.name} (${currentUserData.username}) at ${new Date().toISOString()}`;
+
+                const bookData = {
+                    serialNo: document.getElementById('b-serial').value,
+                    id: bookId,
+                    callNumber: document.getElementById('b-callno').value,
+                    sectionCode: document.getElementById('b-section').value,
+                    title: document.getElementById('b-title').value,
+                    author: document.getElementById('b-author').value,
+                    publisher: document.getElementById('b-publisher').value,
+                    year: document.getElementById('b-year').value,
+                    edition: document.getElementById('b-edition').value,
+                    language: document.getElementById('b-lang').value,
+                    category: document.getElementById('b-category').value,
+                    isbn: document.getElementById('b-isbn').value,
+                    price: parseFloat(document.getElementById('b-price').value) || 0,
+                    purchaseDate: document.getElementById('b-purchasedate').value,
+                    budgetHead: document.getElementById('b-budget').value,
+                    vendor: document.getElementById('b-vendor').value,
+                    shelfLocation: document.getElementById('b-shelf').value,
+                    condition: document.getElementById('b-condition').value,
+                    status: document.getElementById('b-status').value,
+                    verificationDate: document.getElementById('b-verifydate').value,
+                    remarks: document.getElementById('b-remarks').value,
+                    verifiedBy: adminSignature,
+                    photo1: photo1Url,
+                    photo2: photo2Url,
+                    photo3: photo3Url,
+                    dateAdded: serverTimestamp()
+                };
+
+                await setDoc(doc(db, "books", bookId), bookData);
+                showToast(t('msgBookAdded'));
+                e.target.reset();
+                clearBookImage('b-photo1-base64', 'b-photo1-preview', 'Photo 1');
+                clearBookImage('b-photo2-base64', 'b-photo2-preview', 'Photo 2');
+                clearBookImage('b-photo3-base64', 'b-photo3-preview', 'Photo 3');
+                switchBookFormTab('tab-basic');
+                
+            } catch (error) { 
+                if(error.message !== "Exists") {
+                    console.error(error);
+                    showToast(t('msgError'), "error"); 
+                }
+            } finally { 
+                btn.disabled = false; 
+                spinner.classList.add('hidden');
+                btnText.innerText = t('saveBtn');
+            }
+        });
+
+        const renderAdminBooks = () => {
+            const searchTerm = document.getElementById('admin-book-search').value.toLowerCase();
+            const tbody = document.getElementById('admin-books-list');
+            tbody.innerHTML = '';
+            
+            const filtered = allBooks.filter(b => b.title.toLowerCase().includes(searchTerm) || b.id.toLowerCase().includes(searchTerm));
+            
+            filtered.forEach(b => {
+                const statusClass = b.status === 'Available' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400';
+                const condClass = b.condition === 'Poor' || b.condition === 'Damaged' ? 'text-red-500 font-bold' : 'text-gray-500 dark:text-gray-400';
+                
+                tbody.innerHTML += `
+                    <tr class="hover:bg-white/30 dark:hover:bg-gray-800/30">
+                        <td class="px-6 py-4 whitespace-nowrap text-xs font-black text-indigo-600 dark:text-indigo-400 cursor-pointer hover:underline" onclick="openBookDetails('${b.id}')">${b.id}</td>
+                        <td class="px-6 py-4 whitespace-nowrap cursor-pointer" onclick="openBookDetails('${b.id}')">
+                            <div class="text-sm font-bold text-gray-900 dark:text-white truncate max-w-[200px]">${b.title}</div>
+                            <div class="text-xs text-gray-500 truncate max-w-[200px]">${b.author || '-'}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-600 dark:text-gray-400 font-bold">${b.category||'-'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-xs ${condClass}">${b.condition||'-'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-xs font-black ${statusClass}">${b.status === 'Available' ? t('statusAvailable') : t('statusIssued')}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-end">
+                            <button onclick="deleteBook('${b.id}')" class="text-red-500 hover:text-red-700 bg-red-100 dark:bg-red-900/30 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        };
+        document.getElementById('admin-book-search').addEventListener('input', renderAdminBooks);
+
+        window.deleteBook = async (id) => {
+            const confirmed = await showConfirm('Delete Book', 'Are you sure you want to delete this book record?');
+            if(confirmed) {
+                try { 
+                    await deleteDoc(doc(db, "books", id)); 
+                    showToast(t('msgBookDeleted')); 
+                } catch(e) { showToast(e.message, 'error'); }
+            }
+        };
+
+        // --- Bulk Import CSV Logic ---
+        
+        window.downloadCSVTemplate = () => {
+            const headers = "Serial No,Accession No (ID),Call No,Section,Book Title,Author,Publisher,Year,Edition,Language,Category,ISBN,Price,Purchase Date,Budget Head,Vendor,Shelf No,Condition\n";
+            const sampleData = "1,B001,808.8,FIC,Malayalam Grammar,John Doe,DC Books,2020,1st,Malayalam,Education,978-3-16-148410-0,150,2023-01-15,Govt Grant,Book House,A1,Good\n";
+            const csvContent = headers + sampleData;
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", "library_books_full_template.csv");
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+
+        const parseCSV = (text) => {
+            const lines = text.split('\n');
+            const result = [];
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i].trim()) continue; 
+                const cols = lines[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || [];
+                const clean = cols.map(c => c.replace(/^"|"$/g, '').trim());
+
+                if (clean.length >= 5 && clean[1]) {
+                    result.push({
+                        serialNo: clean[0] || '',
+                        id: clean[1].toUpperCase(),
+                        callNumber: clean[2] || '',
+                        sectionCode: clean[3] || '',
+                        title: clean[4] || '',
+                        author: clean[5] || '',
+                        publisher: clean[6] || '',
+                        year: clean[7] || '',
+                        edition: clean[8] || '',
+                        language: clean[9] || '',
+                        category: clean[10] || '',
+                        isbn: clean[11] || '',
+                        price: parseFloat(clean[12]) || 0,
+                        purchaseDate: clean[13] || '',
+                        budgetHead: clean[14] || '',
+                        vendor: clean[15] || '',
+                        shelfLocation: clean[16] || '',
+                        condition: clean[17] || 'Good',
+                        status: 'Available'
+                    });
+                }
+            }
+            return result;
+        };
+
+        window.handleFileSelect = (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            document.getElementById('file-name-display').innerText = file.name;
+            document.getElementById('file-name-display').classList.remove('hidden');
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const text = e.target.result;
+                parsedCSVData = parseCSV(text);
+                renderCSVPreview();
+            };
+            reader.readAsText(file);
+        };
+
+        const renderCSVPreview = () => {
+            const tbody = document.getElementById('csv-preview-list');
+            tbody.innerHTML = '';
+            
+            if (parsedCSVData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" class="px-5 py-10 text-center text-gray-500 font-medium">No valid data found in file. Check format.</td></tr>`;
+                document.getElementById('btn-process-csv').classList.add('hidden');
+                return;
+            }
+
+            let validCount = 0;
+            parsedCSVData.forEach(row => {
+                const exists = allBooks.some(b => b.id === row.id);
+                let statusHtml = '';
+                let trClass = '';
+
+                if (exists) {
+                    statusHtml = '<span class="text-amber-500 font-bold">Exists (Skip)</span>';
+                    trClass = 'bg-amber-50 dark:bg-amber-900/10 opacity-60';
+                } else {
+                    statusHtml = '<span class="text-green-500 font-bold">New</span>';
+                    trClass = 'hover:bg-white/30 dark:hover:bg-gray-800/30';
+                    validCount++;
+                }
+
+                tbody.innerHTML += `
+                    <tr class="${trClass}">
+                        <td class="px-5 py-3 font-black">${row.id}</td>
+                        <td class="px-5 py-3 truncate max-w-[150px]" title="${row.title}">${row.title}</td>
+                        <td class="px-5 py-3">${statusHtml}</td>
+                    </tr>
+                `;
+            });
+
+            if (validCount > 0) {
+                document.getElementById('btn-process-csv').classList.remove('hidden');
+            } else {
+                document.getElementById('btn-process-csv').classList.add('hidden');
+            }
+        };
+
+        window.processBulkImport = async () => {
+            const newBooks = parsedCSVData.filter(row => !allBooks.some(b => b.id === row.id));
+            if (newBooks.length === 0) { showToast(t('msgBulkEmpty'), "error"); return; }
+
+            const overlay = document.getElementById('bulk-processing-overlay');
+            const progressText = document.getElementById('bulk-progress-text');
+            overlay.classList.remove('hidden');
+            overlay.style.display = 'flex';
+
+            try {
+                const batch = writeBatch(db);
+                const adminSignature = `${currentUserData.name} (Bulk Import) at ${new Date().toISOString()}`;
+
+                newBooks.forEach(book => {
+                    const docRef = doc(db, "books", book.id);
+                    book.dateAdded = serverTimestamp();
+                    book.verifiedBy = adminSignature;
+                    batch.set(docRef, book);
+                });
+
+                progressText.innerText = "Saving to database...";
+                await batch.commit();
+                
+                showToast(t('msgBulkSuccess'));
+                resetBulkImport();
+
+            } catch (error) {
+                console.error("Bulk Import Error:", error);
+                showToast(t('msgError'), "error");
+            } finally {
+                overlay.classList.add('hidden');
+                overlay.style.display = 'none';
+            }
+        };
+
+        const resetBulkImport = () => {
+            document.getElementById('csv-file-input').value = ""; 
+            document.getElementById('file-name-display').classList.add('hidden');
+            parsedCSVData = [];
+            document.getElementById('csv-preview-list').innerHTML = `<tr><td colspan="3" class="px-5 py-10 text-center text-gray-500 font-medium" data-i18n="noPreviewMsg">${t('noPreviewMsg')}</td></tr>`;
+            document.getElementById('btn-process-csv').classList.add('hidden');
+        };
+
+        const dropZone = document.getElementById('drop-zone');
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-indigo-500', 'bg-indigo-50/50'); });
+        dropZone.addEventListener('dragleave', (e) => { e.preventDefault(); dropZone.classList.remove('border-indigo-500', 'bg-indigo-50/50'); });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault(); dropZone.classList.remove('border-indigo-500', 'bg-indigo-50/50');
+            if (e.dataTransfer.files.length) {
+                const file = e.dataTransfer.files[0];
+                if (file.name.endsWith('.csv')) {
+                    document.getElementById('csv-file-input').files = e.dataTransfer.files;
+                    handleFileSelect({target: {files: e.dataTransfer.files}});
+                } else { showToast("Please drop a valid .csv file", "error"); }
+            }
+        });
+
+
+        document.getElementById('add-user-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            btn.disabled = true;
+            
+            const username = document.getElementById('u-username').value.trim().toLowerCase();
+            const phone = document.getElementById('u-phone').value.trim();
+            const name = document.getElementById('u-name').value.trim();
+            const password = phone;
+            const pseudoEmail = `${username}@noorulislam.local`;
+
+            try {
+                const userCred = await createUserWithEmailAndPassword(secondaryAuth, pseudoEmail, password);
+                const uid = userCred.user.uid;
+                await setDoc(doc(db, "users", uid), { uid, username, phone, name, role: 'reader', createdAt: serverTimestamp() });
+                await signOut(secondaryAuth);
+                showToast(t('msgUserAdded'));
+                e.target.reset();
+            } catch (error) {
+                if(error.code === 'auth/email-already-in-use') showToast(t('msgUserExists'), "error");
+                else showToast(t('msgError'), "error");
+            } finally { btn.disabled = false; }
+        });
+
+        // Issue Logic
+        document.getElementById('issue-phone').addEventListener('keyup', (e) => {
+            const phoneVal = e.target.value;
+            const nameInput = document.getElementById('issue-name');
+            const badge = document.getElementById('issue-user-badge');
+            
+            if(phoneVal.length >= 4) {
+                const matchedUser = allUsers.find(u => u.phone === phoneVal);
+                if(matchedUser) {
+                    nameInput.value = matchedUser.name; nameInput.readOnly = true;
+                    nameInput.classList.add('bg-green-50/50', 'dark:bg-green-900/20', 'border-green-300', 'dark:border-green-700');
+                    badge.classList.remove('hidden');
+                } else {
+                    nameInput.value = ''; nameInput.readOnly = false;
+                    nameInput.classList.remove('bg-green-50/50', 'dark:bg-green-900/20', 'border-green-300', 'dark:border-green-700');
+                    badge.classList.add('hidden');
+                }
+            } else {
+                nameInput.value = ''; nameInput.readOnly = false;
+                nameInput.classList.remove('bg-green-50/50', 'dark:bg-green-900/20', 'border-green-300', 'dark:border-green-700');
+                badge.classList.add('hidden');
+            }
+        });
+
+        const populateIssueBookSelect = () => {
+            const select = document.getElementById('issue-book-select');
+            select.innerHTML = '';
+            allBooks.filter(b => b.status === 'Available').forEach(b => {
+                const opt = document.createElement('option');
+                opt.value = b.id; opt.text = `${b.id} - ${b.title}`;
+                opt.className = "py-2 px-3 hover:bg-indigo-50 dark:hover:bg-gray-700 cursor-pointer rounded";
+                select.appendChild(opt);
+            });
+        };
+
+        document.getElementById('issue-book-search').addEventListener('focus', () => document.getElementById('issue-book-select').classList.remove('hidden'));
+        document.getElementById('issue-book-search').addEventListener('input', (e) => {
+            const val = e.target.value.toLowerCase();
+            const select = document.getElementById('issue-book-select');
+            select.classList.remove('hidden');
+            Array.from(select.options).forEach(opt => {
+                opt.style.display = opt.text.toLowerCase().includes(val) ? 'block' : 'none';
+            });
+        });
+        document.getElementById('issue-book-select').addEventListener('click', (e) => {
+            if(e.target.tagName === 'OPTION') {
+                document.getElementById('issue-book-search').value = e.target.text;
+                document.getElementById('issue-book-id').value = e.target.value;
+                document.getElementById('issue-book-select').classList.add('hidden');
+            }
+        });
+        document.addEventListener('click', (e) => {
+            if(!e.target.closest('#issue-book-search') && !e.target.closest('#issue-book-select')) {
+                document.getElementById('issue-book-select').classList.add('hidden');
+            }
+        });
+
+        document.getElementById('issue-book-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const phone = document.getElementById('issue-phone').value.trim();
+            const name = document.getElementById('issue-name').value.trim();
+            const bookId = document.getElementById('issue-book-id').value;
+
+            if(!bookId) { showToast(t('msgSelectBook'), "error"); return; }
+            btn.disabled = true;
+            try {
+                const bookInfo = allBooks.find(b => b.id === bookId);
+                await addDoc(collection(db, "transactions"), {
+                    bookId, bookTitle: bookInfo.title, userPhone: phone, userName: name,
+                    issueDate: serverTimestamp(), returnDate: null, status: "Active"
+                });
+                await updateDoc(doc(db, "books", bookId), { status: "Issued" });
+                
+                showToast(t('msgIssued'));
+                e.target.reset();
+                document.getElementById('issue-user-badge').classList.add('hidden');
+                document.getElementById('issue-name').readOnly = false;
+                document.getElementById('issue-name').classList.remove('bg-green-50/50', 'dark:bg-green-900/20', 'border-green-300', 'dark:border-green-700');
+                document.getElementById('issue-book-id').value = '';
+                populateIssueBookSelect();
+            } catch(err) { showToast(t('msgError'), "error"); } 
+            finally { btn.disabled = false; }
+        });
+
+        window.returnBook = async (transactionId, bookId) => {
+            try {
+                await updateDoc(doc(db, "transactions", transactionId), { status: "Returned", returnDate: serverTimestamp() });
+                await updateDoc(doc(db, "books", bookId), { status: "Available" });
+                showToast(t('msgReturned'));
+                populateIssueBookSelect();
+            } catch(e) { showToast(t('msgError'), "error"); }
+        };
+
+        // --- Reader Portal Logic ---
+        const setupReaderListeners = (userPhone) => {
+            const q = query(collection(db, "transactions"), where("userPhone", "==", userPhone));
+            onSnapshot(q, (snapshot) => {
+                const ul = document.getElementById('reader-history-list');
+                ul.innerHTML = ''; let count = 0;
+                
+                if(snapshot.empty) {
+                    document.getElementById('reader-no-history').classList.remove('hidden');
+                } else {
+                    document.getElementById('reader-no-history').classList.add('hidden');
+                    let history = [];
+                    snapshot.forEach(doc => history.push({id: doc.id, ...doc.data()}));
+                    history.sort((a,b) => (b.issueDate?.seconds || 0) - (a.issueDate?.seconds || 0));
+
+                    history.forEach(tData => {
+                        count++;
+                        const isReturned = tData.status === 'Returned';
+                        const statusBadge = isReturned 
+                            ? `<span class="bg-gray-100 text-gray-600 dark:bg-gray-700/50 dark:text-gray-300 text-xs px-3 py-1 rounded-lg font-black border border-gray-200 dark:border-gray-600">Returned</span>`
+                            : `<span class="bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300 text-xs px-3 py-1 rounded-lg border border-amber-300 dark:border-amber-700 font-black animate-pulse flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Live</span>`;
+                        
+                        const li = document.createElement('li');
+                        li.className = `p-5 bg-white/50 dark:bg-gray-800/50 rounded-2xl border ${!isReturned ? 'border-amber-300 dark:border-amber-600 shadow-md' : 'border-gray-100 dark:border-gray-700'} transition-all`;
+                        li.innerHTML = `
+                            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                                <div class="flex-1">
+                                    <h4 class="text-base font-black text-indigo-700 dark:text-indigo-400">${tData.bookTitle} <span class="text-gray-400 dark:text-gray-500 font-medium text-xs ms-1">(${tData.bookId})</span></h4>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-2 font-medium">Issued: <span class="font-bold text-gray-800 dark:text-gray-200">${formatDate(tData.issueDate)}</span></p>
+                                    ${isReturned ? `<p class="text-xs text-green-600 dark:text-green-400 mt-1 font-bold">Returned: ${formatDate(tData.returnDate)}</p>` : ''}
+                                </div>
+                                <div class="flex-shrink-0 w-full sm:w-auto flex justify-end">
+                                    ${statusBadge}
+                                </div>
+                            </div>
+                        `;
+                        ul.appendChild(li);
+                    });
+                }
+                document.getElementById('reader-total-books').innerText = count;
+            }, (error) => { showToast(t('msgError'), "error"); });
+        };
+    </script>
+</body>
+</html>
