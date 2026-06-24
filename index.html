@@ -234,9 +234,10 @@
         </div>
 
         <!-- 3. Admin Dashboard View -->
-        <div id="admin-view" class="view-section hidden-tab fade-in">
-            <div class="mb-8 flex flex-wrap gap-2 border-b border-gray-200/50 dark:border-gray-700/50 pb-4">
+        <div id="admin-view" class="view-section hidden-tab fade-in h-full flex flex-col">
+            <div class="mb-8 flex flex-wrap gap-2 border-b border-gray-200/50 dark:border-gray-700/50 pb-4 shrink-0">
                 <button onclick="switchAdminTab('admin-books')" class="admin-tab-btn active bg-indigo-600 text-white shadow-md px-6 py-2.5 rounded-xl font-bold transition" data-i18n="adminTabBooks">Books</button>
+                <button onclick="switchAdminTab('admin-bulk')" class="admin-tab-btn text-gray-600 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-800/50 px-6 py-2.5 rounded-xl font-bold transition" data-i18n="adminTabBulk">Bulk Import</button>
                 <button onclick="switchAdminTab('admin-issue')" class="admin-tab-btn text-gray-600 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-800/50 px-6 py-2.5 rounded-xl font-bold transition" data-i18n="adminTabIssue">Issue / Return</button>
                 <button onclick="switchAdminTab('admin-users')" class="admin-tab-btn text-gray-600 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-800/50 px-6 py-2.5 rounded-xl font-bold transition" data-i18n="adminTabUsers">Users</button>
             </div>
@@ -314,63 +315,63 @@
                 </div>
             </div>
 
-            <!-- Admin Tab: Issue / Return -->
-            <div id="admin-issue" class="admin-tab-content hidden-tab h-[calc(100vh-250px)]">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 h-full">
-                    <!-- Issue Form -->
-                    <div class="glass-panel p-8 rounded-3xl border-t-4 border-t-indigo-500 flex flex-col justify-center">
-                        <h3 class="text-2xl font-black mb-6 text-indigo-700 dark:text-indigo-400" data-i18n="issueBookTitle">Issue Book</h3>
-                        <form id="issue-book-form" class="space-y-6">
-                            <div>
-                                <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2" data-i18n="phoneFirstLbl">Phone Number (Type first)</label>
-                                <div class="relative">
-                                    <input type="tel" id="issue-phone" required autocomplete="off" placeholder="10 Digits" class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none font-bold tracking-wider dark:text-white text-start">
-                                    <span id="issue-user-badge" class="absolute end-3 top-3 bg-green-100 text-green-800 text-xs font-bold px-2.5 py-1 rounded-md hidden">Registered</span>
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2" data-i18n="readerNameLbl">Reader Name</label>
-                                <input type="text" id="issue-name" required class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white transition-colors text-start">
-                            </div>
-                            <div class="relative">
-                                <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2" data-i18n="selectBookLbl">Select Book (Search)</label>
-                                <input type="text" id="issue-book-search" autocomplete="off" data-i18n-placeholder="searchPlaceholder" placeholder="Search..." class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white mb-1 text-start">
-                                <select id="issue-book-select" required size="4" class="absolute z-10 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl shadow-2xl p-2 focus:ring-2 focus:ring-indigo-500 outline-none text-sm hidden dark:text-white mt-1 max-h-40 text-start">
-                                    <!-- Options injected -->
-                                </select>
-                                <input type="hidden" id="issue-book-id">
-                            </div>
-                            <button type="submit" class="w-full bg-indigo-600 text-white rounded-xl py-4 text-sm font-black hover:bg-indigo-700 shadow-xl shadow-indigo-500/20 mt-4 transition-transform hover:-translate-y-0.5" data-i18n="recordIssueBtn">Record Issue</button>
-                        </form>
+            <!-- Admin Tab: Bulk Import -->
+            <div id="admin-bulk" class="admin-tab-content hidden-tab flex-grow flex flex-col min-h-0">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
+                    <!-- Instructions & Upload -->
+                    <div class="glass-panel p-8 rounded-3xl border-t-4 border-t-indigo-500 flex flex-col">
+                        <h3 class="text-2xl font-black mb-4 text-indigo-700 dark:text-indigo-400" data-i18n="bulkTitle">Bulk Import Books (CSV)</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-6 leading-relaxed" data-i18n="bulkDesc">Upload an Excel (.csv) file to add multiple books at once. Make sure your file matches the template structure exactly. Existing Book IDs will be skipped to prevent duplicates.</p>
+                        
+                        <div class="mb-8">
+                            <button onclick="downloadCSVTemplate()" class="inline-flex items-center gap-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 px-4 py-2.5 rounded-xl font-bold transition-colors text-sm">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                <span data-i18n="btnTemplate">Download CSV Template</span>
+                            </button>
+                        </div>
+
+                        <div class="bg-gray-50/50 dark:bg-gray-800/50 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center flex-grow flex flex-col items-center justify-center transition-colors" id="drop-zone">
+                            <svg class="w-12 h-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 font-bold mb-2" data-i18n="dragDropMsg">Select a CSV file to upload</p>
+                            <input type="file" id="csv-file-input" accept=".csv" class="hidden" onchange="handleFileSelect(event)">
+                            <button onclick="document.getElementById('csv-file-input').click()" class="bg-white dark:bg-gray-700 text-indigo-600 dark:text-indigo-400 border border-gray-200 dark:border-gray-600 px-6 py-2 rounded-xl font-bold shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors" data-i18n="btnBrowse">Browse File</button>
+                            <p id="file-name-display" class="mt-4 text-xs font-bold text-indigo-600 dark:text-indigo-400 hidden"></p>
+                        </div>
                     </div>
 
-                    <!-- Active Issues List -->
-                    <div class="glass-panel p-6 rounded-3xl flex flex-col h-full overflow-hidden">
-                        <div class="flex justify-between items-center mb-6">
-                            <h3 class="text-xl font-black text-gray-800 dark:text-white" data-i18n="activeIssuesTitle">Active Issues</h3>
-                            <span class="bg-yellow-100 text-yellow-800 text-xs font-bold px-3 py-1 rounded-full animate-pulse flex items-center gap-1">
-                                <span class="w-2 h-2 rounded-full bg-yellow-500"></span> Live
-                            </span>
+                    <!-- Preview & Process -->
+                    <div class="glass-panel p-6 rounded-3xl flex flex-col h-full overflow-hidden relative">
+                        <div class="flex justify-between items-center mb-4 shrink-0">
+                            <h3 class="text-xl font-black text-gray-800 dark:text-white" data-i18n="previewTitle">Data Preview</h3>
+                            <button id="btn-process-csv" onclick="processBulkImport()" class="hidden bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-md transition-colors" data-i18n="btnUploadBooks">Upload Data</button>
                         </div>
-                        <div class="overflow-y-auto flex-grow pe-2">
-                            <ul id="active-issues-list" class="space-y-3 text-start">
-                                <!-- Transactions injected here -->
-                            </ul>
-                            <div id="no-active-issues" class="text-center py-16 text-gray-500 dark:text-gray-400 hidden font-bold flex flex-col items-center justify-center h-full">
-                                <svg class="w-12 h-12 mb-3 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                <span data-i18n="noIssuesFound">No active issued books.</span>
-                            </div>
+                        
+                        <!-- Overlay for processing state -->
+                        <div id="bulk-processing-overlay" class="absolute inset-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm z-10 hidden flex-col items-center justify-center">
+                            <svg class="animate-spin h-10 w-10 text-indigo-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                            <p class="text-indigo-800 dark:text-indigo-300 font-bold" id="bulk-progress-text">Processing...</p>
+                        </div>
+
+                        <div class="overflow-y-auto flex-grow border border-gray-200 dark:border-gray-700 rounded-xl bg-white/30 dark:bg-gray-800/30">
+                            <table class="min-w-full divide-y divide-gray-200/50 dark:divide-gray-700/50">
+                                <thead class="bg-gray-100/50 dark:bg-gray-800/80 sticky top-0">
+                                    <tr>
+                                        <th class="px-4 py-2 text-start text-xs font-bold text-gray-500 uppercase">Book ID</th>
+                                        <th class="px-4 py-2 text-start text-xs font-bold text-gray-500 uppercase">Title</th>
+                                        <th class="px-4 py-2 text-start text-xs font-bold text-gray-500 uppercase">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="csv-preview-list" class="divide-y divide-gray-100 dark:divide-gray-800/50 text-xs text-start">
+                                    <tr><td colspan="3" class="px-4 py-8 text-center text-gray-500" data-i18n="noPreviewMsg">No file selected for preview.</td></tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Admin Tab: Users (Readers) -->
-            <div id="admin-users" class="admin-tab-content hidden-tab h-[calc(100vh-250px)]">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 h-full">
-                    <div class="glass-panel p-6 rounded-3xl md:col-span-1 flex flex-col justify-center">
-                        <h3 class="text-xl font-black mb-6 text-gray-800 dark:text-white" data-i18n="addReaderTitle">Add New Reader</h3>
-                        <form id="add-user-form" class="space-y-5">
+            <!-- Admin Tab: Issue / Return -->
+            <div id="admin-issue" class="admin-tab-content hidden-tab flex-grow flex flex-col min-h-0">
                             <div>
                                 <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1" data-i18n="usernameLbl">Username</label>
                                 <input type="text" id="u-username" required class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white text-start">
@@ -461,14 +462,15 @@
                 thBook: "Book & Author", thCategory: "Category", thShelf: "Shelf No", thStatus: "Availability",
                 statusAvailable: "Available", statusIssued: "Issued", loading: "Loading data...", noBooksFound: "No books found.",
                 loginTitle: "Sign In", usernameLbl: "Username", passwordLbl: "Password", loginBtn: "Login", roleLbl: "Role",
-                adminTabBooks: "Books", adminTabIssue: "Issue/Return", adminTabUsers: "Users",
+                adminTabBooks: "Books", adminTabBulk: "Bulk Import", adminTabIssue: "Issue/Return", adminTabUsers: "Users",
                 addBookTitle: "Add New Book", bookIdLbl: "Accession No (Book ID)", bookTitleLbl: "Book Title", bookAuthorLbl: "Author / Translator", priceLbl: "Price (₹)", saveBtn: "Save Book",
                 registryTitle: "Books Registry", actionLbl: "Action",
+                bulkTitle: "Bulk Import Books (CSV)", bulkDesc: "Upload an Excel (.csv) file to add multiple books at once. Make sure your file matches the template structure exactly. Existing Book IDs will be skipped to prevent duplicates.", btnTemplate: "Download CSV Template", dragDropMsg: "Select a CSV file to upload", btnBrowse: "Browse File", previewTitle: "Data Preview", btnUploadBooks: "Upload Data", noPreviewMsg: "No file selected for preview.",
                 issueBookTitle: "Issue Book", phoneFirstLbl: "Phone Number (Type first)", readerNameLbl: "Reader Name", selectBookLbl: "Select Book (Search)", recordIssueBtn: "Record Issue",
                 activeIssuesTitle: "Active Issues", noIssuesFound: "No active issued books.", btnReturn: "Return Book",
                 addReaderTitle: "Add New Reader", phonePassLbl: "Phone Number", fullNameLbl: "Full Name", createAccBtn: "Create Account", regReadersTitle: "Registered Readers", nameLbl: "Name", contactLbl: "Phone & Username", joinedLbl: "Joined Date",
                 greeting: "Hello, ", readerSubtitle: "Your reading history is below.", totalReadLbl: "Total Read", myHistoryTitle: "My Books (History)", noHistoryFound: "You haven't borrowed any books yet.",
-                msgLoginFail: "Login failed. Check credentials.", msgWelcome: "Welcome", msgLogout: "Logged out successfully.", msgBookAdded: "Book added successfully.", msgBookExists: "Accession ID already exists!", msgBookDeleted: "Book deleted.", msgUserAdded: "Reader added successfully.", msgUserExists: "Username/Phone combination already exists.", msgSelectBook: "Please select a book.", msgIssued: "Book issued successfully.", msgReturned: "Book returned successfully.", msgError: "An error occurred."
+                msgLoginFail: "Login failed. Check credentials.", msgWelcome: "Welcome", msgLogout: "Logged out successfully.", msgBookAdded: "Book added successfully.", msgBookExists: "Accession ID already exists!", msgBookDeleted: "Book deleted.", msgUserAdded: "Reader added successfully.", msgUserExists: "Username/Phone combination already exists.", msgSelectBook: "Please select a book.", msgIssued: "Book issued successfully.", msgReturned: "Book returned successfully.", msgError: "An error occurred.", msgBulkSuccess: "Books uploaded successfully!", msgBulkEmpty: "No valid new books found to upload."
             },
             ml: {
                 appTitle: "ലൈബ്രറി രജിസ്റ്റർ", navHome: "ഹോം", navLogin: "ലോഗിൻ", navAdmin: "അഡ്മിൻ പാനൽ", navReader: "എന്റെ പുസ്തകങ്ങൾ", navProfile: "പ്രൊഫൈൽ", navLogout: "ലോഗൗട്ട്",
@@ -476,14 +478,15 @@
                 thBook: "പുസ്തകം & ഗ്രന്ഥകർത്താവ്", thCategory: "കാറ്റഗറി", thShelf: "ഷെൽഫ് നമ്പർ", thStatus: "ലഭ്യത",
                 statusAvailable: "ലഭ്യമാണ്", statusIssued: "നൽകിയിരിക്കുന്നു", loading: "ഡാറ്റ ലോഡ് ചെയ്യുന്നു...", noBooksFound: "പുസ്തകങ്ങൾ ഒന്നും കണ്ടെത്തിയില്ല.",
                 loginTitle: "ലോഗിൻ ചെയ്യുക", usernameLbl: "യൂസർ നെയിം", passwordLbl: "പാസ്‌വേർഡ്", loginBtn: "ലോഗിൻ", roleLbl: "റോൾ",
-                adminTabBooks: "പുസ്തകങ്ങൾ", adminTabIssue: "ഇഷ്യൂ / റിട്ടേൺ", adminTabUsers: "യൂസർമാർ",
+                adminTabBooks: "പുസ്തകങ്ങൾ", adminTabBulk: "ബൾക്ക് ഇമ്പോർട്ട്", adminTabIssue: "ഇഷ്യൂ / റിട്ടേൺ", adminTabUsers: "യൂസർമാർ",
                 addBookTitle: "പുതിയ പുസ്തകം ചേർക്കുക", bookIdLbl: "അക്സഷൻ നമ്പർ (Book ID)", bookTitleLbl: "പുസ്തകത്തിന്റെ പേര്", bookAuthorLbl: "ഗ്രന്ഥകർത്താവ് / വിവർത്തകൻ", priceLbl: "വില (₹)", saveBtn: "സേവ് ചെയ്യുക",
                 registryTitle: "രജിസ്റ്ററിലെ പുസ്തകങ്ങൾ", actionLbl: "Action",
+                bulkTitle: "ഒന്നിച്ച് പുസ്തകങ്ങൾ ചേർക്കുക (CSV)", bulkDesc: "നിരവധി പുസ്തകങ്ങൾ ഒന്നിച്ച് അപ്‌ലോഡ് ചെയ്യാൻ CSV ഫയൽ ഉപയോഗിക്കുക. ടെംപ്ലേറ്റ് ഡൗൺലോഡ് ചെയ്ത് അതേ ഫോർമാറ്റിൽ ഡാറ്റ നൽകുക. നിലവിലുള്ള ബുക്ക് ഐഡികൾ ഒഴിവാക്കപ്പെടും.", btnTemplate: "CSV ടെംപ്ലേറ്റ് ഡൗൺലോഡ്", dragDropMsg: "അപ്‌ലോഡ് ചെയ്യാൻ ഒരു CSV ഫയൽ തിരഞ്ഞെടുക്കുക", btnBrowse: "ഫയൽ എടുക്കുക", previewTitle: "ഡാറ്റ പ്രിവ്യൂ", btnUploadBooks: "അപ്‌ലോഡ് ചെയ്യുക", noPreviewMsg: "പ്രിവ്യൂ കാണാൻ ഫയൽ തിരഞ്ഞെടുക്കുക.",
                 issueBookTitle: "പുസ്തകം നൽകുക (Issue)", phoneFirstLbl: "ഫോൺ നമ്പർ (ആദ്യം നൽകുക)", readerNameLbl: "വായനക്കാരന്റെ പേര്", selectBookLbl: "പുസ്തകം തിരഞ്ഞെടുക്കുക", recordIssueBtn: "ഇഷ്യൂ റെക്കോർഡ് ചെയ്യുക",
                 activeIssuesTitle: "നൽകിയിട്ടുള്ള പുസ്തകങ്ങൾ", noIssuesFound: "നിലവിൽ നൽകിയ പുസ്തകങ്ങൾ ഒന്നുമില്ല.", btnReturn: "മടക്കി നൽകുക",
                 addReaderTitle: "പുതിയ വായനക്കാരനെ ചേർക്കുക", phonePassLbl: "ഫോൺ നമ്പർ (പാസ്‌വേർഡും ഇതാണ്)", fullNameLbl: "മുഴുവൻ പേര്", createAccBtn: "അക്കൗണ്ട് നിർമ്മിക്കുക", regReadersTitle: "രജിസ്റ്റർ ചെയ്ത വായനക്കാർ", nameLbl: "പേര്", contactLbl: "ഫോൺ & യൂസർനെയിം", joinedLbl: "ചേർന്ന തിയ്യതി",
                 greeting: "നമസ്കാരം, ", readerSubtitle: "നിങ്ങളുടെ വായനാ വിവരങ്ങൾ താഴെ കാണാം.", totalReadLbl: "ആകെ വായിച്ചവ", myHistoryTitle: "എന്റെ പുസ്തകങ്ങൾ (History)", noHistoryFound: "നിങ്ങൾ ഇതുവരെ പുസ്തകങ്ങൾ ഒന്നും എടുത്തിട്ടില്ല.",
-                msgLoginFail: "ലോഗിൻ പരാജയപ്പെട്ടു. വിവരങ്ങൾ പരിശോധിക്കുക.", msgWelcome: "സ്വാഗതം", msgLogout: "ലോഗൗട്ട് ചെയ്തു", msgBookAdded: "പുസ്തകം വിജയകരമായി ചേർത്തു", msgBookExists: "ഈ അക്സഷൻ നമ്പർ നിലവിലുണ്ട്!", msgBookDeleted: "പുസ്തകം നീക്കം ചെയ്തു", msgUserAdded: "പുതിയ വായനക്കാരനെ വിജയകരമായി ചേർത്തു", msgUserExists: "ഈ യൂസർനെയിം/ഫോൺ നിലവിലുണ്ട്", msgSelectBook: "ദയവായി ഒരു പുസ്തകം തിരഞ്ഞെടുക്കുക", msgIssued: "പുസ്തകം വിജയകരമായി ഇഷ്യൂ ചെയ്തു", msgReturned: "പുസ്തകം മടക്കി നൽകൽ പൂർത്തിയായി", msgError: "ഒരു പിശക് സംഭവിച്ചു"
+                msgLoginFail: "ലോഗിൻ പരാജയപ്പെട്ടു. വിവരങ്ങൾ പരിശോധിക്കുക.", msgWelcome: "സ്വാഗതം", msgLogout: "ലോഗൗട്ട് ചെയ്തു", msgBookAdded: "പുസ്തകം വിജയകരമായി ചേർത്തു", msgBookExists: "ഈ അക്സഷൻ നമ്പർ നിലവിലുണ്ട്!", msgBookDeleted: "പുസ്തകം നീക്കം ചെയ്തു", msgUserAdded: "പുതിയ വായനക്കാരനെ വിജയകരമായി ചേർത്തു", msgUserExists: "ഈ യൂസർനെയിം/ഫോൺ നിലവിലുണ്ട്", msgSelectBook: "ദയവായി ഒരു പുസ്തകം തിരഞ്ഞെടുക്കുക", msgIssued: "പുസ്തകം വിജയകരമായി ഇഷ്യൂ ചെയ്തു", msgReturned: "പുസ്തകം മടക്കി നൽകൽ പൂർത്തിയായി", msgError: "ഒരു പിശക് സംഭവിച്ചു", msgBulkSuccess: "പുസ്തകങ്ങൾ വിജയകരമായി അപ്‌ലോഡ് ചെയ്തു!", msgBulkEmpty: "അപ്‌ലോഡ് ചെയ്യാൻ പുതിയ പുസ്തകങ്ങൾ കണ്ടെത്തിയില്ല."
             },
             ar: {
                 appTitle: "سجل المكتبة", navHome: "الرئيسية", navLogin: "دخول", navAdmin: "لوحة الإدارة", navReader: "كتبي", navProfile: "الملف الشخصي", navLogout: "خروج",
@@ -491,14 +494,15 @@
                 thBook: "الكتاب والمؤلف", thCategory: "الفئة", thShelf: "رقم الرف", thStatus: "التوفر",
                 statusAvailable: "متاح", statusIssued: "مُعار", loading: "جاري التحميل...", noBooksFound: "لم يتم العثور على كتب.",
                 loginTitle: "تسجيل الدخول", usernameLbl: "اسم المستخدم", passwordLbl: "كلمة المرور", loginBtn: "تسجيل الدخول", roleLbl: "وظيفة",
-                adminTabBooks: "الكتب", adminTabIssue: "إعارة / إرجاع", adminTabUsers: "المستخدمون",
+                adminTabBooks: "الكتب", adminTabBulk: "استيراد جماعي", adminTabIssue: "إعارة / إرجاع", adminTabUsers: "المستخدمون",
                 addBookTitle: "إضافة كتاب جديد", bookIdLbl: "رقم الكتاب (ID)", bookTitleLbl: "عنوان الكتاب", bookAuthorLbl: "المؤلف / المترجم", priceLbl: "السعر (₹)", saveBtn: "حفظ الكتاب",
                 registryTitle: "سجل الكتب", actionLbl: "إجراء",
+                bulkTitle: "استيراد الكتب (CSV)", bulkDesc: "قم بتحميل ملف CSV لإضافة كتب متعددة. تأكد من مطابقة القالب. سيتم تخطي أرقام الكتب الموجودة.", btnTemplate: "تنزيل قالب CSV", dragDropMsg: "اختر ملف CSV للتحميل", btnBrowse: "تصفح الملف", previewTitle: "معاينة البيانات", btnUploadBooks: "تحميل البيانات", noPreviewMsg: "لم يتم تحديد ملف للمعاينة.",
                 issueBookTitle: "إعارة كتاب", phoneFirstLbl: "رقم الهاتف (اكتب أولاً)", readerNameLbl: "اسم القارئ", selectBookLbl: "اختر كتاباً", recordIssueBtn: "تسجيل الإعارة",
                 activeIssuesTitle: "الإعارات النشطة", noIssuesFound: "لا توجد كتب معارة حالياً.", btnReturn: "إرجاع الكتاب",
                 addReaderTitle: "إضافة قارئ جديد", phonePassLbl: "رقم الهاتف (يستخدم ككلمة مرور)", fullNameLbl: "الاسم الكامل", createAccBtn: "إنشاء حساب", regReadersTitle: "القراء المسجلون", nameLbl: "الاسم", contactLbl: "الهاتف واسم المستخدم", joinedLbl: "تاريخ الانضمام",
                 greeting: "مرحباً، ", readerSubtitle: "تاريخ القراءة الخاص بك أدناه.", totalReadLbl: "إجمالي القراءة", myHistoryTitle: "كتبي (السجل)", noHistoryFound: "لم تقم باستعارة أي كتب بعد.",
-                msgLoginFail: "فشل تسجيل الدخول. تحقق من بياناتك.", msgWelcome: "مرحباً", msgLogout: "تم تسجيل الخروج بنجاح.", msgBookAdded: "تمت إضافة الكتاب بنجاح.", msgBookExists: "رقم الكتاب موجود مسبقاً!", msgBookDeleted: "تم حذف الكتاب.", msgUserAdded: "تمت إضافة القارئ بنجاح.", msgUserExists: "اسم المستخدم/الهاتف موجود مسبقاً.", msgSelectBook: "الرجاء تحديد كتاب.", msgIssued: "تمت إعارة الكتاب بنجاح.", msgReturned: "تم إرجاع الكتاب بنجاح.", msgError: "حدث خطأ."
+                msgLoginFail: "فشل تسجيل الدخول. تحقق من بياناتك.", msgWelcome: "مرحباً", msgLogout: "تم تسجيل الخروج بنجاح.", msgBookAdded: "تمت إضافة الكتاب بنجاح.", msgBookExists: "رقم الكتاب موجود مسبقاً!", msgBookDeleted: "تم حذف الكتاب.", msgUserAdded: "تمت إضافة القارئ بنجاح.", msgUserExists: "اسم المستخدم/الهاتف موجود مسبقاً.", msgSelectBook: "الرجاء تحديد كتاب.", msgIssued: "تمت إعارة الكتاب بنجاح.", msgReturned: "تم إرجاع الكتاب بنجاح.", msgError: "حدث خطأ.", msgBulkSuccess: "تم تحميل الكتب بنجاح!", msgBulkEmpty: "لم يتم العثور على كتب جديدة للتحميل."
             }
         };
 
@@ -575,6 +579,7 @@
         let allBooks = [];
         let allUsers = [];
         let allTransactions = [];
+        let parsedCSVData = []; // Array to hold parsed CSV rows
         let unsubBooks, unsubUsers, unsubTransactions;
 
         // UI Utils - Routing & Modals
@@ -674,9 +679,14 @@
                         }
                         showToast(`${t('msgWelcome')} ${currentUserData.name}`);
                     } else {
+                        showToast("Error: User details not found in database.", "error");
                         auth.signOut();
                     }
-                } catch (error) { console.error("Auth error:", error); }
+                } catch (error) { 
+                    console.error("Auth error:", error); 
+                    showToast("Database Permission Error. Please check Firestore Rules.", "error");
+                    auth.signOut(); // Force sign out to prevent getting stuck
+                }
             } else {
                 currentUserData = null;
                 // Reset Sidebar State
@@ -888,6 +898,193 @@
                 catch(e) { showToast(e.message, 'error'); }
             }
         };
+
+        // --- Bulk Import CSV Logic ---
+        
+        // 1. Download Template
+        window.downloadCSVTemplate = () => {
+            const headers = "Book ID,Title,Author,Category,Shelf No,Price\n";
+            const sampleData = "B001,Malayalam Grammar,John Doe,Education,A1,150\nB002,Kerala History,Jane Smith,History,B2,200\n";
+            const csvContent = headers + sampleData;
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", "library_books_template.csv");
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+
+        // 2. Parse CSV (Basic Implementation avoiding external libs)
+        const parseCSV = (text) => {
+            const lines = text.split('\n');
+            const result = [];
+            // Assuming first row is header
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i].trim()) continue; // Skip empty lines
+                
+                // Simple split by comma. Note: This will break if data fields contain commas inside quotes.
+                // For MVP, assuming simple clean data without internal commas.
+                const cols = lines[i].split(',');
+                
+                if (cols.length >= 2 && cols[0].trim()) { // Need at least ID and Title
+                    result.push({
+                        id: cols[0].trim().toUpperCase(),
+                        title: cols[1].trim(),
+                        author: cols[2] ? cols[2].trim() : '',
+                        category: cols[3] ? cols[3].trim() : '',
+                        shelfLocation: cols[4] ? cols[4].trim() : '',
+                        price: cols[5] ? parseFloat(cols[5].trim()) || 0 : 0
+                    });
+                }
+            }
+            return result;
+        };
+
+        // 3. Handle File Selection and Preview
+        window.handleFileSelect = (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            document.getElementById('file-name-display').innerText = file.name;
+            document.getElementById('file-name-display').classList.remove('hidden');
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const text = e.target.result;
+                parsedCSVData = parseCSV(text);
+                renderCSVPreview();
+            };
+            reader.readAsText(file);
+        };
+
+        // 4. Render Preview checking for Duplicates
+        const renderCSVPreview = () => {
+            const tbody = document.getElementById('csv-preview-list');
+            tbody.innerHTML = '';
+            
+            if (parsedCSVData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" class="px-4 py-8 text-center text-gray-500">No valid data found in file.</td></tr>`;
+                document.getElementById('btn-process-csv').classList.add('hidden');
+                return;
+            }
+
+            let validCount = 0;
+            parsedCSVData.forEach(row => {
+                const exists = allBooks.some(b => b.id === row.id);
+                let statusHtml = '';
+                let trClass = '';
+
+                if (exists) {
+                    statusHtml = '<span class="text-amber-500 font-bold">Exists (Skipping)</span>';
+                    trClass = 'bg-amber-50 dark:bg-amber-900/10 opacity-60';
+                } else {
+                    statusHtml = '<span class="text-green-500 font-bold">New (Ready)</span>';
+                    trClass = 'hover:bg-white/30 dark:hover:bg-gray-800/30';
+                    validCount++;
+                }
+
+                tbody.innerHTML += `
+                    <tr class="${trClass}">
+                        <td class="px-4 py-2 font-black">${row.id}</td>
+                        <td class="px-4 py-2 truncate max-w-[150px]">${row.title}</td>
+                        <td class="px-4 py-2">${statusHtml}</td>
+                    </tr>
+                `;
+            });
+
+            if (validCount > 0) {
+                document.getElementById('btn-process-csv').classList.remove('hidden');
+            } else {
+                document.getElementById('btn-process-csv').classList.add('hidden');
+            }
+        };
+
+        // 5. Process & Upload to Firestore using Batch
+        window.processBulkImport = async () => {
+            const newBooks = parsedCSVData.filter(row => !allBooks.some(b => b.id === row.id));
+            
+            if (newBooks.length === 0) {
+                showToast(t('msgBulkEmpty'), "error");
+                return;
+            }
+
+            const overlay = document.getElementById('bulk-processing-overlay');
+            const progressText = document.getElementById('bulk-progress-text');
+            overlay.classList.remove('hidden');
+            overlay.style.display = 'flex'; // force flex display
+
+            try {
+                // Firestore batches allow max 500 writes
+                // For safety and simplicity, if we have > 450, we might need chunks, 
+                // but for MVP, assuming moderate excel sizes (<400 rows)
+                const batch = writeBatch(db);
+                
+                newBooks.forEach(book => {
+                    const docRef = doc(db, "books", book.id);
+                    batch.set(docRef, {
+                        title: book.title,
+                        author: book.author,
+                        category: book.category,
+                        shelfLocation: book.shelfLocation,
+                        price: book.price,
+                        status: "Available",
+                        dateAdded: serverTimestamp()
+                    });
+                });
+
+                progressText.innerText = "Saving to database...";
+                await batch.commit();
+                
+                showToast(t('msgBulkSuccess'));
+                resetBulkImport();
+
+            } catch (error) {
+                console.error("Bulk Import Error:", error);
+                showToast(t('msgError'), "error");
+            } finally {
+                overlay.classList.add('hidden');
+                overlay.style.display = 'none';
+            }
+        };
+
+        const resetBulkImport = () => {
+            document.getElementById('csv-file-input').value = ""; // Clear file
+            document.getElementById('file-name-display').classList.add('hidden');
+            parsedCSVData = [];
+            document.getElementById('csv-preview-list').innerHTML = `<tr><td colspan="3" class="px-4 py-8 text-center text-gray-500" data-i18n="noPreviewMsg">${t('noPreviewMsg')}</td></tr>`;
+            document.getElementById('btn-process-csv').classList.add('hidden');
+        };
+
+        // Handle Drag and Drop for CSV
+        const dropZone = document.getElementById('drop-zone');
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('border-indigo-500', 'bg-indigo-50/50', 'dark:bg-indigo-900/20');
+        });
+        dropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-indigo-500', 'bg-indigo-50/50', 'dark:bg-indigo-900/20');
+        });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-indigo-500', 'bg-indigo-50/50', 'dark:bg-indigo-900/20');
+            
+            if (e.dataTransfer.files.length) {
+                const file = e.dataTransfer.files[0];
+                if (file.name.endsWith('.csv')) {
+                    // Manually trigger the handleFileSelect logic
+                    document.getElementById('csv-file-input').files = e.dataTransfer.files;
+                    handleFileSelect({target: {files: e.dataTransfer.files}});
+                } else {
+                    showToast("Please drop a valid .csv file", "error");
+                }
+            }
+        });
+
 
         document.getElementById('add-user-form').addEventListener('submit', async (e) => {
             e.preventDefault();
