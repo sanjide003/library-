@@ -60,6 +60,10 @@
                 </div>
 
                 <div class="flex items-center gap-2 sm:gap-4">
+                    <div id="app-status-indicator" class="hidden sm:flex items-center gap-2 bg-amber-50/80 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 rounded-2xl px-3 py-2 text-xs font-black shadow-sm" title="Checking app connection">
+                        <span id="app-status-dot" class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
+                        <span id="app-status-text">Connecting</span>
+                    </div>
                     <div class="flex items-center bg-white/50 dark:bg-gray-800/50 rounded-2xl p-1 shadow-inner border border-gray-200 dark:border-gray-700">
                         <button onclick="toggleTheme()" class="p-2 rounded-xl hover:bg-white dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 transition-all">
                             <svg id="theme-icon-light" class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
@@ -283,10 +287,10 @@
                     <button type="button" onclick="resetAddBookForm()" class="text-sm font-bold text-gray-500 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 hidden" id="btn-cancel-edit">Cancel Edit</button>
                 </div>
                 <div class="px-6 pt-4 flex flex-wrap gap-4 border-b border-gray-200 dark:border-gray-700 shrink-0 bg-white/20 dark:bg-gray-800/20">
-                    <button type="button" onclick="switchBookFormTab('tab-basic')" class="add-book-tab active pb-2 text-sm transition-colors" data-i18n="tabBasic">Basic Info</button>
-                    <button type="button" onclick="switchBookFormTab('tab-media')" class="add-book-tab pb-2 text-sm text-gray-500 dark:text-gray-400 transition-colors" data-i18n="tabMedia">Media</button>
-                    <button type="button" onclick="switchBookFormTab('tab-financial')" class="add-book-tab pb-2 text-sm text-gray-500 dark:text-gray-400 transition-colors" data-i18n="tabFinancial">Financials</button>
-                    <button type="button" onclick="switchBookFormTab('tab-audit')" class="add-book-tab pb-2 text-sm text-gray-500 dark:text-gray-400 transition-colors" data-i18n="tabAudit">Stock/Audit</button>
+                    <button type="button" onclick="switchBookFormTab('tab-basic', event)" class="add-book-tab active pb-2 text-sm transition-colors" data-i18n="tabBasic">Basic Info</button>
+                    <button type="button" onclick="switchBookFormTab('tab-media', event)" class="add-book-tab pb-2 text-sm text-gray-500 dark:text-gray-400 transition-colors" data-i18n="tabMedia">Media</button>
+                    <button type="button" onclick="switchBookFormTab('tab-financial', event)" class="add-book-tab pb-2 text-sm text-gray-500 dark:text-gray-400 transition-colors" data-i18n="tabFinancial">Financials</button>
+                    <button type="button" onclick="switchBookFormTab('tab-audit', event)" class="add-book-tab pb-2 text-sm text-gray-500 dark:text-gray-400 transition-colors" data-i18n="tabAudit">Stock/Audit</button>
                 </div>
 
                 <div class="flex-grow overflow-y-auto p-6 md:p-8">
@@ -754,11 +758,15 @@
             sidebar.classList.toggle('-translate-x-full'); sidebar.classList.toggle('rtl:translate-x-full'); overlay.classList.toggle('hidden');
         };
 
-        window.switchBookFormTab = (tabId) => {
+        window.switchBookFormTab = (tabId, evt = null) => {
             document.querySelectorAll('.book-form-section').forEach(el => el.classList.add('hidden-tab'));
             document.querySelectorAll('.add-book-tab').forEach(el => { el.classList.remove('active', 'text-indigo-600', 'dark:text-indigo-400'); el.classList.add('text-gray-500', 'dark:text-gray-400'); });
             document.getElementById(tabId).classList.remove('hidden-tab');
-            event.target.classList.remove('text-gray-500', 'dark:text-gray-400'); event.target.classList.add('active');
+            const clickedTab = evt?.currentTarget || document.querySelector(`[onclick*="${tabId}"]`);
+            if (clickedTab) {
+                clickedTab.classList.remove('text-gray-500', 'dark:text-gray-400');
+                clickedTab.classList.add('active');
+            }
         };
 
         const showToast = (message, type = 'success') => {
@@ -773,6 +781,26 @@
             if (!timestamp) return '-'; const d = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
             return d.toLocaleDateString(currentLang === 'ml' ? 'ml-IN' : 'en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
         };
+
+
+        const setAppStatus = (state, label) => {
+            const indicator = document.getElementById('app-status-indicator');
+            const dot = document.getElementById('app-status-dot');
+            const text = document.getElementById('app-status-text');
+            if (!indicator || !dot || !text) return;
+            const styles = {
+                active: ['bg-green-50/80', 'dark:bg-green-900/20', 'border-green-200', 'dark:border-green-800', 'text-green-700', 'dark:text-green-300', 'bg-green-500'],
+                connecting: ['bg-amber-50/80', 'dark:bg-amber-900/20', 'border-amber-200', 'dark:border-amber-800', 'text-amber-700', 'dark:text-amber-300', 'bg-amber-500'],
+                offline: ['bg-red-50/80', 'dark:bg-red-900/20', 'border-red-200', 'dark:border-red-800', 'text-red-700', 'dark:text-red-300', 'bg-red-500']
+            };
+            indicator.className = `hidden sm:flex items-center gap-2 ${styles[state].slice(0, 6).join(' ')} rounded-2xl px-3 py-2 text-xs font-black shadow-sm`;
+            dot.className = `w-2.5 h-2.5 rounded-full ${styles[state][6]} ${state === 'connecting' ? 'animate-pulse' : ''}`;
+            text.innerText = label;
+            indicator.title = label;
+        };
+
+        window.addEventListener('online', () => setAppStatus('connecting', 'Reconnecting'));
+        window.addEventListener('offline', () => setAppStatus('offline', 'Offline'));
 
         // --- Global Settings Fetch (Library Name & Logo) ---
         onSnapshot(doc(db, "settings", "general"), (docSnap) => {
@@ -844,6 +872,7 @@
             }
 
             document.getElementById('auth-loading').classList.remove('hidden');
+            setAppStatus(navigator.onLine ? 'connecting' : 'offline', navigator.onLine ? 'Connecting' : 'Offline');
 
             try {
                 const userDoc = await getDoc(doc(db, "users", user.uid));
@@ -860,8 +889,14 @@
                     // Global Data Fetch
                     unsubBooks = onSnapshot(query(collection(db, "books")), (snapshot) => {
                         allBooks = []; snapshot.forEach(d => allBooks.push({ id: d.id, ...d.data() }));
-                        if(currentUserData.role === 'admin' && !document.getElementById('admin-registry-view').classList.contains('hidden-tab')) renderAdminBooks(); updateAdminDashboard();
+                        if(currentUserData.role === 'admin' && !document.getElementById('admin-registry-view').classList.contains('hidden-tab')) renderAdminBooks();
+                        updateAdminDashboard();
                         if(currentUserData.role === 'admin') populateIssueBookSelect();
+                        setAppStatus('active', 'App Active');
+                    }, (error) => {
+                        console.error('Books listener:', error);
+                        setAppStatus('offline', 'Sync Error');
+                        showToast(t('msgError'), 'error');
                     });
 
                     if (currentUserData.role === 'admin') {
@@ -1000,7 +1035,13 @@
         const setupAdminListeners = () => {
             unsubUsers = onSnapshot(collection(db, "users"), (snapshot) => {
                 allUsers = []; snapshot.forEach(doc => allUsers.push(doc.data()));
-                if(!document.getElementById('admin-users-view').classList.contains('hidden-tab')) renderAdminUsers(); updateAdminDashboard();
+                if(!document.getElementById('admin-users-view').classList.contains('hidden-tab')) renderAdminUsers();
+                updateAdminDashboard();
+                setAppStatus('active', 'App Active');
+            }, (error) => {
+                console.error('Users listener:', error);
+                setAppStatus('offline', 'Sync Error');
+                showToast(t('msgError'), 'error');
             });
 
             const qTrans = query(collection(db, "transactions"), where("status", "==", "Active"));
@@ -1012,7 +1053,14 @@
                     li.innerHTML = `<div class="flex-1 min-w-0"><p class="text-sm font-black text-gray-900 dark:text-white truncate">${tData.bookTitle} <span class="text-xs text-gray-500 font-normal">(${tData.bookId})</span></p><p class="text-xs text-gray-600 dark:text-gray-400 mt-1 truncate"><span class="font-bold text-indigo-600 dark:text-indigo-400">${tData.userName}</span> (${tData.userPhone})</p><p class="text-xs text-gray-400 dark:text-gray-500 mt-1">${formatDate(tData.issueDate)}</p></div><button onclick="returnBook('${tData.id}', '${tData.bookId}')" class="shrink-0 bg-green-500/10 text-green-600 dark:text-green-400 hover:bg-green-500 hover:text-white border border-green-200 dark:border-green-800 px-4 py-2 rounded-xl text-xs font-black transition-colors">${t('btnReturn')}</button>`;
                     ul.appendChild(li);
                 });
-                if(allTransactions.length === 0) document.getElementById('no-active-issues').classList.remove('hidden'); else document.getElementById('no-active-issues').classList.add('hidden'); updateAdminDashboard();
+                if(allTransactions.length === 0) document.getElementById('no-active-issues').classList.remove('hidden');
+                else document.getElementById('no-active-issues').classList.add('hidden');
+                updateAdminDashboard();
+                setAppStatus('active', 'App Active');
+            }, (error) => {
+                console.error('Transactions listener:', error);
+                setAppStatus('offline', 'Sync Error');
+                showToast(t('msgError'), 'error');
             });
         };
 
@@ -1226,7 +1274,12 @@
                         ul.appendChild(li);
                     });
                 } document.getElementById('reader-total-books').innerText = count;
-            }, (error) => { showToast(t('msgError'), "error"); });
+                setAppStatus('active', 'App Active');
+            }, (error) => {
+                console.error('Reader history listener:', error);
+                setAppStatus('offline', 'Sync Error');
+                showToast(t('msgError'), "error");
+            });
         };
     </script>
 </body>
