@@ -1,100 +1,162 @@
 <!DOCTYPE html>
-<html lang="ml">
+<html lang="en" dir="ltr" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>നൂറുൽ ഇസ്ലാം ലൈബ്രറി രജിസ്റ്റർ</title>
-    <!-- Tailwind CSS -->
+    <title>Library Register</title>
+    <!-- Tailwind CSS with configuration -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Manjari', 'sans-serif'],
+                        arabic: ['Tajawal', 'sans-serif'],
+                    },
+                    colors: {
+                        glass: 'rgba(255, 255, 255, 0.2)',
+                        glassDark: 'rgba(31, 41, 55, 0.4)',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Manjari:wght@400;700&display=swap');
-        body { font-family: 'Manjari', sans-serif; background-color: #f3f4f6; }
-        .toast { transition: all 0.3s ease-in-out; }
+        @import url('https://fonts.googleapis.com/css2?family=Manjari:wght@400;700&family=Tajawal:wght@400;700&display=swap');
+        
+        body { 
+            transition: background-color 0.5s ease, color 0.5s ease; 
+        }
+        
+        /* Glassmorphism Utilities */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        .dark .glass-panel {
+            background: rgba(17, 24, 39, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .toast { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .hidden-tab { display: none; }
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        
+        /* Custom Scrollbar for premium feel */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .dark ::-webkit-scrollbar-thumb { background: #4b5563; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* RTL Support Adjustments */
+        [dir="rtl"] { font-family: 'Tajawal', sans-serif; }
     </style>
 </head>
-<body class="text-gray-800 antialiased h-screen flex flex-col">
+<body class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-indigo-950 dark:to-gray-900 text-gray-800 dark:text-gray-100 antialiased h-screen flex flex-col transition-colors duration-500 overflow-hidden">
 
-    <!-- Navigation Bar -->
-    <nav class="bg-indigo-700 text-white shadow-lg z-10 sticky top-0">
+    <!-- Premium Navigation Bar -->
+    <nav class="glass-panel shadow-lg z-20 sticky top-0 border-b border-white/20 dark:border-gray-700/50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center cursor-pointer" onclick="navigate('public-view')">
-                    <svg class="w-8 h-8 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                    <span class="font-bold text-xl tracking-wide">ലൈബ്രറി രജിസ്റ്റർ</span>
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex items-center cursor-pointer group" onclick="navigate('public-view')">
+                    <div class="bg-indigo-600 p-2 rounded-xl text-white group-hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/30">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    </div>
+                    <span class="font-extrabold text-2xl tracking-wide ms-3 text-indigo-900 dark:text-white drop-shadow-sm" data-i18n="appTitle">Library Register</span>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <button id="nav-home-btn" onclick="navigate('public-view')" class="hover:bg-indigo-600 px-3 py-2 rounded-md text-sm font-medium transition">ഹോം</button>
-                    <button id="nav-login-btn" onclick="navigate('login-view')" class="bg-white text-indigo-700 hover:bg-gray-100 px-4 py-2 rounded-md text-sm font-bold transition shadow">ലോഗിൻ</button>
-                    <button id="nav-admin-btn" onclick="navigate('admin-view')" class="hidden bg-yellow-500 text-yellow-900 hover:bg-yellow-400 px-4 py-2 rounded-md text-sm font-bold transition shadow">അഡ്മിൻ പാനൽ</button>
-                    <button id="nav-reader-btn" onclick="navigate('reader-view')" class="hidden hover:bg-indigo-600 px-3 py-2 rounded-md text-sm font-medium transition">എന്റെ പുസ്തകങ്ങൾ</button>
-                    <button id="nav-logout-btn" class="hidden bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm font-bold transition shadow">ലോഗൗട്ട്</button>
+                
+                <div class="flex items-center gap-2 sm:gap-4">
+                    <!-- Controls (Theme & Lang) -->
+                    <div class="flex items-center bg-white/50 dark:bg-gray-800/50 rounded-2xl p-1 shadow-inner border border-gray-200 dark:border-gray-700">
+                        <!-- Theme Toggle -->
+                        <button onclick="toggleTheme()" class="p-2 rounded-xl hover:bg-white dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 transition-all" aria-label="Toggle Theme">
+                            <svg id="theme-icon-light" class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                            <svg id="theme-icon-dark" class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                        </button>
+                        <!-- Language Switcher -->
+                        <select id="lang-selector" onchange="changeLanguage(this.value)" class="bg-transparent border-none text-sm font-bold text-gray-700 dark:text-gray-200 focus:ring-0 cursor-pointer outline-none pe-8 ps-2 py-2">
+                            <option value="en" class="text-gray-900">EN</option>
+                            <option value="ml" class="text-gray-900">ML</option>
+                            <option value="ar" class="text-gray-900">AR</option>
+                        </select>
+                    </div>
+
+                    <!-- Navigation Buttons -->
+                    <button id="nav-home-btn" onclick="navigate('public-view')" class="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 rounded-xl text-sm font-bold transition" data-i18n="navHome">Home</button>
+                    <button id="nav-login-btn" onclick="navigate('login-view')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition shadow-lg shadow-indigo-500/30" data-i18n="navLogin">Login</button>
+                    <button id="nav-admin-btn" onclick="navigate('admin-view')" class="hidden bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition shadow-lg" data-i18n="navAdmin">Admin Panel</button>
+                    <button id="nav-reader-btn" onclick="navigate('reader-view')" class="hidden text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 rounded-xl text-sm font-bold transition" data-i18n="navReader">My Books</button>
+                    <button id="nav-logout-btn" class="hidden bg-red-500/10 text-red-600 dark:text-red-400 hover:bg-red-500 hover:text-white px-5 py-2.5 rounded-xl text-sm font-bold transition" data-i18n="navLogout">Logout</button>
                 </div>
             </div>
         </div>
     </nav>
 
     <!-- Main Content Area -->
-    <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 overflow-y-auto">
+    <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 overflow-y-auto">
         
         <!-- 1. Public Search View -->
-        <div id="public-view" class="view-section fade-in">
-            <div class="text-center mb-10">
-                <h1 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">പുസ്തകങ്ങൾ തിരയുക</h1>
-                <p class="mt-3 max-w-2xl mx-auto text-xl text-gray-500 sm:mt-4">ലഭ്യമായ പുസ്തകങ്ങളും അവയുടെ ഷെൽഫ് നമ്പറും ഇവിടെ കണ്ടെത്താം</p>
+        <div id="public-view" class="view-section fade-in h-full flex flex-col">
+            <div class="text-center mb-12">
+                <h1 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 drop-shadow-sm mb-4" data-i18n="searchTitle">Search Books</h1>
+                <p class="max-w-2xl mx-auto text-lg text-gray-600 dark:text-gray-400 font-medium" data-i18n="searchSubtitle">Find available books and their shelf numbers here</p>
             </div>
-            <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-md p-6 mb-8 border border-gray-100">
-                <div class="relative">
-                    <input type="text" id="public-search-input" placeholder="പുസ്തകത്തിന്റെ പേര്, ഗ്രന്ഥകർത്താവ് അല്ലെങ്കിൽ കാറ്റഗറി..." class="w-full pl-12 pr-4 py-3 rounded-lg border-2 border-indigo-100 focus:border-indigo-500 focus:ring-0 text-lg transition shadow-sm">
-                    <svg class="w-6 h-6 text-gray-400 absolute left-4 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            
+            <div class="max-w-4xl mx-auto w-full mb-10">
+                <div class="relative group">
+                    <div class="absolute inset-y-0 start-0 ps-5 flex items-center pointer-events-none">
+                        <svg class="w-6 h-6 text-indigo-400 group-focus-within:text-indigo-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                    <input type="text" id="public-search-input" data-i18n-placeholder="searchPlaceholder" placeholder="Book name, author or category..." class="w-full ps-14 pe-6 py-4 rounded-2xl glass-panel text-lg text-gray-800 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/30 transition-all shadow-xl dark:shadow-none placeholder-gray-400 dark:placeholder-gray-500">
                 </div>
             </div>
+
             <!-- Search Results -->
-            <div class="bg-white shadow overflow-hidden sm:rounded-lg border border-gray-200">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">പുസ്തകം & ഗ്രന്ഥകർത്താവ്</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">കാറ്റഗറി</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ഷെൽഫ് നമ്പർ</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ലഭ്യത</th>
-                        </tr>
-                    </thead>
-                    <tbody id="public-books-list" class="bg-white divide-y divide-gray-200">
-                        <!-- Books dynamically injected here -->
-                    </tbody>
-                </table>
-                <div id="public-loading" class="text-center py-10 text-gray-500 hidden">ഡാറ്റ ലോഡ് ചെയ്യുന്നു...</div>
-                <div id="public-no-results" class="text-center py-10 text-gray-500 hidden">പുസ്തകങ്ങൾ ഒന്നും കണ്ടെത്തിയില്ല.</div>
+            <div class="max-w-6xl mx-auto w-full glass-panel rounded-3xl overflow-hidden shadow-2xl border border-white/40 dark:border-gray-700/50 flex flex-col flex-grow">
+                <div class="overflow-x-auto flex-grow">
+                    <table class="min-w-full divide-y divide-gray-200/50 dark:divide-gray-700/50">
+                        <thead class="bg-gray-50/50 dark:bg-gray-800/50 backdrop-blur-md">
+                            <tr>
+                                <th scope="col" class="px-6 py-4 text-start text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider" data-i18n="thBook">Book & Author</th>
+                                <th scope="col" class="px-6 py-4 text-start text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider" data-i18n="thCategory">Category</th>
+                                <th scope="col" class="px-6 py-4 text-start text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider" data-i18n="thShelf">Shelf No</th>
+                                <th scope="col" class="px-6 py-4 text-start text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider" data-i18n="thStatus">Availability</th>
+                            </tr>
+                        </thead>
+                        <tbody id="public-books-list" class="divide-y divide-gray-100 dark:divide-gray-800/50">
+                            <!-- Books dynamically injected -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="public-loading" class="text-center py-16 text-gray-500 dark:text-gray-400 hidden font-bold animate-pulse" data-i18n="loading">Loading data...</div>
+                <div id="public-no-results" class="text-center py-16 text-gray-500 dark:text-gray-400 hidden font-bold" data-i18n="noBooksFound">No books found.</div>
             </div>
         </div>
 
         <!-- 2. Login View -->
-        <div id="login-view" class="view-section hidden-tab max-w-md mx-auto fade-in">
-            <div class="bg-white py-8 px-10 shadow-xl rounded-2xl border border-gray-100">
-                <div class="mb-6 text-center">
-                    <h2 class="text-2xl font-bold text-gray-900">അക്കൗണ്ടിലേക്ക് പ്രവേശിക്കുക</h2>
+        <div id="login-view" class="view-section hidden-tab max-w-md mx-auto fade-in mt-10">
+            <div class="glass-panel py-10 px-8 shadow-2xl rounded-3xl border border-white/50 dark:border-gray-700">
+                <div class="mb-8 text-center">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 mb-4 shadow-inner">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    </div>
+                    <h2 class="text-3xl font-black text-gray-900 dark:text-white" data-i18n="loginTitle">Sign In</h2>
                 </div>
                 <form id="login-form" class="space-y-6">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">യൂസർ നെയിം</label>
-                        <input type="text" id="login-username" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2" data-i18n="usernameLbl">Username</label>
+                        <input type="text" id="login-username" required class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-shadow">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">ഫോൺ നമ്പർ</label>
-                        <input type="tel" id="login-phone" required pattern="[0-9]{10}" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2" data-i18n="passwordLbl">Password</label>
+                        <input type="password" id="login-password" required class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-shadow">
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">പാസ്‌വേർഡ്</label>
-                        <input type="password" id="login-password" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                    </div>
-                    <button type="submit" id="login-submit-btn" class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition">
-                        ലോഗിൻ ചെയ്യുക
+                    <button type="submit" id="login-submit-btn" class="w-full flex justify-center py-3.5 px-4 rounded-xl shadow-lg text-sm font-black text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500/50 transition-all transform hover:-translate-y-0.5">
+                        <span data-i18n="loginBtn">Login</span>
                     </button>
                 </form>
             </div>
@@ -102,75 +164,78 @@
 
         <!-- 3. Admin Dashboard View -->
         <div id="admin-view" class="view-section hidden-tab fade-in">
-            <div class="mb-6 flex flex-wrap gap-2 border-b border-gray-200 pb-2">
-                <button onclick="switchAdminTab('admin-books')" class="admin-tab-btn active bg-indigo-100 text-indigo-700 px-4 py-2 rounded-t-md font-bold transition">പുസ്തകങ്ങൾ</button>
-                <button onclick="switchAdminTab('admin-issue')" class="admin-tab-btn text-gray-600 hover:bg-gray-100 px-4 py-2 rounded-t-md font-bold transition">ഇഷ്യൂ / റിട്ടേൺ</button>
-                <button onclick="switchAdminTab('admin-users')" class="admin-tab-btn text-gray-600 hover:bg-gray-100 px-4 py-2 rounded-t-md font-bold transition">യൂസർമാർ</button>
+            <div class="mb-8 flex flex-wrap gap-2 border-b border-gray-200/50 dark:border-gray-700/50 pb-4">
+                <button onclick="switchAdminTab('admin-books')" class="admin-tab-btn active bg-indigo-600 text-white shadow-md px-6 py-2.5 rounded-xl font-bold transition" data-i18n="adminTabBooks">Books</button>
+                <button onclick="switchAdminTab('admin-issue')" class="admin-tab-btn text-gray-600 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-800/50 px-6 py-2.5 rounded-xl font-bold transition" data-i18n="adminTabIssue">Issue / Return</button>
+                <button onclick="switchAdminTab('admin-users')" class="admin-tab-btn text-gray-600 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-800/50 px-6 py-2.5 rounded-xl font-bold transition" data-i18n="adminTabUsers">Users</button>
             </div>
 
             <!-- Admin Tab: Books Register -->
-            <div id="admin-books" class="admin-tab-content">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div id="admin-books" class="admin-tab-content h-[calc(100vh-250px)]">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 h-full">
                     <!-- Add Book Form -->
-                    <div class="bg-white p-6 shadow rounded-lg border border-gray-200 md:col-span-1">
-                        <h3 class="text-lg font-bold mb-4">പുതിയ പുസ്തകം ചേർക്കുക</h3>
-                        <form id="add-book-form" class="space-y-4">
+                    <div class="glass-panel p-6 rounded-3xl md:col-span-1 overflow-y-auto">
+                        <h3 class="text-xl font-black mb-6 text-gray-800 dark:text-white flex items-center gap-2">
+                            <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                            <span data-i18n="addBookTitle">Add New Book</span>
+                        </h3>
+                        <form id="add-book-form" class="space-y-5">
                             <div>
-                                <label class="block text-xs font-medium text-gray-700">അക്സഷൻ നമ്പർ (Book ID)</label>
-                                <input type="text" id="b-id" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-1.5 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1" data-i18n="bookIdLbl">Accession No (Book ID)</label>
+                                <input type="text" id="b-id" required class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-gray-700">പുസ്തകത്തിന്റെ പേര്</label>
-                                <input type="text" id="b-title" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-1.5 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1" data-i18n="bookTitleLbl">Book Title</label>
+                                <input type="text" id="b-title" required class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-gray-700">ഗ്രന്ഥകർത്താവ് / വിവർത്തകൻ</label>
-                                <input type="text" id="b-author" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-1.5 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1" data-i18n="bookAuthorLbl">Author / Translator</label>
+                                <input type="text" id="b-author" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
                             </div>
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-xs font-medium text-gray-700">കാറ്റഗറി</label>
-                                    <input type="text" id="b-category" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-1.5 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1" data-i18n="thCategory">Category</label>
+                                    <input type="text" id="b-category" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-medium text-gray-700">ഷെൽഫ് നമ്പർ</label>
-                                    <input type="text" id="b-shelf" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-1.5 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1" data-i18n="thShelf">Shelf No</label>
+                                    <input type="text" id="b-shelf" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
                                 </div>
                             </div>
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-xs font-medium text-gray-700">വില (₹)</label>
-                                    <input type="number" id="b-price" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-1.5 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1" data-i18n="priceLbl">Price (₹)</label>
+                                    <input type="number" id="b-price" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-medium text-gray-700">ലഭ്യത</label>
-                                    <select id="b-status" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-1.5 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                        <option value="Available">ലഭ്യമാണ് (Available)</option>
-                                        <option value="Issued">നൽകിയിരിക്കുന്നു (Issued)</option>
+                                    <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1" data-i18n="thStatus">Availability</label>
+                                    <select id="b-status" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                                        <option value="Available" data-i18n="statusAvailable">Available</option>
+                                        <option value="Issued" data-i18n="statusIssued">Issued</option>
                                     </select>
                                 </div>
                             </div>
-                            <button type="submit" class="w-full bg-indigo-600 text-white rounded-md py-2 text-sm font-bold hover:bg-indigo-700">സേവ് ചെയ്യുക</button>
+                            <button type="submit" class="w-full bg-indigo-600 text-white rounded-xl py-3 text-sm font-black hover:bg-indigo-700 transition-colors shadow-md mt-2" data-i18n="saveBtn">Save Book</button>
                         </form>
                     </div>
                     <!-- Books List -->
-                    <div class="bg-white shadow rounded-lg border border-gray-200 md:col-span-2 overflow-hidden flex flex-col">
-                        <div class="p-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
-                            <h3 class="text-lg font-bold">രജിസ്റ്ററിലെ പുസ്തകങ്ങൾ</h3>
-                            <input type="text" id="admin-book-search" placeholder="തിരയുക..." class="border border-gray-300 rounded-md py-1 px-3 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    <div class="glass-panel rounded-3xl md:col-span-2 flex flex-col h-full overflow-hidden">
+                        <div class="p-5 border-b border-gray-200/50 dark:border-gray-700/50 bg-white/30 dark:bg-gray-800/30 flex justify-between items-center">
+                            <h3 class="text-xl font-black text-gray-800 dark:text-white" data-i18n="registryTitle">Books Registry</h3>
+                            <input type="text" id="admin-book-search" data-i18n-placeholder="searchPlaceholder" placeholder="Search..." class="bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-700 rounded-lg py-1.5 px-4 text-sm focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white w-1/3 min-w-[200px]">
                         </div>
-                        <div class="overflow-y-auto flex-grow" style="max-height: 500px;">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50 sticky top-0">
+                        <div class="overflow-y-auto flex-grow p-0">
+                            <table class="min-w-full divide-y divide-gray-200/50 dark:divide-gray-700/50">
+                                <thead class="bg-gray-50/50 dark:bg-gray-800/50 sticky top-0 backdrop-blur-md">
                                     <tr>
-                                        <th class="px-4 py-2 text-left text-xs font-bold text-gray-500 uppercase">No.</th>
-                                        <th class="px-4 py-2 text-left text-xs font-bold text-gray-500 uppercase">പേര് & ഓതർ</th>
-                                        <th class="px-4 py-2 text-left text-xs font-bold text-gray-500 uppercase">ഷെൽഫ്</th>
-                                        <th class="px-4 py-2 text-left text-xs font-bold text-gray-500 uppercase">സ്റ്റാറ്റസ്</th>
-                                        <th class="px-4 py-2 text-right text-xs font-bold text-gray-500 uppercase">Action</th>
+                                        <th class="px-5 py-3 text-start text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">ID</th>
+                                        <th class="px-5 py-3 text-start text-xs font-bold text-gray-500 dark:text-gray-400 uppercase" data-i18n="thBook">Title & Author</th>
+                                        <th class="px-5 py-3 text-start text-xs font-bold text-gray-500 dark:text-gray-400 uppercase" data-i18n="thShelf">Shelf</th>
+                                        <th class="px-5 py-3 text-start text-xs font-bold text-gray-500 dark:text-gray-400 uppercase" data-i18n="thStatus">Status</th>
+                                        <th class="px-5 py-3 text-end text-xs font-bold text-gray-500 dark:text-gray-400 uppercase" data-i18n="actionLbl">Action</th>
                                     </tr>
                                 </thead>
-                                <tbody id="admin-books-list" class="bg-white divide-y divide-gray-200 text-sm">
+                                <tbody id="admin-books-list" class="divide-y divide-gray-100 dark:divide-gray-800/50 text-sm">
                                 </tbody>
                             </table>
                         </div>
@@ -179,87 +244,91 @@
             </div>
 
             <!-- Admin Tab: Issue / Return -->
-            <div id="admin-issue" class="admin-tab-content hidden-tab">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div id="admin-issue" class="admin-tab-content hidden-tab h-[calc(100vh-250px)]">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 h-full">
                     <!-- Issue Form -->
-                    <div class="bg-white p-6 shadow rounded-lg border border-indigo-200 border-t-4 border-t-indigo-500">
-                        <h3 class="text-lg font-bold mb-4 text-indigo-800">പുസ്തകം നൽകുക (Issue Book)</h3>
-                        <form id="issue-book-form" class="space-y-4">
+                    <div class="glass-panel p-8 rounded-3xl border-t-4 border-t-indigo-500 flex flex-col justify-center">
+                        <h3 class="text-2xl font-black mb-6 text-indigo-700 dark:text-indigo-400" data-i18n="issueBookTitle">Issue Book</h3>
+                        <form id="issue-book-form" class="space-y-6">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">ഫോൺ നമ്പർ (ആദ്യം നൽകുക)</label>
+                                <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2" data-i18n="phoneFirstLbl">Phone Number (Type first)</label>
                                 <div class="relative">
-                                    <input type="tel" id="issue-phone" required autocomplete="off" placeholder="10 അക്ക നമ്പർ" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 font-bold tracking-wider">
-                                    <span id="issue-user-badge" class="absolute right-2 top-2 bg-green-100 text-green-800 text-xs font-bold px-2 py-1 rounded hidden">Registered User</span>
+                                    <input type="tel" id="issue-phone" required autocomplete="off" placeholder="10 Digits" class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none font-bold tracking-wider dark:text-white">
+                                    <span id="issue-user-badge" class="absolute end-3 top-3 bg-green-100 text-green-800 text-xs font-bold px-2.5 py-1 rounded-md hidden">Registered</span>
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">വായനക്കാരന്റെ പേര്</label>
-                                <input type="text" id="issue-name" required class="block w-full border border-gray-300 bg-gray-50 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500">
+                                <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2" data-i18n="readerNameLbl">Reader Name</label>
+                                <input type="text" id="issue-name" required class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white transition-colors">
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">പുസ്തകം (Type Accession No / Name)</label>
-                                <input type="text" id="issue-book-search" autocomplete="off" placeholder="തിരയുക..." class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500">
-                                <select id="issue-book-select" required size="4" class="mt-2 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 text-sm hidden">
-                                    <!-- Options injected via JS -->
+                            <div class="relative">
+                                <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2" data-i18n="selectBookLbl">Select Book (Search)</label>
+                                <input type="text" id="issue-book-search" autocomplete="off" data-i18n-placeholder="searchPlaceholder" placeholder="Search..." class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white mb-1">
+                                <select id="issue-book-select" required size="4" class="absolute z-10 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl shadow-2xl p-2 focus:ring-2 focus:ring-indigo-500 outline-none text-sm hidden dark:text-white mt-1 max-h-40">
+                                    <!-- Options injected -->
                                 </select>
                                 <input type="hidden" id="issue-book-id">
                             </div>
-                            <button type="submit" class="w-full bg-indigo-600 text-white rounded-md py-2.5 text-sm font-bold hover:bg-indigo-700 shadow mt-4">ഇഷ്യൂ റെക്കോർഡ് ചെയ്യുക</button>
+                            <button type="submit" class="w-full bg-indigo-600 text-white rounded-xl py-4 text-sm font-black hover:bg-indigo-700 shadow-xl shadow-indigo-500/20 mt-4 transition-transform hover:-translate-y-0.5" data-i18n="recordIssueBtn">Record Issue</button>
                         </form>
                     </div>
 
-                    <!-- Active Issues List (Return logic) -->
-                    <div class="bg-white p-6 shadow rounded-lg border border-gray-200 flex flex-col">
-                        <h3 class="text-lg font-bold mb-4">നൽകിയിട്ടുള്ള പുസ്തകങ്ങൾ (Active Issues)</h3>
-                        <div class="overflow-y-auto flex-grow" style="max-height: 400px;">
-                            <ul id="active-issues-list" class="divide-y divide-gray-200">
+                    <!-- Active Issues List -->
+                    <div class="glass-panel p-6 rounded-3xl flex flex-col h-full overflow-hidden">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-black text-gray-800 dark:text-white" data-i18n="activeIssuesTitle">Active Issues</h3>
+                            <span class="bg-yellow-100 text-yellow-800 text-xs font-bold px-3 py-1 rounded-full animate-pulse flex items-center gap-1">
+                                <span class="w-2 h-2 rounded-full bg-yellow-500"></span> Live
+                            </span>
+                        </div>
+                        <div class="overflow-y-auto flex-grow pe-2">
+                            <ul id="active-issues-list" class="space-y-3">
                                 <!-- Transactions injected here -->
                             </ul>
-                            <div id="no-active-issues" class="text-center py-8 text-gray-500 hidden">നിലവിൽ നൽകിയ പുസ്തകങ്ങൾ ഒന്നുമില്ല.</div>
+                            <div id="no-active-issues" class="text-center py-16 text-gray-500 dark:text-gray-400 hidden font-bold flex flex-col items-center justify-center h-full">
+                                <svg class="w-12 h-12 mb-3 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span data-i18n="noIssuesFound">No active issued books.</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Admin Tab: Users (Readers) -->
-            <div id="admin-users" class="admin-tab-content hidden-tab">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-white p-6 shadow rounded-lg border border-gray-200 md:col-span-1">
-                        <h3 class="text-lg font-bold mb-4">പുതിയ വായനക്കാരനെ ചേർക്കുക</h3>
-                        <form id="add-user-form" class="space-y-4">
+            <div id="admin-users" class="admin-tab-content hidden-tab h-[calc(100vh-250px)]">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 h-full">
+                    <div class="glass-panel p-6 rounded-3xl md:col-span-1 flex flex-col justify-center">
+                        <h3 class="text-xl font-black mb-6 text-gray-800 dark:text-white" data-i18n="addReaderTitle">Add New Reader</h3>
+                        <form id="add-user-form" class="space-y-5">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700">യൂസർ നെയിം</label>
-                                <input type="text" id="u-username" required class="mt-1 block w-full border border-gray-300 rounded-md py-1.5 px-3">
+                                <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1" data-i18n="usernameLbl">Username</label>
+                                <input type="text" id="u-username" required class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700">ഫോൺ നമ്പർ</label>
-                                <input type="tel" id="u-phone" required pattern="[0-9]{10}" class="mt-1 block w-full border border-gray-300 rounded-md py-1.5 px-3">
+                                <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1" data-i18n="phonePassLbl">Phone (Used as Password)</label>
+                                <input type="tel" id="u-phone" required pattern="[0-9]{10}" class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700">മുഴുവൻ പേര്</label>
-                                <input type="text" id="u-name" required class="mt-1 block w-full border border-gray-300 rounded-md py-1.5 px-3">
+                                <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1" data-i18n="fullNameLbl">Full Name</label>
+                                <input type="text" id="u-name" required class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white">
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">പാസ്‌വേർഡ് നൽകുക</label>
-                                <input type="password" id="u-password" required minlength="6" class="mt-1 block w-full border border-gray-300 rounded-md py-1.5 px-3">
-                            </div>
-                            <button type="submit" class="w-full bg-green-600 text-white rounded-md py-2 text-sm font-bold hover:bg-green-700">അക്കൗണ്ട് നിർമ്മിക്കുക</button>
+                            <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white rounded-xl py-3.5 text-sm font-black shadow-lg shadow-green-500/30 transition-transform hover:-translate-y-0.5 mt-4" data-i18n="createAccBtn">Create Account</button>
                         </form>
                     </div>
-                    <div class="bg-white shadow rounded-lg border border-gray-200 md:col-span-2 overflow-hidden">
-                        <div class="p-4 border-b border-gray-200 bg-gray-50">
-                            <h3 class="text-lg font-bold">രജിസ്റ്റർ ചെയ്ത വായനക്കാർ</h3>
+                    <div class="glass-panel rounded-3xl md:col-span-2 overflow-hidden flex flex-col h-full">
+                        <div class="p-5 border-b border-gray-200/50 dark:border-gray-700/50 bg-white/30 dark:bg-gray-800/30">
+                            <h3 class="text-xl font-black text-gray-800 dark:text-white" data-i18n="regReadersTitle">Registered Readers</h3>
                         </div>
-                        <div class="overflow-y-auto" style="max-height: 400px;">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
+                        <div class="overflow-y-auto flex-grow">
+                            <table class="min-w-full divide-y divide-gray-200/50 dark:divide-gray-700/50">
+                                <thead class="bg-gray-50/50 dark:bg-gray-800/50 backdrop-blur-md sticky top-0">
                                     <tr>
-                                        <th class="px-4 py-2 text-left text-xs font-bold text-gray-500 uppercase">പേര്</th>
-                                        <th class="px-4 py-2 text-left text-xs font-bold text-gray-500 uppercase">ഫോൺ & യൂസർനെയിം</th>
-                                        <th class="px-4 py-2 text-left text-xs font-bold text-gray-500 uppercase">ചേർന്ന തിയ്യതി</th>
+                                        <th class="px-6 py-4 text-start text-xs font-black text-gray-500 dark:text-gray-400 uppercase" data-i18n="nameLbl">Name</th>
+                                        <th class="px-6 py-4 text-start text-xs font-black text-gray-500 dark:text-gray-400 uppercase" data-i18n="contactLbl">Phone & Username</th>
+                                        <th class="px-6 py-4 text-start text-xs font-black text-gray-500 dark:text-gray-400 uppercase" data-i18n="joinedLbl">Joined Date</th>
                                     </tr>
                                 </thead>
-                                <tbody id="admin-users-list" class="bg-white divide-y divide-gray-200 text-sm">
+                                <tbody id="admin-users-list" class="divide-y divide-gray-100 dark:divide-gray-800/50 text-sm">
                                 </tbody>
                             </table>
                         </div>
@@ -269,47 +338,152 @@
         </div>
 
         <!-- 4. Reader Dashboard View -->
-        <div id="reader-view" class="view-section hidden-tab fade-in">
-            <div class="bg-white p-6 shadow-md rounded-lg border border-gray-200 mb-6 flex justify-between items-center">
-                <div>
-                    <h2 class="text-2xl font-bold text-gray-900" id="reader-welcome-name">നമസ്കാരം, </h2>
-                    <p class="text-gray-500 text-sm mt-1">നിങ്ങളുടെ വായനാ വിവരങ്ങൾ താഴെ കാണാം.</p>
+        <div id="reader-view" class="view-section hidden-tab fade-in h-full flex flex-col max-w-4xl mx-auto w-full">
+            <div class="glass-panel p-8 shadow-xl rounded-3xl mb-8 flex flex-col sm:flex-row justify-between items-center gap-6">
+                <div class="text-center sm:text-start">
+                    <h2 class="text-3xl font-black text-gray-900 dark:text-white flex items-center gap-2 justify-center sm:justify-start">
+                        <span data-i18n="greeting">Hello, </span> <span id="reader-welcome-name" class="text-indigo-600 dark:text-indigo-400"></span>
+                    </h2>
+                    <p class="text-gray-500 dark:text-gray-400 mt-2 font-medium" data-i18n="readerSubtitle">Your reading history is below.</p>
                 </div>
-                <div class="bg-indigo-100 text-indigo-800 px-4 py-2 rounded-lg text-center">
-                    <span class="block text-xs font-bold uppercase">ആകെ വായിച്ചവ</span>
-                    <span class="block text-2xl font-black" id="reader-total-books">0</span>
+                <div class="bg-indigo-600 text-white px-6 py-4 rounded-2xl text-center shadow-lg shadow-indigo-500/30 w-full sm:w-auto">
+                    <span class="block text-xs font-black uppercase tracking-wider mb-1 opacity-80" data-i18n="totalReadLbl">Total Read</span>
+                    <span class="block text-4xl font-black" id="reader-total-books">0</span>
                 </div>
             </div>
 
-            <div class="bg-white shadow overflow-hidden sm:rounded-lg border border-gray-200">
-                <div class="px-4 py-5 border-b border-gray-200 sm:px-6 bg-gray-50">
-                    <h3 class="text-lg leading-6 font-bold text-gray-900">എന്റെ പുസ്തകങ്ങൾ (History)</h3>
+            <div class="glass-panel rounded-3xl overflow-hidden shadow-xl flex-grow flex flex-col">
+                <div class="px-6 py-5 border-b border-white/40 dark:border-gray-700/50 bg-white/30 dark:bg-gray-800/30">
+                    <h3 class="text-xl font-black text-gray-900 dark:text-white flex items-center gap-2">
+                        <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span data-i18n="myHistoryTitle">My Books (History)</span>
+                    </h3>
                 </div>
-                <ul id="reader-history-list" class="divide-y divide-gray-200">
-                    <!-- History injected here -->
-                </ul>
-                <div id="reader-no-history" class="text-center py-10 text-gray-500 hidden">നിങ്ങൾ ഇതുവരെ പുസ്തകങ്ങൾ ഒന്നും എടുത്തിട്ടില്ല.</div>
+                <div class="overflow-y-auto p-4 flex-grow">
+                    <ul id="reader-history-list" class="space-y-3">
+                        <!-- History injected -->
+                    </ul>
+                    <div id="reader-no-history" class="text-center py-20 text-gray-500 dark:text-gray-400 hidden flex flex-col items-center">
+                        <svg class="w-16 h-16 mb-4 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                        <span class="text-lg font-bold" data-i18n="noHistoryFound">You haven't borrowed any books yet.</span>
+                    </div>
+                </div>
             </div>
         </div>
 
     </main>
 
-    <!-- Toast Notifications Container -->
-    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2"></div>
+    <!-- Premium Toast Container -->
+    <div id="toast-container" class="fixed bottom-6 right-6 sm:bottom-10 sm:right-10 z-50 flex flex-col gap-3 rtl:right-auto rtl:left-6 sm:rtl:left-10"></div>
 
-    <!-- Firebase Scripts (v11.6.1 modules via ES Imports) -->
+    <!-- Firebase Scripts -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { 
-            getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, 
-            signOut, onAuthStateChanged 
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { 
-            getFirestore, collection, addDoc, setDoc, doc, getDoc, getDocs, 
-            updateDoc, deleteDoc, query, where, onSnapshot, serverTimestamp, orderBy 
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, setDoc, doc, getDoc, updateDoc, deleteDoc, query, where, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // --- Firebase Configuration (Provided by User) ---
+        // --- i18n Dictionary ---
+        const i18n = {
+            en: {
+                appTitle: "Library Register", navHome: "Home", navLogin: "Login", navAdmin: "Admin Panel", navReader: "My Books", navLogout: "Logout",
+                searchTitle: "Search Books", searchSubtitle: "Find available books and their shelf numbers here", searchPlaceholder: "Book name, author or category...",
+                thBook: "Book & Author", thCategory: "Category", thShelf: "Shelf No", thStatus: "Availability",
+                statusAvailable: "Available", statusIssued: "Issued", loading: "Loading data...", noBooksFound: "No books found.",
+                loginTitle: "Sign In", usernameLbl: "Username", passwordLbl: "Password", loginBtn: "Login",
+                adminTabBooks: "Books", adminTabIssue: "Issue/Return", adminTabUsers: "Users",
+                addBookTitle: "Add New Book", bookIdLbl: "Accession No (Book ID)", bookTitleLbl: "Book Title", bookAuthorLbl: "Author / Translator", priceLbl: "Price (₹)", saveBtn: "Save Book",
+                registryTitle: "Books Registry", actionLbl: "Action",
+                issueBookTitle: "Issue Book", phoneFirstLbl: "Phone Number (Type first)", readerNameLbl: "Reader Name", selectBookLbl: "Select Book (Search)", recordIssueBtn: "Record Issue",
+                activeIssuesTitle: "Active Issues", noIssuesFound: "No active issued books.", btnReturn: "Return Book",
+                addReaderTitle: "Add New Reader", phonePassLbl: "Phone (Used as Password)", fullNameLbl: "Full Name", createAccBtn: "Create Account", regReadersTitle: "Registered Readers", nameLbl: "Name", contactLbl: "Phone & Username", joinedLbl: "Joined Date",
+                greeting: "Hello, ", readerSubtitle: "Your reading history is below.", totalReadLbl: "Total Read", myHistoryTitle: "My Books (History)", noHistoryFound: "You haven't borrowed any books yet.",
+                msgLoginFail: "Login failed. Check credentials.", msgWelcome: "Welcome", msgLogout: "Logged out successfully.", msgBookAdded: "Book added successfully.", msgBookExists: "Accession ID already exists!", msgBookDeleted: "Book deleted.", msgUserAdded: "Reader added successfully.", msgUserExists: "Username/Phone combination already exists.", msgSelectBook: "Please select a book.", msgIssued: "Book issued successfully.", msgReturned: "Book returned successfully.", msgError: "An error occurred."
+            },
+            ml: {
+                appTitle: "ലൈബ്രറി രജിസ്റ്റർ", navHome: "ഹോം", navLogin: "ലോഗിൻ", navAdmin: "അഡ്മിൻ പാനൽ", navReader: "എന്റെ പുസ്തകങ്ങൾ", navLogout: "ലോഗൗട്ട്",
+                searchTitle: "പുസ്തകങ്ങൾ തിരയുക", searchSubtitle: "ലഭ്യമായ പുസ്തകങ്ങളും അവയുടെ ഷെൽഫ് നമ്പറും ഇവിടെ കണ്ടെത്താം", searchPlaceholder: "പുസ്തകത്തിന്റെ പേര്, ഗ്രന്ഥകർത്താവ് അല്ലെങ്കിൽ കാറ്റഗറി...",
+                thBook: "പുസ്തകം & ഗ്രന്ഥകർത്താവ്", thCategory: "കാറ്റഗറി", thShelf: "ഷെൽഫ് നമ്പർ", thStatus: "ലഭ്യത",
+                statusAvailable: "ലഭ്യമാണ്", statusIssued: "നൽകിയിരിക്കുന്നു", loading: "ഡാറ്റ ലോഡ് ചെയ്യുന്നു...", noBooksFound: "പുസ്തകങ്ങൾ ഒന്നും കണ്ടെത്തിയില്ല.",
+                loginTitle: "ലോഗിൻ ചെയ്യുക", usernameLbl: "യൂസർ നെയിം", passwordLbl: "പാസ്‌വേർഡ്", loginBtn: "ലോഗിൻ",
+                adminTabBooks: "പുസ്തകങ്ങൾ", adminTabIssue: "ഇഷ്യൂ / റിട്ടേൺ", adminTabUsers: "യൂസർമാർ",
+                addBookTitle: "പുതിയ പുസ്തകം ചേർക്കുക", bookIdLbl: "അക്സഷൻ നമ്പർ (Book ID)", bookTitleLbl: "പുസ്തകത്തിന്റെ പേര്", bookAuthorLbl: "ഗ്രന്ഥകർത്താവ് / വിവർത്തകൻ", priceLbl: "വില (₹)", saveBtn: "സേവ് ചെയ്യുക",
+                registryTitle: "രജിസ്റ്ററിലെ പുസ്തകങ്ങൾ", actionLbl: "Action",
+                issueBookTitle: "പുസ്തകം നൽകുക (Issue)", phoneFirstLbl: "ഫോൺ നമ്പർ (ആദ്യം നൽകുക)", readerNameLbl: "വായനക്കാരന്റെ പേര്", selectBookLbl: "പുസ്തകം തിരഞ്ഞെടുക്കുക", recordIssueBtn: "ഇഷ്യൂ റെക്കോർഡ് ചെയ്യുക",
+                activeIssuesTitle: "നൽകിയിട്ടുള്ള പുസ്തകങ്ങൾ", noIssuesFound: "നിലവിൽ നൽകിയ പുസ്തകങ്ങൾ ഒന്നുമില്ല.", btnReturn: "മടക്കി നൽകുക",
+                addReaderTitle: "പുതിയ വായനക്കാരനെ ചേർക്കുക", phonePassLbl: "ഫോൺ നമ്പർ (ഇതായിരിക്കും പാസ്‌വേർഡ്)", fullNameLbl: "മുഴുവൻ പേര്", createAccBtn: "അക്കൗണ്ട് നിർമ്മിക്കുക", regReadersTitle: "രജിസ്റ്റർ ചെയ്ത വായനക്കാർ", nameLbl: "പേര്", contactLbl: "ഫോൺ & യൂസർനെയിം", joinedLbl: "ചേർന്ന തിയ്യതി",
+                greeting: "നമസ്കാരം, ", readerSubtitle: "നിങ്ങളുടെ വായനാ വിവരങ്ങൾ താഴെ കാണാം.", totalReadLbl: "ആകെ വായിച്ചവ", myHistoryTitle: "എന്റെ പുസ്തകങ്ങൾ (History)", noHistoryFound: "നിങ്ങൾ ഇതുവരെ പുസ്തകങ്ങൾ ഒന്നും എടുത്തിട്ടില്ല.",
+                msgLoginFail: "ലോഗിൻ പരാജയപ്പെട്ടു. വിവരങ്ങൾ പരിശോധിക്കുക.", msgWelcome: "സ്വാഗതം", msgLogout: "ലോഗൗട്ട് ചെയ്തു", msgBookAdded: "പുസ്തകം വിജയകരമായി ചേർത്തു", msgBookExists: "ഈ അക്സഷൻ നമ്പർ നിലവിലുണ്ട്!", msgBookDeleted: "പുസ്തകം നീക്കം ചെയ്തു", msgUserAdded: "പുതിയ വായനക്കാരനെ വിജയകരമായി ചേർത്തു", msgUserExists: "ഈ യൂസർനെയിം/ഫോൺ നിലവിലുണ്ട്", msgSelectBook: "ദയവായി ഒരു പുസ്തകം തിരഞ്ഞെടുക്കുക", msgIssued: "പുസ്തകം വിജയകരമായി ഇഷ്യൂ ചെയ്തു", msgReturned: "പുസ്തകം മടക്കി നൽകൽ പൂർത്തിയായി", msgError: "ഒരു പിശക് സംഭവിച്ചു"
+            },
+            ar: {
+                appTitle: "سجل المكتبة", navHome: "الرئيسية", navLogin: "دخول", navAdmin: "لوحة الإدارة", navReader: "كتبي", navLogout: "خروج",
+                searchTitle: "البحث عن الكتب", searchSubtitle: "ابحث عن الكتب المتوفرة وأرقام رفوفها هنا", searchPlaceholder: "اسم الكتاب، المؤلف أو الفئة...",
+                thBook: "الكتاب والمؤلف", thCategory: "الفئة", thShelf: "رقم الرف", thStatus: "التوفر",
+                statusAvailable: "متاح", statusIssued: "مُعار", loading: "جاري التحميل...", noBooksFound: "لم يتم العثور على كتب.",
+                loginTitle: "تسجيل الدخول", usernameLbl: "اسم المستخدم", passwordLbl: "كلمة المرور", loginBtn: "تسجيل الدخول",
+                adminTabBooks: "الكتب", adminTabIssue: "إعارة / إرجاع", adminTabUsers: "المستخدمون",
+                addBookTitle: "إضافة كتاب جديد", bookIdLbl: "رقم الكتاب (ID)", bookTitleLbl: "عنوان الكتاب", bookAuthorLbl: "المؤلف / المترجم", priceLbl: "السعر (₹)", saveBtn: "حفظ الكتاب",
+                registryTitle: "سجل الكتب", actionLbl: "إجراء",
+                issueBookTitle: "إعارة كتاب", phoneFirstLbl: "رقم الهاتف (اكتب أولاً)", readerNameLbl: "اسم القارئ", selectBookLbl: "اختر كتاباً", recordIssueBtn: "تسجيل الإعارة",
+                activeIssuesTitle: "الإعارات النشطة", noIssuesFound: "لا توجد كتب معارة حالياً.", btnReturn: "إرجاع الكتاب",
+                addReaderTitle: "إضافة قارئ جديد", phonePassLbl: "رقم الهاتف (يستخدم ككلمة مرور)", fullNameLbl: "الاسم الكامل", createAccBtn: "إنشاء حساب", regReadersTitle: "القراء المسجلون", nameLbl: "الاسم", contactLbl: "الهاتف واسم المستخدم", joinedLbl: "تاريخ الانضمام",
+                greeting: "مرحباً، ", readerSubtitle: "تاريخ القراءة الخاص بك أدناه.", totalReadLbl: "إجمالي القراءة", myHistoryTitle: "كتبي (السجل)", noHistoryFound: "لم تقم باستعارة أي كتب بعد.",
+                msgLoginFail: "فشل تسجيل الدخول. تحقق من بياناتك.", msgWelcome: "مرحباً", msgLogout: "تم تسجيل الخروج بنجاح.", msgBookAdded: "تمت إضافة الكتاب بنجاح.", msgBookExists: "رقم الكتاب موجود مسبقاً!", msgBookDeleted: "تم حذف الكتاب.", msgUserAdded: "تمت إضافة القارئ بنجاح.", msgUserExists: "اسم المستخدم/الهاتف موجود مسبقاً.", msgSelectBook: "الرجاء تحديد كتاب.", msgIssued: "تمت إعارة الكتاب بنجاح.", msgReturned: "تم إرجاع الكتاب بنجاح.", msgError: "حدث خطأ."
+            }
+        };
+
+        // Theme Logic
+        let currentLang = localStorage.getItem('appLang') || 'en';
+        let currentTheme = localStorage.getItem('appTheme') || 'light';
+        
+        const applyTheme = () => {
+            if (currentTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        };
+        
+        window.toggleTheme = () => {
+            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+            localStorage.setItem('appTheme', currentTheme);
+            applyTheme();
+        };
+
+        // Language Logic
+        window.t = (key) => i18n[currentLang][key] || key;
+
+        window.changeLanguage = (lang) => {
+            currentLang = lang;
+            localStorage.setItem('appLang', lang);
+            document.getElementById('lang-selector').value = lang;
+            
+            // RTL support for Arabic
+            document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+            document.documentElement.setAttribute('lang', lang);
+
+            // Update all static data-i18n tags
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if(i18n[lang][key]) el.innerText = i18n[lang][key];
+            });
+
+            // Update placeholders
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if(i18n[lang][key]) el.setAttribute('placeholder', i18n[lang][key]);
+            });
+
+            // Re-render dynamic lists to translate statuses
+            if(!document.getElementById('public-view').classList.contains('hidden-tab')) renderPublicBooks();
+            if(currentUserData && currentUserData.role === 'admin') renderAdminBooks();
+        };
+
+        // Initialize Theme & Lang
+        applyTheme();
+        window.onload = () => changeLanguage(currentLang);
+
+
+        // --- Firebase Configuration ---
         const firebaseConfig = {
             apiKey: "AIzaSyAAvxaW7bL7S_oD_xrElO4-XvuxnhfJKxc",
             authDomain: "noorul-islam-91eae.firebaseapp.com",
@@ -320,28 +494,22 @@
             measurementId: "G-ZFSQDL9MTB"
         };
 
-        // Initialize Primary Firebase App
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-
-        // Initialize Secondary App for Admin to create users without auto-login
         const secondaryApp = initializeApp(firebaseConfig, "Secondary");
         const secondaryAuth = getAuth(secondaryApp);
 
-        // --- Global State ---
+        // Global State
         let currentUserData = null;
         let allBooks = [];
         let allUsers = [];
         let allTransactions = [];
         let unsubBooks, unsubUsers, unsubTransactions;
 
-        // --- DOM Elements ---
-        const views = ['public-view', 'login-view', 'admin-view', 'reader-view'];
-        
-        // --- Utility Functions ---
+        // UI Utils
         window.navigate = (viewId) => {
-            views.forEach(v => document.getElementById(v).classList.add('hidden-tab'));
+            ['public-view', 'login-view', 'admin-view', 'reader-view'].forEach(v => document.getElementById(v).classList.add('hidden-tab'));
             document.getElementById(viewId).classList.remove('hidden-tab');
             
             // Adjust Nav Buttons
@@ -352,23 +520,23 @@
         window.switchAdminTab = (tabId) => {
             document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.add('hidden-tab'));
             document.querySelectorAll('.admin-tab-btn').forEach(el => {
-                el.classList.remove('bg-indigo-100', 'text-indigo-700');
-                el.classList.add('text-gray-600');
+                el.classList.remove('bg-indigo-600', 'text-white', 'shadow-md');
+                el.classList.add('text-gray-600', 'dark:text-gray-300');
             });
             document.getElementById(tabId).classList.remove('hidden-tab');
-            event.target.classList.remove('text-gray-600');
-            event.target.classList.add('bg-indigo-100', 'text-indigo-700');
+            event.target.classList.remove('text-gray-600', 'dark:text-gray-300');
+            event.target.classList.add('bg-indigo-600', 'text-white', 'shadow-md');
         };
 
         const showToast = (message, type = 'success') => {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
-            const color = type === 'success' ? 'bg-green-500' : (type === 'error' ? 'bg-red-500' : 'bg-blue-500');
-            toast.className = `${color} text-white px-6 py-3 rounded shadow-lg transform transition-all duration-300 translate-y-0 opacity-100 font-bold text-sm`;
-            toast.innerText = message;
+            const color = type === 'success' ? 'bg-green-500/90 dark:bg-green-600/90 border-green-400' : (type === 'error' ? 'bg-red-500/90 dark:bg-red-600/90 border-red-400' : 'bg-indigo-500/90 dark:bg-indigo-600/90 border-indigo-400');
+            toast.className = `${color} backdrop-blur-md text-white px-6 py-3 rounded-2xl shadow-xl border-t border-l transform transition-all duration-300 translate-y-0 opacity-100 font-bold text-sm flex items-center gap-2`;
+            toast.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${type==='success'?'M5 13l4 4L19 7':'M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'}"></path></svg> ${message}`;
             container.appendChild(toast);
             setTimeout(() => {
-                toast.classList.add('opacity-0', 'translate-y-2');
+                toast.classList.add('opacity-0', 'translate-y-4');
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
         };
@@ -376,10 +544,10 @@
         const formatDate = (timestamp) => {
             if (!timestamp) return '-';
             const d = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-            return d.toLocaleDateString('ml-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+            return d.toLocaleDateString(currentLang === 'ml' ? 'ml-IN' : 'en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
         };
 
-        // --- Authentication & Initialization ---
+        // --- Authentication ---
         onAuthStateChanged(auth, async (user) => {
             const loginBtn = document.getElementById('nav-login-btn');
             const logoutBtn = document.getElementById('nav-logout-btn');
@@ -387,7 +555,6 @@
             const readerBtn = document.getElementById('nav-reader-btn');
 
             if (user) {
-                // User logged in, fetch role
                 try {
                     const userDoc = await getDoc(doc(db, "users", user.uid));
                     if (userDoc.exists()) {
@@ -403,68 +570,51 @@
                         } else {
                             adminBtn.classList.add('hidden');
                             readerBtn.classList.remove('hidden');
-                            document.getElementById('reader-welcome-name').innerText = `നമസ്കാരം, ${currentUserData.name}`;
+                            document.getElementById('reader-welcome-name').innerText = currentUserData.name;
                             navigate('reader-view');
                             setupReaderListeners(currentUserData.phone);
                         }
-                        showToast(`സ്വാഗതം ${currentUserData.name}`);
+                        showToast(`${t('msgWelcome')} ${currentUserData.name}`);
                     } else {
-                        // Edge case: Admin created directly via Firebase console
-                        showToast("User details not found in DB.", "error");
                         auth.signOut();
                     }
-                } catch (error) {
-                    console.error("Error fetching user role:", error);
-                }
+                } catch (error) { console.error("Auth error:", error); }
             } else {
-                // Logged out
                 currentUserData = null;
                 loginBtn.classList.remove('hidden');
                 logoutBtn.classList.add('hidden');
                 adminBtn.classList.add('hidden');
                 readerBtn.classList.add('hidden');
-                
-                // Cleanup listeners
-                if(unsubBooks) unsubBooks();
-                if(unsubUsers) unsubUsers();
-                if(unsubTransactions) unsubTransactions();
-                
+                if(unsubBooks) unsubBooks(); if(unsubUsers) unsubUsers(); if(unsubTransactions) unsubTransactions();
                 navigate('public-view');
             }
         });
 
         document.getElementById('nav-logout-btn').addEventListener('click', () => {
-            signOut(auth).then(() => { showToast("ലോഗൗട്ട് ചെയ്തു"); }).catch(e => showToast(e.message, 'error'));
+            signOut(auth).then(() => { showToast(t('msgLogout')); }).catch(e => showToast(e.message, 'error'));
         });
 
-        // Custom Login Logic: username_phone@noorulislam.local
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('login-submit-btn');
-            btn.disabled = true; btn.innerText = "Processing...";
+            btn.disabled = true; btn.style.opacity = '0.7';
             
             const username = document.getElementById('login-username').value.trim().toLowerCase();
-            const phone = document.getElementById('login-phone').value.trim();
             const password = document.getElementById('login-password').value;
-            const pseudoEmail = `${username}_${phone}@noorulislam.local`;
+            const pseudoEmail = `${username}@noorulislam.local`;
 
             try {
-                // To check if it's the master admin login (first time setup via hardcode or console)
-                // If standard login fails, provide standard error.
                 await signInWithEmailAndPassword(auth, pseudoEmail, password);
                 document.getElementById('login-form').reset();
             } catch (error) {
-                console.error(error);
-                let msg = "ലോഗിൻ പരാജയപ്പെട്ടു. വിവരങ്ങൾ പരിശോധിക്കുക.";
-                if(error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') msg = "തെറ്റായ യൂസർനെയിം, ഫോൺ അല്ലെങ്കിൽ പാസ്‌വേർഡ്.";
-                showToast(msg, "error");
+                showToast(t('msgLoginFail'), "error");
             } finally {
-                btn.disabled = false; btn.innerText = "ലോഗിൻ ചെയ്യുക";
+                btn.disabled = false; btn.style.opacity = '1';
             }
         });
 
 
-        // --- Public Portal Functions ---
+        // --- Public Portal ---
         const fetchPublicBooks = () => {
             document.getElementById('public-loading').classList.remove('hidden');
             const q = query(collection(db, "books"));
@@ -473,16 +623,11 @@
                 snapshot.forEach(doc => allBooks.push({ id: doc.id, ...doc.data() }));
                 renderPublicBooks();
                 if(currentUserData && currentUserData.role === 'admin') {
-                    renderAdminBooks();
-                    populateIssueBookSelect();
+                    renderAdminBooks(); populateIssueBookSelect();
                 }
                 document.getElementById('public-loading').classList.add('hidden');
-            }, (error) => {
-                console.error("Error fetching public books:", error);
-                document.getElementById('public-loading').innerText = "Data load error!";
-            });
+            }, (error) => { console.error(error); });
         };
-        // Call immediately for public access
         fetchPublicBooks();
 
         const renderPublicBooks = () => {
@@ -502,21 +647,22 @@
             } else {
                 noRes.classList.add('hidden');
                 filtered.forEach(b => {
-                    const statusClass = b.status === 'Available' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
-                    const statusText = b.status === 'Available' ? 'ലഭ്യമാണ്' : 'നൽകിയിരിക്കുന്നു';
+                    const statusClass = b.status === 'Available' ? 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300 border border-green-200 dark:border-green-800' : 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300 border border-red-200 dark:border-red-800';
+                    const statusText = b.status === 'Available' ? t('statusAvailable') : t('statusIssued');
+                    
                     const tr = document.createElement('tr');
-                    tr.className = 'hover:bg-gray-50';
+                    tr.className = 'hover:bg-white/40 dark:hover:bg-gray-800/40 transition-colors group';
                     tr.innerHTML = `
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-bold text-gray-900">${b.title}</div>
-                            <div class="text-xs text-gray-500">${b.author || '-'} (ID: ${b.id})</div>
+                        <td class="px-6 py-4">
+                            <div class="text-sm font-black text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">${b.title}</div>
+                            <div class="text-xs text-gray-500 dark:text-gray-400 font-medium">${b.author || '-'} <span class="opacity-50">(ID: ${b.id})</span></div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${b.category || '-'}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-100 text-indigo-800">${b.shelfLocation || '-'}</span>
+                        <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300 font-medium">${b.category || '-'}</td>
+                        <td class="px-6 py-4">
+                            <span class="px-3 py-1 inline-flex text-xs font-black rounded-lg bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">${b.shelfLocation || '-'}</span>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClass}">${statusText}</span>
+                        <td class="px-6 py-4">
+                            <span class="px-3 py-1 inline-flex text-xs font-black rounded-lg ${statusClass}">${statusText}</span>
                         </td>
                     `;
                     tbody.appendChild(tr);
@@ -527,9 +673,8 @@
         document.getElementById('public-search-input').addEventListener('input', renderPublicBooks);
 
 
-        // --- Admin Portal Functions ---
+        // --- Admin Portal ---
         const setupAdminListeners = () => {
-            // Listen to Users
             unsubUsers = onSnapshot(collection(db, "users"), (snapshot) => {
                 allUsers = [];
                 const tbody = document.getElementById('admin-users-list');
@@ -539,34 +684,33 @@
                     allUsers.push(u);
                     if(u.role !== 'admin') {
                         tbody.innerHTML += `
-                            <tr>
-                                <td class="px-4 py-3 whitespace-nowrap text-sm font-bold">${u.name}</td>
-                                <td class="px-4 py-3 whitespace-nowrap text-xs text-gray-500">${u.phone}<br>@${u.username}</td>
-                                <td class="px-4 py-3 whitespace-nowrap text-xs text-gray-500">${formatDate(u.createdAt)}</td>
+                            <tr class="hover:bg-white/30 dark:hover:bg-gray-800/30">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-black dark:text-white">${u.name}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-600 dark:text-gray-400 font-medium">${u.phone}<br><span class="text-indigo-500">@${u.username}</span></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-500 dark:text-gray-500">${formatDate(u.createdAt)}</td>
                             </tr>
                         `;
                     }
                 });
             });
 
-            // Listen to Active Transactions
             const qTrans = query(collection(db, "transactions"), where("status", "==", "Active"));
             unsubTransactions = onSnapshot(qTrans, (snapshot) => {
                 allTransactions = [];
                 const ul = document.getElementById('active-issues-list');
                 ul.innerHTML = '';
                 snapshot.forEach(docSnap => {
-                    const t = { id: docSnap.id, ...docSnap.data() };
-                    allTransactions.push(t);
+                    const tData = { id: docSnap.id, ...docSnap.data() };
+                    allTransactions.push(tData);
                     const li = document.createElement('li');
-                    li.className = 'py-4 px-2 hover:bg-gray-50 flex justify-between items-center';
+                    li.className = 'p-4 bg-white/50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow flex justify-between items-center gap-4';
                     li.innerHTML = `
-                        <div>
-                            <p class="text-sm font-bold text-gray-900">${t.bookTitle} <span class="text-xs text-gray-500">(${t.bookId})</span></p>
-                            <p class="text-xs text-gray-600 mt-1">എടുത്തത്: <span class="font-bold text-indigo-600">${t.userName}</span> (${t.userPhone})</p>
-                            <p class="text-xs text-gray-400 mt-0.5">തിയ്യതി: ${formatDate(t.issueDate)}</p>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-black text-gray-900 dark:text-white truncate">${tData.bookTitle} <span class="text-xs text-gray-500 font-normal">(${tData.bookId})</span></p>
+                            <p class="text-xs text-gray-600 dark:text-gray-400 mt-1 truncate"><span class="font-bold text-indigo-600 dark:text-indigo-400">${tData.userName}</span> (${tData.userPhone})</p>
+                            <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">${formatDate(tData.issueDate)}</p>
                         </div>
-                        <button onclick="returnBook('${t.id}', '${t.bookId}')" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded text-xs font-bold shadow transition">മടക്കി നൽകുക</button>
+                        <button onclick="returnBook('${tData.id}', '${tData.bookId}')" class="shrink-0 bg-green-500/10 text-green-600 dark:text-green-400 hover:bg-green-500 hover:text-white border border-green-200 dark:border-green-800 px-4 py-2 rounded-xl text-xs font-black transition-colors">${t('btnReturn')}</button>
                     `;
                     ul.appendChild(li);
                 });
@@ -575,7 +719,6 @@
             });
         };
 
-        // Admin: Add Book
         document.getElementById('add-book-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = e.target.querySelector('button');
@@ -593,25 +736,18 @@
             };
 
             try {
-                // Check if exists
-                const docRef = doc(db, "books", bookId);
-                const docSnap = await getDoc(docRef);
+                const docSnap = await getDoc(doc(db, "books", bookId));
                 if(docSnap.exists()) {
-                    showToast("ഈ അക്സഷൻ നമ്പർ നിലവിലുണ്ട്!", "error");
+                    showToast(t('msgBookExists'), "error");
                 } else {
-                    await setDoc(docRef, bookData);
-                    showToast("പുസ്തകം വിജയകരമായി ചേർത്തു");
+                    await setDoc(doc(db, "books", bookId), bookData);
+                    showToast(t('msgBookAdded'));
                     e.target.reset();
                 }
-            } catch (error) {
-                console.error(error);
-                showToast("Error adding book", "error");
-            } finally {
-                btn.disabled = false;
-            }
+            } catch (error) { showToast(t('msgError'), "error"); } 
+            finally { btn.disabled = false; }
         });
 
-        // Admin: Render Books
         const renderAdminBooks = () => {
             const searchTerm = document.getElementById('admin-book-search').value.toLowerCase();
             const tbody = document.getElementById('admin-books-list');
@@ -620,15 +756,15 @@
             const filtered = allBooks.filter(b => b.title.toLowerCase().includes(searchTerm) || b.id.toLowerCase().includes(searchTerm));
             
             filtered.forEach(b => {
-                const statusClass = b.status === 'Available' ? 'text-green-600' : 'text-red-600';
+                const statusClass = b.status === 'Available' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400';
                 tbody.innerHTML += `
-                    <tr>
-                        <td class="px-4 py-3 whitespace-nowrap text-xs font-bold text-gray-500">${b.id}</td>
-                        <td class="px-4 py-3 whitespace-nowrap"><div class="text-sm font-bold text-gray-900">${b.title}</div><div class="text-xs text-gray-500">${b.author||'-'}</div></td>
-                        <td class="px-4 py-3 whitespace-nowrap text-xs text-gray-500">${b.shelfLocation||'-'}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-xs font-bold ${statusClass}">${b.status === 'Available' ? 'Available' : 'Issued'}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-right text-xs font-medium">
-                            <button onclick="deleteBook('${b.id}')" class="text-red-600 hover:text-red-900">Delete</button>
+                    <tr class="hover:bg-white/30 dark:hover:bg-gray-800/30">
+                        <td class="px-5 py-3 whitespace-nowrap text-xs font-black text-gray-500 dark:text-gray-400">${b.id}</td>
+                        <td class="px-5 py-3 whitespace-nowrap"><div class="text-sm font-bold text-gray-900 dark:text-white truncate max-w-[150px]">${b.title}</div></td>
+                        <td class="px-5 py-3 whitespace-nowrap text-xs text-gray-600 dark:text-gray-400 font-bold">${b.shelfLocation||'-'}</td>
+                        <td class="px-5 py-3 whitespace-nowrap text-xs font-black ${statusClass}">${b.status === 'Available' ? t('statusAvailable') : t('statusIssued')}</td>
+                        <td class="px-5 py-3 whitespace-nowrap text-end">
+                            <button onclick="deleteBook('${b.id}')" class="text-red-500 hover:text-red-700 bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded-md text-xs font-bold transition-colors">Del</button>
                         </td>
                     </tr>
                 `;
@@ -637,82 +773,56 @@
         document.getElementById('admin-book-search').addEventListener('input', renderAdminBooks);
 
         window.deleteBook = async (id) => {
-            if(confirm('ഈ പുസ്തകം നീക്കം ചെയ്യാൻ ഉറപ്പാണോ?')) {
-                try {
-                    await deleteDoc(doc(db, "books", id));
-                    showToast("പുസ്തകം നീക്കം ചെയ്തു");
-                } catch(e) { showToast(e.message, 'error'); }
+            if(confirm('Are you sure?')) {
+                try { await deleteDoc(doc(db, "books", id)); showToast(t('msgBookDeleted')); } 
+                catch(e) { showToast(e.message, 'error'); }
             }
         };
 
-        // Admin: Add User (Reader) Using Secondary App to avoid Admin logout
         document.getElementById('add-user-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = e.target.querySelector('button');
-            btn.disabled = true; btn.innerText = "Creating...";
-
+            btn.disabled = true;
+            
             const username = document.getElementById('u-username').value.trim().toLowerCase();
             const phone = document.getElementById('u-phone').value.trim();
             const name = document.getElementById('u-name').value.trim();
-            const password = document.getElementById('u-password').value;
-            const pseudoEmail = `${username}_${phone}@noorulislam.local`;
+            const password = phone;
+            const pseudoEmail = `${username}@noorulislam.local`;
 
             try {
-                // 1. Create Auth User using secondary app instance
-                const userCredential = await createUserWithEmailAndPassword(secondaryAuth, pseudoEmail, password);
-                const uid = userCredential.user.uid;
-                
-                // 2. Add to Firestore using primary DB
-                await setDoc(doc(db, "users", uid), {
-                    uid: uid,
-                    username: username,
-                    phone: phone,
-                    name: name,
-                    role: 'reader',
-                    createdAt: serverTimestamp()
-                });
-
-                // 3. Sign out of secondary
+                const userCred = await createUserWithEmailAndPassword(secondaryAuth, pseudoEmail, password);
+                const uid = userCred.user.uid;
+                await setDoc(doc(db, "users", uid), { uid, username, phone, name, role: 'reader', createdAt: serverTimestamp() });
                 await signOut(secondaryAuth);
-
-                showToast("പുതിയ വായനക്കാരനെ വിജയകരമായി ചേർത്തു");
+                showToast(t('msgUserAdded'));
                 e.target.reset();
             } catch (error) {
-                console.error(error);
-                if(error.code === 'auth/email-already-in-use') {
-                    showToast("ഈ യൂസർനെയിം/ഫോൺ കോമ്പിനേഷൻ നിലവിലുണ്ട്", "error");
-                } else {
-                    showToast("Error: " + error.message, "error");
-                }
-            } finally {
-                btn.disabled = false; btn.innerText = "അക്കൗണ്ട് നിർമ്മിക്കുക";
-            }
+                if(error.code === 'auth/email-already-in-use') showToast(t('msgUserExists'), "error");
+                else showToast(t('msgError'), "error");
+            } finally { btn.disabled = false; }
         });
 
-        // Admin: Issue Logic - SMART AUTOFILL
+        // Issue Logic
         document.getElementById('issue-phone').addEventListener('keyup', (e) => {
             const phoneVal = e.target.value;
             const nameInput = document.getElementById('issue-name');
             const badge = document.getElementById('issue-user-badge');
             
             if(phoneVal.length >= 4) {
-                // Find matching user
                 const matchedUser = allUsers.find(u => u.phone === phoneVal);
                 if(matchedUser) {
-                    nameInput.value = matchedUser.name;
-                    nameInput.readOnly = true;
-                    nameInput.classList.add('bg-green-50');
+                    nameInput.value = matchedUser.name; nameInput.readOnly = true;
+                    nameInput.classList.add('bg-green-50/50', 'dark:bg-green-900/20', 'border-green-300', 'dark:border-green-700');
                     badge.classList.remove('hidden');
                 } else {
-                    nameInput.value = '';
-                    nameInput.readOnly = false;
-                    nameInput.classList.remove('bg-green-50');
+                    nameInput.value = ''; nameInput.readOnly = false;
+                    nameInput.classList.remove('bg-green-50/50', 'dark:bg-green-900/20', 'border-green-300', 'dark:border-green-700');
                     badge.classList.add('hidden');
                 }
             } else {
-                nameInput.value = '';
-                nameInput.readOnly = false;
-                nameInput.classList.remove('bg-green-50');
+                nameInput.value = ''; nameInput.readOnly = false;
+                nameInput.classList.remove('bg-green-50/50', 'dark:bg-green-900/20', 'border-green-300', 'dark:border-green-700');
                 badge.classList.add('hidden');
             }
         });
@@ -720,20 +830,15 @@
         const populateIssueBookSelect = () => {
             const select = document.getElementById('issue-book-select');
             select.innerHTML = '';
-            // Only show Available books
-            const available = allBooks.filter(b => b.status === 'Available');
-            available.forEach(b => {
+            allBooks.filter(b => b.status === 'Available').forEach(b => {
                 const opt = document.createElement('option');
-                opt.value = b.id;
-                opt.text = `${b.id} - ${b.title}`;
+                opt.value = b.id; opt.text = `${b.id} - ${b.title}`;
+                opt.className = "py-2 px-3 hover:bg-indigo-50 dark:hover:bg-gray-700 cursor-pointer rounded";
                 select.appendChild(opt);
             });
         };
 
-        // UI trick for searchable select
-        document.getElementById('issue-book-search').addEventListener('focus', () => {
-            document.getElementById('issue-book-select').classList.remove('hidden');
-        });
+        document.getElementById('issue-book-search').addEventListener('focus', () => document.getElementById('issue-book-select').classList.remove('hidden'));
         document.getElementById('issue-book-search').addEventListener('input', (e) => {
             const val = e.target.value.toLowerCase();
             const select = document.getElementById('issue-book-select');
@@ -742,15 +847,20 @@
                 opt.style.display = opt.text.toLowerCase().includes(val) ? 'block' : 'none';
             });
         });
-        document.getElementById('issue-book-select').addEventListener('change', (e) => {
-            const id = e.target.value;
-            const text = e.target.options[e.target.selectedIndex].text;
-            document.getElementById('issue-book-search').value = text;
-            document.getElementById('issue-book-id').value = id;
-            e.target.classList.add('hidden');
+        document.getElementById('issue-book-select').addEventListener('click', (e) => { // Changed to click for custom styling options
+            if(e.target.tagName === 'OPTION') {
+                document.getElementById('issue-book-search').value = e.target.text;
+                document.getElementById('issue-book-id').value = e.target.value;
+                document.getElementById('issue-book-select').classList.add('hidden');
+            }
+        });
+        // Hide select on outside click
+        document.addEventListener('click', (e) => {
+            if(!e.target.closest('#issue-book-search') && !e.target.closest('#issue-book-select')) {
+                document.getElementById('issue-book-select').classList.add('hidden');
+            }
         });
 
-        // Submit Issue
         document.getElementById('issue-book-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = e.target.querySelector('button');
@@ -758,96 +868,68 @@
             const name = document.getElementById('issue-name').value.trim();
             const bookId = document.getElementById('issue-book-id').value;
 
-            if(!bookId) { showToast("ദയവായി ഒരു പുസ്തകം തിരഞ്ഞെടുക്കുക", "error"); return; }
-            
+            if(!bookId) { showToast(t('msgSelectBook'), "error"); return; }
             btn.disabled = true;
             try {
                 const bookInfo = allBooks.find(b => b.id === bookId);
-                
-                // Create Transaction Document
                 await addDoc(collection(db, "transactions"), {
-                    bookId: bookId,
-                    bookTitle: bookInfo.title,
-                    userPhone: phone,
-                    userName: name,
-                    issueDate: serverTimestamp(),
-                    returnDate: null,
-                    status: "Active"
+                    bookId, bookTitle: bookInfo.title, userPhone: phone, userName: name,
+                    issueDate: serverTimestamp(), returnDate: null, status: "Active"
                 });
-
-                // Update Book Status
                 await updateDoc(doc(db, "books", bookId), { status: "Issued" });
-
-                showToast("പുസ്തകം വിജയകരമായി ഇഷ്യൂ ചെയ്തു");
+                
+                showToast(t('msgIssued'));
                 e.target.reset();
                 document.getElementById('issue-user-badge').classList.add('hidden');
                 document.getElementById('issue-name').readOnly = false;
-                document.getElementById('issue-name').classList.remove('bg-green-50');
+                document.getElementById('issue-name').classList.remove('bg-green-50/50', 'dark:bg-green-900/20', 'border-green-300', 'dark:border-green-700');
                 document.getElementById('issue-book-id').value = '';
-                populateIssueBookSelect(); // refresh list
-                
-            } catch(err) {
-                console.error(err);
-                showToast("Error processing issue", "error");
-            } finally { btn.disabled = false; }
+                populateIssueBookSelect();
+            } catch(err) { showToast(t('msgError'), "error"); } 
+            finally { btn.disabled = false; }
         });
 
-        // Admin: Return Book
         window.returnBook = async (transactionId, bookId) => {
             try {
-                // Update Transaction
-                await updateDoc(doc(db, "transactions", transactionId), {
-                    status: "Returned",
-                    returnDate: serverTimestamp()
-                });
-                // Update Book Status
+                await updateDoc(doc(db, "transactions", transactionId), { status: "Returned", returnDate: serverTimestamp() });
                 await updateDoc(doc(db, "books", bookId), { status: "Available" });
-                
-                showToast("പുസ്തകം മടക്കി നൽകൽ പൂർത്തിയായി");
+                showToast(t('msgReturned'));
                 populateIssueBookSelect();
-            } catch(e) {
-                showToast("Error: " + e.message, "error");
-            }
+            } catch(e) { showToast(t('msgError'), "error"); }
         };
 
-
-        // --- Reader Portal Functions ---
+        // --- Reader Portal ---
         const setupReaderListeners = (userPhone) => {
-            // Fetch Transactions for this user
             const q = query(collection(db, "transactions"), where("userPhone", "==", userPhone));
             onSnapshot(q, (snapshot) => {
                 const ul = document.getElementById('reader-history-list');
-                ul.innerHTML = '';
-                let count = 0;
+                ul.innerHTML = ''; let count = 0;
                 
                 if(snapshot.empty) {
                     document.getElementById('reader-no-history').classList.remove('hidden');
                 } else {
                     document.getElementById('reader-no-history').classList.add('hidden');
-                    // Sort locally since we shouldn't use complex queries without index
                     let history = [];
                     snapshot.forEach(doc => history.push({id: doc.id, ...doc.data()}));
-                    history.sort((a,b) => (b.issueDate?.seconds || 0) - (a.issueDate?.seconds || 0)); // Descending
+                    history.sort((a,b) => (b.issueDate?.seconds || 0) - (a.issueDate?.seconds || 0));
 
-                    history.forEach(t => {
+                    history.forEach(tData => {
                         count++;
-                        const isReturned = t.status === 'Returned';
+                        const isReturned = tData.status === 'Returned';
                         const statusBadge = isReturned 
-                            ? `<span class="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded font-bold">മടക്കി നൽകി</span>`
-                            : `<span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded border border-yellow-300 font-bold animate-pulse">കയ്യിലുണ്ട്</span>`;
-                        
-                        const returnInfo = isReturned ? `<p class="text-xs text-gray-500 mt-1">മടക്കി നൽകിയത്: ${formatDate(t.returnDate)}</p>` : '';
+                            ? `<span class="bg-gray-100 text-gray-600 dark:bg-gray-700/50 dark:text-gray-300 text-xs px-3 py-1 rounded-lg font-black border border-gray-200 dark:border-gray-600">Returned</span>`
+                            : `<span class="bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300 text-xs px-3 py-1 rounded-lg border border-amber-300 dark:border-amber-700 font-black animate-pulse flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Live</span>`;
                         
                         const li = document.createElement('li');
-                        li.className = `px-4 py-4 sm:px-6 hover:bg-gray-50 transition ${!isReturned ? 'border-l-4 border-yellow-400' : ''}`;
+                        li.className = `p-5 bg-white/50 dark:bg-gray-800/50 rounded-2xl border ${!isReturned ? 'border-amber-300 dark:border-amber-600 shadow-md' : 'border-gray-100 dark:border-gray-700'} transition-all`;
                         li.innerHTML = `
-                            <div class="flex items-center justify-between">
+                            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                                 <div class="flex-1">
-                                    <h4 class="text-sm font-bold text-indigo-600 truncate">${t.bookTitle} <span class="text-gray-400 font-normal ml-1">(${t.bookId})</span></h4>
-                                    <p class="text-xs text-gray-500 mt-1">എടുത്ത തിയ്യതി: <span class="font-semibold text-gray-700">${formatDate(t.issueDate)}</span></p>
-                                    ${returnInfo}
+                                    <h4 class="text-base font-black text-indigo-700 dark:text-indigo-400">${tData.bookTitle} <span class="text-gray-400 dark:text-gray-500 font-medium text-xs ms-1">(${tData.bookId})</span></h4>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-2 font-medium">Issued: <span class="font-bold text-gray-800 dark:text-gray-200">${formatDate(tData.issueDate)}</span></p>
+                                    ${isReturned ? `<p class="text-xs text-green-600 dark:text-green-400 mt-1 font-bold">Returned: ${formatDate(tData.returnDate)}</p>` : ''}
                                 </div>
-                                <div class="ml-4 flex-shrink-0 flex flex-col items-end gap-2">
+                                <div class="flex-shrink-0 w-full sm:w-auto flex justify-end">
                                     ${statusBadge}
                                 </div>
                             </div>
@@ -856,20 +938,8 @@
                     });
                 }
                 document.getElementById('reader-total-books').innerText = count;
-            }, (error) => {
-                console.error("Reader history error:", error);
-                showToast("ഡാറ്റ ലോഡ് ചെയ്യാൻ സാധിച്ചില്ല", "error");
-            });
+            }, (error) => { showToast(t('msgError'), "error"); });
         };
-
-        // Set Default Admin if DB is empty (Optional Developer Snippet)
-        /* setTimeout(() => {
-            if(allUsers.length === 0 && !currentUserData) {
-               console.log("No users found. Admin should run script to create first master admin.");
-            }
-        }, 3000);
-        */
-
     </script>
 </body>
 </html>
