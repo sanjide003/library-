@@ -105,7 +105,7 @@
     <!-- Main Content Area -->
     <main class="flex-grow w-full mx-auto overflow-y-auto relative flex flex-col">
         
-        <!-- 1. PUBLIC VIEW (Search & Grid) -->
+        <!-- 1. PUBLIC VIEW (Search, Filters & Grid) -->
         <div id="public-view" class="view-section fade-in flex-grow flex flex-col">
             <!-- Hero Search Section -->
             <div class="w-full px-4 sm:px-6 lg:px-8 py-10 pb-6 shrink-0">
@@ -114,7 +114,7 @@
                     <p class="max-w-2xl mx-auto text-lg text-gray-600 dark:text-gray-400 font-medium" data-i18n="searchSubtitle">Find available books and their shelf numbers here</p>
                 </div>
                 
-                <div class="w-full lg:w-2/3 mx-auto">
+                <div class="w-full lg:w-3/4 mx-auto mb-6">
                     <div class="relative group">
                         <div class="absolute inset-y-0 start-0 ps-5 flex items-center pointer-events-none">
                             <svg class="w-6 h-6 text-indigo-400 group-focus-within:text-indigo-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
@@ -122,10 +122,32 @@
                         <input type="text" id="public-search-input" data-i18n-placeholder="searchPlaceholder" placeholder="Book name, author or category..." class="w-full ps-14 pe-6 py-4 rounded-2xl glass-panel text-lg text-gray-800 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/30 transition-all shadow-xl dark:shadow-none placeholder-gray-400 dark:placeholder-gray-500 font-medium">
                     </div>
                 </div>
+
+                <!-- Filters -->
+                <div class="w-full lg:w-3/4 mx-auto flex flex-wrap gap-4 items-center justify-center bg-white/30 dark:bg-gray-800/30 p-4 rounded-2xl border border-white/40 dark:border-gray-700/50 shadow-sm">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+                        <span class="text-sm font-bold text-gray-600 dark:text-gray-300">Filters:</span>
+                    </div>
+                    <select id="filter-category" class="bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="">All Categories</option>
+                        <!-- Injected dynamically -->
+                    </select>
+                    <select id="filter-status" class="bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="">All Statuses</option>
+                        <option value="Available" data-i18n="statusAvailable">Available</option>
+                        <option value="Issued" data-i18n="statusIssued">Issued</option>
+                    </select>
+                    <select id="filter-language" class="bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="">All Languages</option>
+                        <!-- Injected dynamically -->
+                    </select>
+                    <button onclick="clearFilters()" class="text-sm text-red-500 hover:text-red-700 font-bold px-3 py-2 bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-100 dark:border-red-800/50 transition-colors">Clear All</button>
+                </div>
             </div>
 
             <!-- Books Grid Layout -->
-            <div class="w-full px-4 sm:px-6 lg:px-8 pb-12 flex-grow">
+            <div class="w-full px-4 sm:px-6 lg:px-8 pb-12 flex-grow flex flex-col">
                 <!-- Loading Indicator -->
                 <div id="public-loading" class="text-center py-20 hidden flex flex-col items-center">
                     <svg class="animate-spin h-10 w-10 text-indigo-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
@@ -139,8 +161,15 @@
                 </div>
 
                 <!-- E-commerce Grid -->
-                <div id="public-books-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6">
+                <div id="public-books-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 gap-4 sm:gap-6">
                     <!-- Cards dynamically injected here -->
+                </div>
+
+                <!-- Pagination Controls -->
+                <div id="pagination-controls" class="mt-10 flex justify-center items-center gap-4 hidden">
+                    <button id="btn-prev-page" onclick="prevPage()" class="px-5 py-2.5 bg-white/60 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-600 rounded-xl text-sm font-bold text-gray-700 dark:text-gray-200 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Previous</button>
+                    <span class="text-sm font-bold text-gray-600 dark:text-gray-400 bg-white/40 dark:bg-gray-800/40 px-4 py-2.5 rounded-xl border border-gray-100 dark:border-gray-700">Page <span id="current-page-display">1</span> of <span id="total-pages-display">1</span></span>
+                    <button id="btn-next-page" onclick="nextPage()" class="px-5 py-2.5 bg-indigo-600 text-white border border-transparent rounded-xl text-sm font-bold hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md">Next</button>
                 </div>
             </div>
         </div>
@@ -205,7 +234,7 @@
             </div>
         </div>
 
-        <!-- Global Footer -->
+        <!-- Global Footer (Fixed at bottom when content is less due to flex layout) -->
         <footer class="mt-auto glass-panel border-t border-white/20 dark:border-gray-700/50 py-8 shrink-0">
             <div class="w-full mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
                 <div class="text-center md:text-start">
@@ -244,7 +273,10 @@
             document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr'); document.documentElement.setAttribute('lang', lang);
             document.querySelectorAll('[data-i18n]').forEach(el => el.innerText = i18n[lang][el.getAttribute('data-i18n')]);
             document.querySelectorAll('[data-i18n-placeholder]').forEach(el => el.setAttribute('placeholder', i18n[lang][el.getAttribute('data-i18n-placeholder')]));
-            renderPublicBooks();
+            
+            // Re-render filters when language changes
+            populateFilters();
+            filterAndPaginateBooks();
         };
 
         applyTheme(); window.onload = () => changeLanguage(currentLang);
@@ -253,7 +285,7 @@
         window.navigate = (viewId) => {
             ['public-view', 'book-details-page'].forEach(v => document.getElementById(v).classList.add('hidden-tab'));
             document.getElementById(viewId).classList.remove('hidden-tab');
-            if (viewId === 'public-view') renderPublicBooks();
+            if (viewId === 'public-view') filterAndPaginateBooks();
             window.scrollTo(0,0);
         };
 
@@ -300,63 +332,141 @@
             let username = loginInput;
 
             try {
-                // If input is purely numbers and looks like a phone number, query the DB to get the actual username
                 if (/^\d{4,}$/.test(loginInput)) {
-                    // Requires Firestore Rule to allow read on users collection (we updated this in the rules)
                     const userQ = query(collection(db, "users"), where("phone", "==", loginInput));
                     const userSnap = await getDocs(userQ);
-                    if (!userSnap.empty) {
-                        username = userSnap.docs[0].data().username;
-                    } else {
-                        throw new Error("Phone number not registered.");
-                    }
+                    if (!userSnap.empty) username = userSnap.docs[0].data().username;
+                    else throw new Error("Phone number not registered.");
                 }
 
                 const pseudoEmail = `${username}@noorulislam.local`;
                 await signInWithEmailAndPassword(auth, pseudoEmail, password);
-                // Auth listener will catch this and redirect automatically
             } catch (error) {
                 showToast(t('msgLoginFail'), "error");
                 btn.disabled = false; btn.style.opacity = '1';
             }
         });
 
-        // --- Public Book View Logic (E-Commerce Cards) ---
+        // --- Public Book View Logic (E-Commerce Cards, Filtering, Pagination) ---
         let allBooks = [];
+        let filteredBooks = [];
+        let currentPage = 1;
+        const itemsPerPage = 10;
+
         const fetchPublicBooks = () => {
             document.getElementById('public-loading').classList.remove('hidden');
             const q = query(collection(db, "books"));
             onSnapshot(q, (snapshot) => {
                 allBooks = [];
                 snapshot.forEach(doc => allBooks.push({ id: doc.id, ...doc.data() }));
-                renderPublicBooks();
+                populateFilters();
+                filterAndPaginateBooks();
                 document.getElementById('public-loading').classList.add('hidden');
             }, (error) => { console.error(error); });
         };
         fetchPublicBooks();
 
-        window.renderPublicBooks = () => {
+        // 1. Filter Logic
+        const populateFilters = () => {
+            const categories = new Set();
+            const languages = new Set();
+            
+            allBooks.forEach(b => {
+                if(b.category) categories.add(b.category);
+                if(b.language) languages.add(b.language);
+            });
+
+            const catSelect = document.getElementById('filter-category');
+            catSelect.innerHTML = '<option value="">All Categories</option>';
+            Array.from(categories).sort().forEach(c => catSelect.innerHTML += `<option value="${c}">${c}</option>`);
+
+            const langSelect = document.getElementById('filter-language');
+            langSelect.innerHTML = '<option value="">All Languages</option>';
+            Array.from(languages).sort().forEach(l => langSelect.innerHTML += `<option value="${l}">${l}</option>`);
+        };
+
+        window.clearFilters = () => {
+            document.getElementById('public-search-input').value = '';
+            document.getElementById('filter-category').value = '';
+            document.getElementById('filter-status').value = '';
+            document.getElementById('filter-language').value = '';
+            currentPage = 1;
+            filterAndPaginateBooks();
+        };
+
+        const applyFilters = () => {
             const searchTerm = document.getElementById('public-search-input').value.toLowerCase();
+            const catFilter = document.getElementById('filter-category').value;
+            const statusFilter = document.getElementById('filter-status').value;
+            const langFilter = document.getElementById('filter-language').value;
+
+            filteredBooks = allBooks.filter(b => {
+                const matchSearch = b.title.toLowerCase().includes(searchTerm) || (b.author && b.author.toLowerCase().includes(searchTerm));
+                const matchCat = catFilter === '' || b.category === catFilter;
+                const matchStatus = statusFilter === '' || b.status === statusFilter;
+                const matchLang = langFilter === '' || b.language === langFilter;
+                
+                return matchSearch && matchCat && matchStatus && matchLang;
+            });
+        };
+
+        // 2. Pagination Logic
+        window.filterAndPaginateBooks = () => {
+            applyFilters();
+            
+            const totalPages = Math.ceil(filteredBooks.length / itemsPerPage) || 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const booksToShow = filteredBooks.slice(startIndex, endIndex);
+
+            renderBooksGrid(booksToShow);
+            updatePaginationControls(totalPages);
+        };
+
+        window.prevPage = () => { if (currentPage > 1) { currentPage--; filterAndPaginateBooks(); } };
+        window.nextPage = () => { 
+            const totalPages = Math.ceil(filteredBooks.length / itemsPerPage);
+            if (currentPage < totalPages) { currentPage++; filterAndPaginateBooks(); } 
+        };
+
+        const updatePaginationControls = (totalPages) => {
+            const controls = document.getElementById('pagination-controls');
+            if (filteredBooks.length === 0) {
+                controls.classList.add('hidden');
+                return;
+            }
+            
+            controls.classList.remove('hidden');
+            document.getElementById('current-page-display').innerText = currentPage;
+            document.getElementById('total-pages-display').innerText = totalPages;
+
+            document.getElementById('btn-prev-page').disabled = currentPage === 1;
+            document.getElementById('btn-next-page').disabled = currentPage === totalPages;
+        };
+
+        // Attach listeners
+        document.getElementById('public-search-input').addEventListener('input', () => { currentPage = 1; filterAndPaginateBooks(); });
+        document.getElementById('filter-category').addEventListener('change', () => { currentPage = 1; filterAndPaginateBooks(); });
+        document.getElementById('filter-status').addEventListener('change', () => { currentPage = 1; filterAndPaginateBooks(); });
+        document.getElementById('filter-language').addEventListener('change', () => { currentPage = 1; filterAndPaginateBooks(); });
+
+        // 3. Render Grid
+        const renderBooksGrid = (books) => {
             const grid = document.getElementById('public-books-grid');
             const noRes = document.getElementById('public-no-results');
             grid.innerHTML = '';
             
-            const filtered = allBooks.filter(b => 
-                b.title.toLowerCase().includes(searchTerm) || 
-                (b.author && b.author.toLowerCase().includes(searchTerm)) || 
-                (b.category && b.category.toLowerCase().includes(searchTerm))
-            );
-
-            if(filtered.length === 0 && allBooks.length > 0) {
+            if(books.length === 0 && allBooks.length > 0) {
                 noRes.classList.remove('hidden');
             } else {
                 noRes.classList.add('hidden');
-                filtered.forEach(b => {
+                books.forEach(b => {
                     const isAvailable = b.status === 'Available';
                     const statusClass = isAvailable ? 'bg-green-500 text-white' : 'bg-red-500 text-white';
                     const statusText = isAvailable ? t('statusAvailable') : t('statusIssued');
                     
-                    // Image Carousel Logic for the Card
                     const photos = [b.photo1, b.photo2, b.photo3].filter(Boolean);
                     let carouselHtml = '';
                     if (photos.length > 0) {
@@ -399,17 +509,13 @@
             }
         };
 
-        document.getElementById('public-search-input').addEventListener('input', renderPublicBooks);
-
         // --- FULL PAGE BOOK DETAILS & SUGGESTIONS ---
         window.openBookPage = (bookId) => {
             const b = allBooks.find(book => book.id === bookId);
             if(!b) return;
 
-            // Switch views
             navigate('book-details-page');
 
-            // Populate Details
             document.getElementById('bp-title').innerText = b.title;
             document.getElementById('bp-author').innerText = b.author || 'Unknown Author';
             document.getElementById('bp-category').innerText = b.category || 'General';
@@ -427,7 +533,6 @@
             statusBadge.innerText = b.status === 'Available' ? t('statusAvailable') : t('statusIssued');
             statusBadge.className = `text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-lg border ${b.status === 'Available' ? 'bg-green-100 text-green-800 border-green-300 dark:bg-green-900/40 dark:text-green-300 dark:border-green-800' : 'bg-red-100 text-red-800 border-red-300 dark:bg-red-900/40 dark:text-red-300 dark:border-red-800'}`;
 
-            // Images Carousel
             const photosContainer = document.getElementById('bp-images');
             const images = [b.photo1, b.photo2, b.photo3].filter(Boolean);
             if(images.length > 0) {
@@ -451,16 +556,14 @@
             const container = document.getElementById('bp-suggestions-container');
             container.innerHTML = '';
 
-            // Group books by category
             const categories = {};
             allBooks.forEach(bk => {
-                if(bk.id === currentBook.id) return; // Skip current book
+                if(bk.id === currentBook.id) return;
                 const cat = bk.category || 'General';
                 if(!categories[cat]) categories[cat] = [];
                 categories[cat].push(bk);
             });
 
-            // Priority 1: Same category
             const currentCat = currentBook.category || 'General';
             let rowCount = 0;
 
@@ -469,10 +572,9 @@
                 rowCount++;
             }
 
-            // Priority 2: Other random categories
             for(const [cat, books] of Object.entries(categories)) {
                 if(cat === currentCat) continue;
-                if(books.length > 0 && rowCount < 4) { // Limit to 4 suggestion rows total
+                if(books.length > 0 && rowCount < 4) {
                     container.appendChild(createSuggestionRow(`Explore ${cat}`, books));
                     rowCount++;
                 }
@@ -522,9 +624,3 @@
     </script>
 </body>
 </html>
-```
-
-### പ്രധാന ശ്രദ്ധയ്ക്ക്: ഫയർബേസ് റൂൾ അപ്ഡേറ്റ്
-ഇത് ശരിയായി വർക്ക് ചെയ്യണമെങ്കിൽ മുൻപ് മെസ്സേജിൽ ഞാൻ നൽകിയ ഏറ്റവും പുതിയ ഫയർബേസ് റൂൾ (അതായത് `match /users/{userId}` എന്ന ഭാഗം) നിങ്ങൾ ഫയർബേസിൽ അപ്ഡേറ്റ് ചെയ്തിരിക്കണം. ഫോൺ നമ്പർ വെച്ച് ലോഗിൻ ചെയ്യാൻ സിസ്റ്റത്തിന് ഡാറ്റാബേസിൽ നിന്ന് യൂസർനെയിം കണ്ടുപിടിക്കേണ്ടത് ഉള്ളതുകൊണ്ടാണ് ആ റൂൾ മാറ്റി നൽകിയത്.
-
-ഇത് ടെസ്റ്റ് ചെയ്ത് നോക്കുക. നിങ്ങളുടെ വെബ്സൈറ്റ് ഇപ്പോൾ പൂർണ്ണമായും ഒരു പ്രീമിയം ഷോപ്പിംഗ് സൈറ്റ് ലേഔട്ടിലേക്ക് മാറിയിട്ടുണ്ടാകും!
