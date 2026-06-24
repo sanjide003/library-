@@ -35,7 +35,7 @@
 </head>
 <body class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-indigo-950 dark:to-gray-900 text-gray-800 dark:text-gray-100 antialiased h-screen flex flex-col overflow-hidden">
 
-    <!-- Loading Overlay (Visible until Auth completes) -->
+    <!-- Loading Overlay -->
     <div id="auth-loading" class="fixed inset-0 z-[100] bg-white dark:bg-gray-900 flex flex-col items-center justify-center">
         <svg class="animate-spin h-12 w-12 text-indigo-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
         <p class="text-indigo-800 dark:text-indigo-300 font-bold text-lg">Authenticating...</p>
@@ -49,11 +49,13 @@
                     <button onclick="toggleSidebar()" class="p-2 rounded-xl text-gray-700 dark:text-gray-200 hover:bg-white/50 dark:hover:bg-gray-800/50 transition">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                     </button>
-                    <div class="flex items-center">
-                        <div class="bg-indigo-600 p-2 rounded-xl text-white shadow-lg shadow-indigo-500/30 hidden sm:block">
+                    <!-- Global Brand Logo & Title -->
+                    <div class="flex items-center cursor-pointer group" onclick="navigate('public-view')">
+                        <img id="brand-logo-img" src="" class="w-10 h-10 rounded-xl object-cover shadow-lg hidden" alt="Logo">
+                        <div id="brand-logo-icon" class="bg-indigo-600 p-2 rounded-xl text-white shadow-lg shadow-indigo-500/30 hidden sm:block">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                         </div>
-                        <span class="font-extrabold text-xl sm:text-2xl tracking-wide ms-2 sm:ms-3 text-indigo-900 dark:text-white drop-shadow-sm" data-i18n="appTitle">Library Register</span>
+                        <span id="brand-title" class="font-extrabold text-xl sm:text-2xl tracking-wide ms-2 sm:ms-3 text-indigo-900 dark:text-white drop-shadow-sm" data-i18n="appTitle">Library Register</span>
                     </div>
                 </div>
                 
@@ -85,7 +87,7 @@
         </div>
         
         <div class="p-4 flex flex-col gap-2 flex-grow overflow-y-auto">
-            <a href="public.html" class="flex items-center gap-3 w-full text-start px-4 py-3 rounded-xl hover:bg-indigo-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 font-bold transition">
+            <a href="index.html" class="flex items-center gap-3 w-full text-start px-4 py-3 rounded-xl hover:bg-indigo-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 font-bold transition">
                 <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                 <span data-i18n="navHome">Home (Search)</span>
             </a>
@@ -119,6 +121,10 @@
                 <button onclick="navigate('admin-users-view')" class="flex items-center gap-3 w-full text-start px-4 py-3 rounded-xl hover:bg-amber-50 dark:hover:bg-amber-900/20 text-gray-700 dark:text-gray-200 font-bold transition">
                     <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                     <span data-i18n="navUsers">Users</span>
+                </button>
+                <button onclick="navigate('admin-settings-view')" class="flex items-center gap-3 w-full text-start px-4 py-3 rounded-xl hover:bg-amber-50 dark:hover:bg-amber-900/20 text-gray-700 dark:text-gray-200 font-bold transition">
+                    <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <span>Settings</span>
                 </button>
             </div>
 
@@ -297,19 +303,19 @@
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-4 bg-white/20 dark:bg-gray-800/20">
                                     <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Photo 1 (Front Cover)</label>
-                                    <input type="file" id="b-photo1" accept=".jpg, .jpeg, .png" onchange="handleBookImageUpload(event, 'b-photo1-base64', 'b-photo1-preview', 'Photo 1')" class="text-sm w-full text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
+                                    <input type="file" id="b-photo1" accept=".jpg, .jpeg, .png" onchange="handleImageUpload(event, 'b-photo1-base64', 'b-photo1-preview', 'Photo 1')" class="text-sm w-full text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
                                     <input type="hidden" id="b-photo1-base64">
                                     <div id="b-photo1-preview" class="mt-4"></div>
                                 </div>
                                 <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-4 bg-white/20 dark:bg-gray-800/20">
                                     <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Photo 2</label>
-                                    <input type="file" id="b-photo2" accept=".jpg, .jpeg, .png" onchange="handleBookImageUpload(event, 'b-photo2-base64', 'b-photo2-preview', 'Photo 2')" class="text-sm w-full text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
+                                    <input type="file" id="b-photo2" accept=".jpg, .jpeg, .png" onchange="handleImageUpload(event, 'b-photo2-base64', 'b-photo2-preview', 'Photo 2')" class="text-sm w-full text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
                                     <input type="hidden" id="b-photo2-base64">
                                     <div id="b-photo2-preview" class="mt-4"></div>
                                 </div>
                                 <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-4 bg-white/20 dark:bg-gray-800/20">
                                     <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Photo 3</label>
-                                    <input type="file" id="b-photo3" accept=".jpg, .jpeg, .png" onchange="handleBookImageUpload(event, 'b-photo3-base64', 'b-photo3-preview', 'Photo 3')" class="text-sm w-full text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
+                                    <input type="file" id="b-photo3" accept=".jpg, .jpeg, .png" onchange="handleImageUpload(event, 'b-photo3-base64', 'b-photo3-preview', 'Photo 3')" class="text-sm w-full text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
                                     <input type="hidden" id="b-photo3-base64">
                                     <div id="b-photo3-preview" class="mt-4"></div>
                                 </div>
@@ -421,18 +427,15 @@
         <!-- 5. Admin View: Bulk Import -->
         <div id="admin-bulk-view" class="view-section hidden-tab fade-in h-full flex flex-col items-center">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 h-full w-full max-w-6xl">
-                <!-- Instructions & Upload -->
                 <div class="glass-panel p-8 md:p-10 rounded-3xl border-t-4 border-t-indigo-500 flex flex-col shadow-2xl h-[calc(100vh-100px)]">
                     <h3 class="text-3xl font-black mb-4 text-indigo-700 dark:text-indigo-400" data-i18n="bulkTitle">Bulk Import Books (CSV)</h3>
                     <p class="text-base text-gray-600 dark:text-gray-400 mb-8 leading-relaxed" data-i18n="bulkDesc">Upload an Excel (.csv) file to add multiple books at once. Make sure your file matches the template structure exactly. Existing Book IDs will be skipped to prevent duplicates.</p>
-                    
                     <div class="mb-8">
                         <button onclick="downloadCSVTemplate()" class="inline-flex items-center gap-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 px-5 py-3 rounded-xl font-bold transition-colors text-sm shadow-sm">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                             <span data-i18n="btnTemplate">Download CSV Template</span>
                         </button>
                     </div>
-
                     <div class="bg-gray-50/50 dark:bg-gray-800/50 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-10 text-center flex-grow flex flex-col items-center justify-center transition-colors cursor-pointer hover:bg-white/50 dark:hover:bg-gray-700/50" id="drop-zone" onclick="document.getElementById('csv-file-input').click()">
                         <div class="bg-indigo-100 dark:bg-indigo-900/50 p-4 rounded-full mb-4">
                             <svg class="w-10 h-10 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
@@ -443,7 +446,6 @@
                     </div>
                 </div>
 
-                <!-- Preview & Process -->
                 <div class="glass-panel p-8 rounded-3xl flex flex-col h-[calc(100vh-100px)] overflow-hidden relative shadow-2xl">
                     <div class="flex justify-between items-center mb-6 shrink-0">
                         <h3 class="text-2xl font-black text-gray-800 dark:text-white" data-i18n="previewTitle">Data Preview</h3>
@@ -476,7 +478,6 @@
         <!-- 6. Admin View: Issue / Return -->
         <div id="admin-issue-view" class="view-section hidden-tab fade-in h-full flex flex-col items-center">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 h-full w-full max-w-6xl">
-                <!-- Issue Form -->
                 <div class="glass-panel p-8 md:p-10 rounded-3xl border-t-4 border-t-indigo-500 flex flex-col justify-center shadow-2xl h-[calc(100vh-100px)]">
                     <h3 class="text-3xl font-black mb-8 text-indigo-700 dark:text-indigo-400" data-i18n="issueBookTitle">Issue Book</h3>
                     <form id="issue-book-form" class="space-y-6">
@@ -495,7 +496,6 @@
                             <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2" data-i18n="selectBookLbl">Select Book (Search by ID or Title)</label>
                             <input type="text" id="issue-book-search" autocomplete="off" data-i18n-placeholder="searchPlaceholder" placeholder="Search..." class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3.5 focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white mb-1 text-start shadow-sm">
                             <select id="issue-book-select" required size="5" class="absolute z-10 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl shadow-2xl p-2 focus:ring-2 focus:ring-indigo-500 outline-none text-sm hidden dark:text-white mt-2 max-h-48 text-start">
-                                <!-- Options injected -->
                             </select>
                             <input type="hidden" id="issue-book-id">
                         </div>
@@ -503,7 +503,6 @@
                     </form>
                 </div>
 
-                <!-- Active Issues List -->
                 <div class="glass-panel p-8 rounded-3xl flex flex-col h-[calc(100vh-100px)] overflow-hidden shadow-2xl">
                     <div class="flex justify-between items-center mb-6 border-b border-gray-200/50 dark:border-gray-700/50 pb-4 shrink-0">
                         <h3 class="text-2xl font-black text-gray-800 dark:text-white" data-i18n="activeIssuesTitle">Active Issues</h3>
@@ -512,9 +511,7 @@
                         </span>
                     </div>
                     <div class="overflow-y-auto flex-grow pe-2">
-                        <ul id="active-issues-list" class="space-y-4 text-start">
-                            <!-- Transactions injected here -->
-                        </ul>
+                        <ul id="active-issues-list" class="space-y-4 text-start"></ul>
                         <div id="no-active-issues" class="text-center py-20 text-gray-500 dark:text-gray-400 hidden font-bold flex flex-col items-center justify-center h-full">
                             <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-full mb-4">
                                 <svg class="w-10 h-10 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
@@ -529,7 +526,6 @@
         <!-- 7. Admin View: Users -->
         <div id="admin-users-view" class="view-section hidden-tab fade-in h-full flex flex-col items-center">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 h-full w-full max-w-6xl">
-                <!-- Add User Form -->
                 <div class="glass-panel p-8 md:p-10 rounded-3xl lg:col-span-1 flex flex-col justify-center shadow-2xl h-fit lg:sticky lg:top-20">
                     <h3 class="text-2xl font-black mb-8 text-gray-800 dark:text-white flex items-center gap-2">
                         <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
@@ -552,7 +548,6 @@
                     </form>
                 </div>
                 
-                <!-- Users List -->
                 <div class="glass-panel rounded-3xl lg:col-span-2 overflow-hidden flex flex-col h-[calc(100vh-100px)] shadow-2xl">
                     <div class="p-6 border-b border-gray-200/50 dark:border-gray-700/50 bg-white/30 dark:bg-gray-800/30 shrink-0">
                         <h3 class="text-2xl font-black text-gray-800 dark:text-white flex items-center gap-2">
@@ -578,112 +573,69 @@
             </div>
         </div>
 
-        <!-- 8. Reader Dashboard View -->
-        <div id="reader-view" class="view-section hidden-tab fade-in h-full flex flex-col max-w-4xl mx-auto w-full pt-10">
-            <div class="glass-panel p-8 shadow-xl rounded-3xl mb-8 flex flex-col sm:flex-row justify-between items-center gap-6">
-                <div class="text-center sm:text-start">
-                    <h2 class="text-3xl font-black text-gray-900 dark:text-white flex items-center gap-2 justify-center sm:justify-start">
-                        <span data-i18n="greeting">Hello, </span> <span id="reader-welcome-name" class="text-indigo-600 dark:text-indigo-400"></span>
-                    </h2>
-                    <p class="text-gray-500 dark:text-gray-400 mt-2 font-medium" data-i18n="readerSubtitle">Your reading history is below.</p>
-                </div>
-                <div class="bg-indigo-600 text-white px-6 py-4 rounded-2xl text-center shadow-lg shadow-indigo-500/30 w-full sm:w-auto">
-                    <span class="block text-xs font-black uppercase tracking-wider mb-1 opacity-80" data-i18n="totalReadLbl">Total Read</span>
-                    <span class="block text-4xl font-black" id="reader-total-books">0</span>
-                </div>
-            </div>
-
-            <div class="glass-panel rounded-3xl overflow-hidden shadow-xl flex-grow flex flex-col">
-                <div class="px-6 py-5 border-b border-white/40 dark:border-gray-700/50 bg-white/30 dark:bg-gray-800/30">
-                    <h3 class="text-xl font-black text-gray-900 dark:text-white flex items-center gap-2">
-                        <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <span data-i18n="myHistoryTitle">My Books (History)</span>
-                    </h3>
-                </div>
-                <div class="overflow-y-auto p-4 flex-grow">
-                    <ul id="reader-history-list" class="space-y-3 text-start">
-                        <!-- History injected -->
-                    </ul>
-                    <div id="reader-no-history" class="text-center py-20 text-gray-500 dark:text-gray-400 hidden flex flex-col items-center">
-                        <svg class="w-16 h-16 mb-4 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                        <span class="text-lg font-bold" data-i18n="noHistoryFound">You haven't borrowed any books yet.</span>
+        <!-- 8. Admin View: Settings Tab -->
+        <div id="admin-settings-view" class="view-section hidden-tab fade-in h-full flex flex-col items-center">
+            <div class="glass-panel w-full max-w-3xl rounded-3xl flex flex-col overflow-y-auto h-[calc(100vh-100px)] shadow-2xl p-8 md:p-10">
+                <div class="flex items-center gap-3 border-b border-gray-200/50 dark:border-gray-700/50 pb-6 mb-6">
+                    <div class="bg-amber-100 dark:bg-amber-900/30 p-3 rounded-xl text-amber-600 dark:text-amber-400">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    </div>
+                    <div>
+                        <h2 class="text-3xl font-black text-gray-900 dark:text-white">Library Settings</h2>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Update global information, logos, and contact details.</p>
                     </div>
                 </div>
+
+                <form id="settings-form" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Library Name</label>
+                            <input type="text" id="s-name" placeholder="e.g. Central City Library" class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-gray-800 dark:text-white font-bold transition-shadow text-start">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Phone Number</label>
+                            <input type="tel" id="s-phone" placeholder="Contact Number" class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-gray-800 dark:text-white transition-shadow text-start">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Email Address</label>
+                        <input type="email" id="s-email" placeholder="library@example.com" class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-gray-800 dark:text-white transition-shadow text-start">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Short Description</label>
+                        <textarea id="s-desc" rows="3" placeholder="A short description about the library..." class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-gray-800 dark:text-white transition-shadow text-start"></textarea>
+                    </div>
+
+                    <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-6 bg-white/20 dark:bg-gray-800/20">
+                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Library Logo</label>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">Upload a square logo (JPG/PNG). Max 150KB.</p>
+                        <input type="file" id="s-logo-upload" accept=".jpg, .jpeg, .png" onchange="handleImageUpload(event, 's-logo-base64', 's-logo-preview', 'Logo')" class="text-sm w-full text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
+                        <input type="hidden" id="s-logo-base64">
+                        <div id="s-logo-preview" class="mt-4 flex"></div>
+                    </div>
+
+                    <div class="pt-4">
+                        <button type="submit" id="btn-save-settings" class="w-full flex justify-center items-center gap-2 py-4 px-4 rounded-xl shadow-lg text-base font-black text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none transition-all transform hover:-translate-y-0.5">
+                            <svg class="w-5 h-5 hidden animate-spin" id="settings-spinner" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                            <span id="settings-btn-text">Save Settings</span>
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
 
     </main>
 
-    <!-- Full Book Details Modal (View Only) -->
-    <div id="book-details-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-gray-900/80 backdrop-blur-md transition-opacity" onclick="closeBookDetailsModal()"></div>
-        <div class="relative glass-panel w-full max-w-2xl max-h-[90vh] flex flex-col rounded-3xl shadow-2xl border border-white/40 dark:border-gray-600 fade-in">
-            <button onclick="closeBookDetailsModal()" class="absolute top-4 end-4 p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition z-10 focus:outline-none">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-            <div class="p-6 border-b border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 rounded-t-3xl shrink-0">
-                <div class="flex items-start gap-4">
-                    <div class="bg-indigo-100 dark:bg-indigo-900/50 p-3 rounded-xl text-indigo-600 dark:text-indigo-400">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                    </div>
-                    <div>
-                        <h2 class="text-2xl font-black text-gray-900 dark:text-white" id="modal-b-title">Book Title</h2>
-                        <p class="text-indigo-600 dark:text-indigo-400 font-bold" id="modal-b-author">Author Name</p>
-                    </div>
-                </div>
-            </div>
-            <div class="p-6 overflow-y-auto flex-grow text-start">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div class="space-y-3">
-                        <h4 class="font-bold text-gray-800 dark:text-gray-200 border-b border-gray-200 dark:border-gray-700 pb-1">Identity & Location</h4>
-                        <div class="grid grid-cols-2 gap-x-2 gap-y-3 text-sm">
-                            <span class="text-gray-500">Accession No:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-id">-</span>
-                            <span class="text-gray-500">Call No:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-callno">-</span>
-                            <span class="text-gray-500">Shelf No:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-shelf">-</span>
-                            <span class="text-gray-500">Section:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-section">-</span>
-                            <span class="text-gray-500">Status:</span> <span class="font-bold px-2 py-0.5 rounded text-xs inline-block" id="modal-b-status">-</span>
-                        </div>
-                    </div>
-                    <div class="space-y-3">
-                        <h4 class="font-bold text-gray-800 dark:text-gray-200 border-b border-gray-200 dark:border-gray-700 pb-1">Publication Details</h4>
-                        <div class="grid grid-cols-2 gap-x-2 gap-y-3 text-sm">
-                            <span class="text-gray-500">Publisher:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-publisher">-</span>
-                            <span class="text-gray-500">Year/Edition:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-yearedition">-</span>
-                            <span class="text-gray-500">Language:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-lang">-</span>
-                            <span class="text-gray-500">Category:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-category">-</span>
-                            <span class="text-gray-500">ISBN:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-isbn">-</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="mt-6 space-y-3">
-                    <h4 class="font-bold text-gray-800 dark:text-gray-200 border-b border-gray-200 dark:border-gray-700 pb-1">Audit & Condition</h4>
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-x-2 gap-y-3 text-sm bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
-                        <span class="text-gray-500">Condition:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-condition">-</span>
-                        <span class="text-gray-500">Verified On:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-verifydate">-</span>
-                        <span class="text-gray-500 col-span-2">Verified By:</span> <span class="font-bold text-indigo-600 dark:text-indigo-400 col-span-2 text-xs" id="modal-b-verifiedby">-</span>
-                    </div>
-                </div>
-
-                <div class="mt-6 space-y-3">
-                    <h4 class="font-bold text-gray-800 dark:text-gray-200 border-b border-gray-200 dark:border-gray-700 pb-1">Media / Photos</h4>
-                    <div class="flex gap-4" id="modal-b-photos">
-                        <span class="text-sm text-gray-500">No photos available.</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Premium Toast Container -->
-    <div id="toast-container" class="fixed bottom-6 end-6 sm:bottom-10 sm:end-10 z-50 flex flex-col gap-3"></div>
+    <div id="toast-container" class="fixed bottom-6 end-6 sm:bottom-10 sm:end-10 z-[70] flex flex-col gap-3"></div>
 
     <!-- Javascript Logic -->
     <script type="module">
         import { auth, db, i18n } from './config.js';
-        import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { signOut, onAuthStateChanged, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { collection, query, where, getDoc, getDocs, doc, setDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { secondaryAuth } from './config.js';
 
         // Theme & Lang
@@ -728,10 +680,10 @@
         };
 
         // UI Utils
-        const viewIds = ['profile-view', 'reader-view', 'admin-add-book-view', 'admin-registry-view', 'admin-bulk-view', 'admin-issue-view', 'admin-users-view'];
+        const viewIds = ['profile-view', 'reader-view', 'admin-add-book-view', 'admin-registry-view', 'admin-bulk-view', 'admin-issue-view', 'admin-users-view', 'admin-settings-view'];
         
         window.navigate = (viewId) => {
-            if(viewId === 'public-view') { window.location.href = "public.html"; return; }
+            if(viewId === 'public-view') { window.location.href = "index.html"; return; }
             viewIds.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden-tab'); });
             const target = document.getElementById(viewId); if(target) target.classList.remove('hidden-tab');
             if(!document.getElementById('sidebar').classList.contains('-translate-x-full') && !document.getElementById('sidebar').classList.contains('rtl:translate-x-full')) toggleSidebar();
@@ -766,15 +718,75 @@
             return d.toLocaleDateString(currentLang === 'ml' ? 'ml-IN' : 'en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
         };
 
+        // --- Global Settings Fetch (Library Name & Logo) ---
+        onSnapshot(doc(db, "settings", "general"), (docSnap) => {
+            if(docSnap.exists()) {
+                const s = docSnap.data();
+                const titleElements = document.querySelectorAll('#brand-title');
+                const brandIcon = document.getElementById('brand-logo-icon');
+                const brandImg = document.getElementById('brand-logo-img');
+                
+                // Update Name
+                if(s.libraryName) {
+                    titleElements.forEach(el => el.innerText = s.libraryName);
+                    document.title = s.libraryName + " - Admin";
+                    // Populate Settings form if in view
+                    document.getElementById('s-name').value = s.libraryName || '';
+                }
+                
+                // Populate other settings fields
+                document.getElementById('s-desc').value = s.description || '';
+                document.getElementById('s-phone').value = s.phone || '';
+                document.getElementById('s-email').value = s.email || '';
+
+                // Update Logo
+                if(s.logo) {
+                    brandImg.src = s.logo; brandImg.classList.remove('hidden'); brandIcon.classList.add('hidden');
+                    document.getElementById('s-logo-base64').value = s.logo;
+                    renderBookImagePreview('s-logo-base64', 's-logo-preview', 'Logo', s.logo);
+                } else {
+                    brandImg.classList.add('hidden'); brandIcon.classList.remove('hidden');
+                }
+            }
+        });
+
+        // --- Save Settings Logic ---
+        document.getElementById('settings-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-save-settings');
+            const spinner = document.getElementById('settings-spinner');
+            const btnText = document.getElementById('settings-btn-text');
+            
+            btn.disabled = true; spinner.classList.remove('hidden'); btnText.innerText = "Saving...";
+
+            const settingsData = {
+                libraryName: document.getElementById('s-name').value.trim(),
+                description: document.getElementById('s-desc').value.trim(),
+                phone: document.getElementById('s-phone').value.trim(),
+                email: document.getElementById('s-email').value.trim(),
+                logo: document.getElementById('s-logo-base64').value || null,
+                updatedAt: serverTimestamp()
+            };
+
+            try {
+                await setDoc(doc(db, "settings", "general"), settingsData, { merge: true });
+                showToast("Settings updated successfully!");
+            } catch (error) {
+                console.error(error);
+                showToast("Failed to update settings.", "error");
+            } finally {
+                btn.disabled = false; spinner.classList.add('hidden'); btnText.innerText = "Save Settings";
+            }
+        });
+
         // --- Authentication & Protection Logic ---
         onAuthStateChanged(auth, async (user) => {
             if (!user) {
-                // Kick out unauthenticated users
-                window.location.href = "public.html";
+                // Kick out unauthenticated users to index.html
+                window.location.href = "index.html";
                 return;
             }
 
-            // User is logged in, show app loading
             document.getElementById('auth-loading').classList.remove('hidden');
             
             try {
@@ -832,21 +844,21 @@
             document.getElementById('prof-joined').innerText = formatDate(currentUserData.createdAt);
         };
 
-        // --- Base64 Images ---
+        // --- Base64 Images & Universal Image Handlers ---
         function renderBookImagePreview(hiddenInputId, previewId, label, imageData) {
             const preview = document.getElementById(previewId); if(!preview) return;
             if(imageData) {
-                preview.innerHTML = `<div class="flex items-start gap-3 rounded border border-gray-200 bg-gray-50 dark:bg-gray-800 p-2 mt-2"><img src="${imageData}" alt="${label}" class="h-16 w-16 object-cover bg-white border rounded"><div class="flex-1"><div class="text-xs font-semibold text-emerald-600 dark:text-emerald-400">Ready to save</div><button type="button" onclick="clearBookImage('${hiddenInputId}', '${previewId}', '${label}')" class="mt-1 text-xs font-bold text-red-600 hover:text-red-800">Remove</button></div></div>`;
+                preview.innerHTML = `<div class="flex items-start gap-3 rounded border border-gray-200 bg-gray-50 dark:bg-gray-800 p-2 mt-2 w-full"><img src="${imageData}" alt="${label}" class="h-16 w-16 object-cover bg-white border rounded"><div class="flex-1"><div class="text-xs font-semibold text-emerald-600 dark:text-emerald-400">Ready to save</div><button type="button" onclick="clearBookImage('${hiddenInputId}', '${previewId}', '${label}')" class="mt-1 text-xs font-bold text-red-600 hover:text-red-800">Remove</button></div></div>`;
             } else preview.innerHTML = '';
         }
 
         window.clearBookImage = function(hiddenInputId, previewId, label) {
             document.getElementById(hiddenInputId).value = '';
-            const fileInputId = hiddenInputId.replace('-base64', ''); if(document.getElementById(fileInputId)) document.getElementById(fileInputId).value = '';
+            const fileInputId = hiddenInputId.replace('-base64', '').replace('-upload', ''); if(document.getElementById(fileInputId)) document.getElementById(fileInputId).value = '';
             renderBookImagePreview(hiddenInputId, previewId, label, '');
         };
 
-        window.handleBookImageUpload = function(event, hiddenInputId, previewId, label) {
+        window.handleImageUpload = function(event, hiddenInputId, previewId, label) {
             const file = event.target.files?.[0]; if(!file) return;
             if(file.size > 150 * 1024) { showToast(`${label} max 150 KB. This file is ${(file.size / 1024).toFixed(1)} KB.`, 'error'); event.target.value = ''; return; }
             const reader = new FileReader();
