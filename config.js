@@ -25,7 +25,7 @@ const secondaryAuth = getAuth(secondaryApp);
 // --- i18n Dictionary (Translations) ---
 const i18n = {
     en: {
-        appTitle: "Library Register", navHome: "Home", navLogin: "Login", navReader: "My Books", navProfile: "Profile", navLogout: "Logout",
+        appTitle: "Library Register", navDashboard: "Dashboard", dashboardTitle: "Dashboard", navHome: "Home", navLogin: "Login", navReader: "My Books", navProfile: "Profile", navLogout: "Logout",
         adminPanelTitle: "Admin Controls", navAddBook: "Add New Book", navRegistry: "Books Registry", navBulk: "Bulk Import", navIssue: "Issue / Return", navUsers: "Users",
         searchTitle: "Search Books", searchSubtitle: "Find available books and their shelf numbers here", searchPlaceholder: "Book name, author or category...",
         thBook: "Book & Author", thCategory: "Category", thShelf: "Shelf No", thStatus: "Availability",
@@ -42,7 +42,7 @@ const i18n = {
         msgLoginFail: "Login failed. Check credentials.", msgWelcome: "Welcome", msgLogout: "Logged out successfully.", msgBookAdded: "Book saved successfully.", msgBookExists: "Accession ID already exists!", msgBookDeleted: "Book deleted.", msgUserAdded: "Reader added successfully.", msgUserExists: "Username/Phone combination already exists.", msgSelectBook: "Please select a book.", msgIssued: "Book issued successfully.", msgReturned: "Book returned successfully.", msgError: "An error occurred.", msgBulkSuccess: "Books uploaded successfully!", msgBulkEmpty: "No valid new books found to upload.", msgUserDeleted: "Reader deactivated successfully.", msgUserUpdated: "Reader info updated."
     },
     ml: {
-        appTitle: "ലൈബ്രറി രജിസ്റ്റർ", navHome: "ഹോം (സെർച്ച്)", navLogin: "ലോഗിൻ", navReader: "എന്റെ പുസ്തകങ്ങൾ", navProfile: "പ്രൊഫൈൽ", navLogout: "ലോഗൗട്ട്",
+        appTitle: "ലൈബ്രറി രജിസ്റ്റർ", navDashboard: "ഡാഷ്‌ബോർഡ്", dashboardTitle: "ഡാഷ്‌ബോർഡ്", navHome: "ഹോം (സെർച്ച്)", navLogin: "ലോഗിൻ", navReader: "എന്റെ പുസ്തകങ്ങൾ", navProfile: "പ്രൊഫൈൽ", navLogout: "ലോഗൗട്ട്",
         adminPanelTitle: "അഡ്മിൻ പാനൽ", navAddBook: "പുതിയ പുസ്തകം ചേർക്കുക", navRegistry: "രജിസ്റ്ററിലെ പുസ്തകങ്ങൾ", navBulk: "ബൾക്ക് ഇമ്പോർട്ട് (CSV)", navIssue: "ഇഷ്യൂ / റിട്ടേൺ", navUsers: "വായനക്കാർ (Users)",
         searchTitle: "പുസ്തകങ്ങൾ തിരയുക", searchSubtitle: "ലഭ്യമായ പുസ്തകങ്ങളും അവയുടെ ഷെൽഫ് നമ്പറും ഇവിടെ കണ്ടെത്താം", searchPlaceholder: "പുസ്തകത്തിന്റെ പേര്, ഗ്രന്ഥകർത്താവ് അല്ലെങ്കിൽ കാറ്റഗറി...",
         thBook: "പുസ്തകം & ഗ്രന്ഥകർത്താവ്", thCategory: "കാറ്റഗറി", thShelf: "ഷെൽഫ് നമ്പർ", thStatus: "ലഭ്യത",
@@ -59,7 +59,7 @@ const i18n = {
         msgLoginFail: "ലോഗിൻ പരാജയപ്പെട്ടു. വിവരങ്ങൾ പരിശോധിക്കുക.", msgWelcome: "സ്വാഗതം", msgLogout: "ലോഗൗട്ട് ചെയ്തു", msgBookAdded: "പുസ്തകം വിജയകരമായി സേവ് ചെയ്തു", msgBookExists: "ഈ അക്സഷൻ നമ്പർ നിലവിലുണ്ട്!", msgBookDeleted: "പുസ്തകം നീക്കം ചെയ്തു", msgUserAdded: "പുതിയ വായനക്കാരനെ വിജയകരമായി ചേർത്തു", msgUserExists: "ഈ യൂസർനെയിം/ഫോൺ നിലവിലുണ്ട്", msgSelectBook: "ദയവായി ഒരു പുസ്തകം തിരഞ്ഞെടുക്കുക", msgIssued: "പുസ്തകം വിജയകരമായി ഇഷ്യൂ ചെയ്തു", msgReturned: "പുസ്തകം മടക്കി നൽകൽ പൂർത്തിയായി", msgError: "ഒരു പിശക് സംഭവിച്ചു", msgBulkSuccess: "പുസ്തകങ്ങൾ വിജയകരമായി അപ്‌ലോഡ് ചെയ്തു!", msgBulkEmpty: "അപ്‌ലോഡ് ചെയ്യാൻ പുതിയ പുസ്തകങ്ങൾ കണ്ടെത്തിയില്ല.", msgUserDeleted: "വായനക്കാരനെ ഡീ-ആക്ടിവേറ്റ് ചെയ്തു", msgUserUpdated: "വിവരങ്ങൾ അപ്ഡേറ്റ് ചെയ്തു."
     },
     ar: {
-        appTitle: "سجل المكتبة", navHome: "الرئيسية", navLogin: "دخول", navReader: "كتبي", navProfile: "الملف الشخصي", navLogout: "خروج",
+        appTitle: "سجل المكتبة", navDashboard: "لوحة المعلومات", dashboardTitle: "لوحة المعلومات", navHome: "الرئيسية", navLogin: "دخول", navReader: "كتبي", navProfile: "الملف الشخصي", navLogout: "خروج",
         adminPanelTitle: "لوحة الإدارة", navAddBook: "إضافة كتاب جديد", navRegistry: "سجل الكتب", navBulk: "استيراد جماعي", navIssue: "إعارة / إرجاع", navUsers: "المستخدمون",
         searchTitle: "البحث عن الكتب", searchSubtitle: "ابحث عن الكتب المتوفرة وأرقام رفوفها هنا", searchPlaceholder: "اسم الكتاب، المؤلف أو الفئة...",
         thBook: "الكتاب والمؤلف", thCategory: "الفئة", thShelf: "رقم الرف", thStatus: "التوفر",

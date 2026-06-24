@@ -50,7 +50,7 @@
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                     </button>
                     <!-- Global Brand Logo & Title -->
-                    <div class="flex items-center cursor-pointer group" onclick="navigate('public-view')">
+                    <div class="flex items-center cursor-pointer group" onclick="currentUserData?.role === 'admin' ? navigate('admin-dashboard-view') : navigate('reader-view')">
                         <img id="brand-logo-img" src="" class="w-10 h-10 rounded-xl object-cover shadow-lg hidden" alt="Logo">
                         <div id="brand-logo-icon" class="bg-indigo-600 p-2 rounded-xl text-white shadow-lg shadow-indigo-500/30 hidden sm:block">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
@@ -58,7 +58,7 @@
                         <span id="brand-title" class="font-extrabold text-xl sm:text-2xl tracking-wide ms-2 sm:ms-3 text-indigo-900 dark:text-white drop-shadow-sm" data-i18n="appTitle">Library Register</span>
                     </div>
                 </div>
-                
+
                 <div class="flex items-center gap-2 sm:gap-4">
                     <div class="flex items-center bg-white/50 dark:bg-gray-800/50 rounded-2xl p-1 shadow-inner border border-gray-200 dark:border-gray-700">
                         <button onclick="toggleTheme()" class="p-2 rounded-xl hover:bg-white dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 transition-all">
@@ -85,14 +85,18 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
         </div>
-        
+
         <div class="p-4 flex flex-col gap-2 flex-grow overflow-y-auto">
             <a href="index.html" class="flex items-center gap-3 w-full text-start px-4 py-3 rounded-xl hover:bg-indigo-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 font-bold transition">
                 <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                 <span data-i18n="navHome">Home (Search)</span>
             </a>
-            
+
             <!-- Reader Links -->
+            <button id="nav-reader-dashboard-btn" onclick="navigate('reader-view')" class="hidden flex items-center gap-3 w-full text-start px-4 py-3 rounded-xl hover:bg-indigo-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 font-bold transition">
+                <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"></path></svg>
+                <span data-i18n="navDashboard">Dashboard</span>
+            </button>
             <button id="nav-reader-btn" onclick="navigate('reader-view')" class="hidden flex items-center gap-3 w-full text-start px-4 py-3 rounded-xl hover:bg-indigo-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 font-bold transition">
                 <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                 <span data-i18n="navReader">My Books</span>
@@ -101,7 +105,11 @@
             <!-- Admin specific Links -->
             <div id="admin-nav-group" class="hidden flex-col gap-2 mt-2 pt-2 border-t border-gray-200/50 dark:border-gray-700/50">
                 <p class="px-4 text-xs font-black uppercase text-gray-400 tracking-wider mb-1" data-i18n="adminPanelTitle">Admin Controls</p>
-                
+
+                <button onclick="navigate('admin-dashboard-view')" class="flex items-center gap-3 w-full text-start px-4 py-3 rounded-xl hover:bg-amber-50 dark:hover:bg-amber-900/20 text-gray-700 dark:text-gray-200 font-bold transition">
+                    <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"></path></svg>
+                    <span data-i18n="navDashboard">Dashboard</span>
+                </button>
                 <button onclick="navigate('admin-add-book-view'); resetAddBookForm();" class="flex items-center gap-3 w-full text-start px-4 py-3 rounded-xl hover:bg-amber-50 dark:hover:bg-amber-900/20 text-gray-700 dark:text-gray-200 font-bold transition">
                     <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                     <span data-i18n="navAddBook">Add New Book</span>
@@ -186,7 +194,55 @@
 
     <!-- Main Content Area -->
     <main class="flex-grow w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 overflow-y-auto relative">
-        
+
+        <!-- 1. Admin Dashboard View -->
+        <div id="admin-dashboard-view" class="view-section hidden-tab fade-in max-w-7xl mx-auto w-full">
+            <div class="mb-8">
+                <h1 class="text-4xl font-black text-gray-900 dark:text-white" data-i18n="dashboardTitle">Dashboard</h1>
+                <p class="text-gray-500 dark:text-gray-400 font-bold mt-2">Live library overview and quick actions.</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+                <div class="glass-panel p-6 rounded-3xl shadow-xl"><p class="text-xs uppercase font-black text-gray-500">Total Books</p><p id="dash-total-books" class="text-4xl font-black text-indigo-600 mt-2">0</p></div>
+                <div class="glass-panel p-6 rounded-3xl shadow-xl"><p class="text-xs uppercase font-black text-gray-500">Available</p><p id="dash-available-books" class="text-4xl font-black text-green-600 mt-2">0</p></div>
+                <div class="glass-panel p-6 rounded-3xl shadow-xl"><p class="text-xs uppercase font-black text-gray-500">Issued</p><p id="dash-issued-books" class="text-4xl font-black text-amber-600 mt-2">0</p></div>
+                <div class="glass-panel p-6 rounded-3xl shadow-xl"><p class="text-xs uppercase font-black text-gray-500">Readers</p><p id="dash-readers" class="text-4xl font-black text-purple-600 mt-2">0</p></div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="glass-panel rounded-3xl p-6 shadow-xl"><h2 class="text-xl font-black mb-4">Quick Actions</h2><div class="grid grid-cols-1 sm:grid-cols-2 gap-3"><button onclick="navigate('admin-add-book-view'); resetAddBookForm();" class="bg-indigo-600 text-white p-4 rounded-2xl font-black">Add Book</button><button onclick="navigate('admin-issue-view')" class="bg-amber-500 text-white p-4 rounded-2xl font-black">Issue / Return</button><button onclick="navigate('admin-users-view')" class="bg-green-500 text-white p-4 rounded-2xl font-black">Readers</button><button onclick="navigate('admin-bulk-view')" class="bg-purple-500 text-white p-4 rounded-2xl font-black">Bulk Import</button></div></div>
+                <div class="glass-panel rounded-3xl p-6 shadow-xl"><h2 class="text-xl font-black mb-4">Active Issues</h2><div id="dash-active-issues" class="space-y-3 text-sm max-h-72 overflow-y-auto"></div></div>
+            </div>
+        </div>
+
+        <!-- Reader Dashboard View -->
+        <div id="reader-view" class="view-section hidden-tab fade-in max-w-5xl mx-auto w-full">
+            <div class="glass-panel p-8 rounded-3xl shadow-2xl mb-8 border border-white/40 dark:border-gray-700/50">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                    <div>
+                        <h1 class="text-3xl sm:text-4xl font-black text-gray-900 dark:text-white"><span data-i18n="greeting">Hello, </span><span id="reader-welcome-name">Reader</span></h1>
+                        <p class="text-gray-500 dark:text-gray-400 font-bold mt-2" data-i18n="readerSubtitle">Your reading history is below.</p>
+                    </div>
+                    <div class="bg-indigo-600 text-white rounded-3xl px-8 py-5 shadow-xl shadow-indigo-500/30 min-w-[160px] text-center">
+                        <p class="text-xs uppercase font-black opacity-80" data-i18n="totalReadLbl">Total Read</p>
+                        <p id="reader-total-books" class="text-4xl font-black mt-1">0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="glass-panel rounded-3xl shadow-2xl overflow-hidden border border-white/40 dark:border-gray-700/50">
+                <div class="p-6 border-b border-gray-200/50 dark:border-gray-700/50 bg-white/30 dark:bg-gray-800/30">
+                    <h2 class="text-2xl font-black text-gray-900 dark:text-white" data-i18n="myHistoryTitle">My Books (History)</h2>
+                </div>
+                <div class="p-6">
+                    <ul id="reader-history-list" class="space-y-4 text-start"></ul>
+                    <div id="reader-no-history" class="hidden text-center py-16 text-gray-500 dark:text-gray-400 font-bold">
+                        <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-full inline-flex mb-4">
+                            <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                        </div>
+                        <p data-i18n="noHistoryFound">You haven't borrowed any books yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- 2. Profile View -->
         <div id="profile-view" class="view-section hidden-tab fade-in max-w-3xl mx-auto w-full pt-10">
             <div class="glass-panel p-8 sm:p-12 rounded-3xl shadow-2xl border border-white/40 dark:border-gray-700/50 text-center relative overflow-hidden">
@@ -197,7 +253,7 @@
                     </div>
                     <h2 class="text-3xl font-black text-gray-900 dark:text-white mb-2" id="prof-name">Name</h2>
                     <p class="text-indigo-600 dark:text-indigo-400 font-bold mb-8">@<span id="prof-username">username</span></p>
-                    
+
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-start">
                         <div class="bg-white/50 dark:bg-gray-800/50 p-4 rounded-2xl border border-gray-100 dark:border-gray-700">
                             <p class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase mb-1" data-i18n="phonePassLbl">Phone Number</p>
@@ -236,7 +292,7 @@
                 <div class="flex-grow overflow-y-auto p-6 md:p-8">
                     <form id="add-book-form" class="space-y-6 h-full flex flex-col">
                         <input type="hidden" id="b-is-edit" value="false">
-                        
+
                         <div id="tab-basic" class="book-form-section flex-grow">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                                 <div>
@@ -451,7 +507,7 @@
                         <h3 class="text-2xl font-black text-gray-800 dark:text-white" data-i18n="previewTitle">Data Preview</h3>
                         <button id="btn-process-csv" onclick="processBulkImport()" class="hidden bg-green-500 hover:bg-green-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-green-500/30 transition-transform hover:-translate-y-0.5" data-i18n="btnUploadBooks">Upload Data</button>
                     </div>
-                    
+
                     <div id="bulk-processing-overlay" class="absolute inset-0 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md z-10 hidden flex-col items-center justify-center rounded-3xl">
                         <svg class="animate-spin h-12 w-12 text-indigo-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                         <p class="text-indigo-800 dark:text-indigo-300 font-bold text-lg" id="bulk-progress-text">Processing...</p>
@@ -547,7 +603,7 @@
                         <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white rounded-xl py-4 text-sm font-black shadow-lg shadow-green-500/30 transition-transform hover:-translate-y-0.5 mt-6" data-i18n="createAccBtn">Create Account</button>
                     </form>
                 </div>
-                
+
                 <div class="glass-panel rounded-3xl lg:col-span-2 overflow-hidden flex flex-col h-[calc(100vh-100px)] shadow-2xl">
                     <div class="p-6 border-b border-gray-200/50 dark:border-gray-700/50 bg-white/30 dark:bg-gray-800/30 shrink-0">
                         <h3 class="text-2xl font-black text-gray-800 dark:text-white flex items-center gap-2">
@@ -597,7 +653,7 @@
                             <input type="tel" id="s-phone" placeholder="Contact Number" class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-gray-800 dark:text-white transition-shadow text-start">
                         </div>
                     </div>
-                    
+
                     <div>
                         <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Email Address</label>
                         <input type="email" id="s-email" placeholder="library@example.com" class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-gray-800 dark:text-white transition-shadow text-start">
@@ -635,13 +691,13 @@
     <script type="module">
         import { auth, db, i18n } from './config.js';
         import { signOut, onAuthStateChanged, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { collection, query, where, getDoc, getDocs, doc, setDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { collection, query, where, getDoc, getDocs, doc, setDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, writeBatch, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { secondaryAuth } from './config.js';
 
         // Theme & Lang
         let currentLang = localStorage.getItem('appLang') || 'en';
         let currentTheme = localStorage.getItem('appTheme') || 'light';
-        
+
         const applyTheme = () => { currentTheme === 'dark' ? document.documentElement.classList.add('dark') : document.documentElement.classList.remove('dark'); };
         window.toggleTheme = () => { currentTheme = currentTheme === 'light' ? 'dark' : 'light'; localStorage.setItem('appTheme', currentTheme); applyTheme(); };
 
@@ -651,9 +707,9 @@
             document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr'); document.documentElement.setAttribute('lang', lang);
             document.querySelectorAll('[data-i18n]').forEach(el => el.innerText = i18n[lang][el.getAttribute('data-i18n')]);
             document.querySelectorAll('[data-i18n-placeholder]').forEach(el => el.setAttribute('placeholder', i18n[lang][el.getAttribute('data-i18n-placeholder')]));
-            
+
             if(!document.getElementById('admin-registry-view').classList.contains('hidden-tab')) renderAdminBooks();
-            if(!document.getElementById('admin-users-view').classList.contains('hidden-tab')) renderAdminUsers();
+            if(!document.getElementById('admin-users-view').classList.contains('hidden-tab')) renderAdminUsers(); updateAdminDashboard();
         };
 
         applyTheme(); window.onload = () => changeLanguage(currentLang);
@@ -663,7 +719,7 @@
         let allBooks = [];
         let allUsers = [];
         let allTransactions = [];
-        let parsedCSVData = []; 
+        let parsedCSVData = [];
         let unsubBooks, unsubUsers, unsubTransactions;
 
         // Custom Confirm Logic
@@ -680,14 +736,14 @@
         };
 
         // UI Utils
-        const viewIds = ['profile-view', 'reader-view', 'admin-add-book-view', 'admin-registry-view', 'admin-bulk-view', 'admin-issue-view', 'admin-users-view', 'admin-settings-view'];
-        
+        const viewIds = ['admin-dashboard-view', 'profile-view', 'reader-view', 'admin-add-book-view', 'admin-registry-view', 'admin-bulk-view', 'admin-issue-view', 'admin-users-view', 'admin-settings-view'];
+
         window.navigate = (viewId) => {
             if(viewId === 'public-view') { window.location.href = "index.html"; return; }
             viewIds.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden-tab'); });
             const target = document.getElementById(viewId); if(target) target.classList.remove('hidden-tab');
             if(!document.getElementById('sidebar').classList.contains('-translate-x-full') && !document.getElementById('sidebar').classList.contains('rtl:translate-x-full')) toggleSidebar();
-            
+
             if (viewId === 'profile-view') renderProfile();
             if (viewId === 'admin-registry-view' && currentUserData?.role === 'admin') renderAdminBooks();
             if (viewId === 'admin-users-view' && currentUserData?.role === 'admin') renderAdminUsers();
@@ -725,7 +781,7 @@
                 const titleElements = document.querySelectorAll('#brand-title');
                 const brandIcon = document.getElementById('brand-logo-icon');
                 const brandImg = document.getElementById('brand-logo-img');
-                
+
                 // Update Name
                 if(s.libraryName) {
                     titleElements.forEach(el => el.innerText = s.libraryName);
@@ -733,7 +789,7 @@
                     // Populate Settings form if in view
                     document.getElementById('s-name').value = s.libraryName || '';
                 }
-                
+
                 // Populate other settings fields
                 document.getElementById('s-desc').value = s.description || '';
                 document.getElementById('s-phone').value = s.phone || '';
@@ -756,7 +812,7 @@
             const btn = document.getElementById('btn-save-settings');
             const spinner = document.getElementById('settings-spinner');
             const btnText = document.getElementById('settings-btn-text');
-            
+
             btn.disabled = true; spinner.classList.remove('hidden'); btnText.innerText = "Saving...";
 
             const settingsData = {
@@ -788,43 +844,44 @@
             }
 
             document.getElementById('auth-loading').classList.remove('hidden');
-            
+
             try {
                 const userDoc = await getDoc(doc(db, "users", user.uid));
                 if (userDoc.exists()) {
                     currentUserData = userDoc.data();
-                    
+
                     const authGroup = document.getElementById('auth-nav-group');
                     const adminGroup = document.getElementById('admin-nav-group');
                     const readerBtn = document.getElementById('nav-reader-btn');
-                    
+                    const readerDashboardBtn = document.getElementById('nav-reader-dashboard-btn');
+
                     authGroup.classList.remove('hidden'); authGroup.classList.add('flex');
 
                     // Global Data Fetch
                     unsubBooks = onSnapshot(query(collection(db, "books")), (snapshot) => {
                         allBooks = []; snapshot.forEach(d => allBooks.push({ id: d.id, ...d.data() }));
-                        if(currentUserData.role === 'admin' && !document.getElementById('admin-registry-view').classList.contains('hidden-tab')) renderAdminBooks();
+                        if(currentUserData.role === 'admin' && !document.getElementById('admin-registry-view').classList.contains('hidden-tab')) renderAdminBooks(); updateAdminDashboard();
                         if(currentUserData.role === 'admin') populateIssueBookSelect();
                     });
 
                     if (currentUserData.role === 'admin') {
                         adminGroup.classList.remove('hidden'); adminGroup.classList.add('flex');
-                        readerBtn.classList.add('hidden');
+                        readerBtn.classList.add('hidden'); readerDashboardBtn.classList.add('hidden');
                         setupAdminListeners();
-                        navigate('admin-registry-view'); 
+                        navigate('admin-dashboard-view');
                     } else {
                         adminGroup.classList.add('hidden'); adminGroup.classList.remove('flex');
-                        readerBtn.classList.remove('hidden');
+                        readerBtn.classList.remove('hidden'); readerDashboardBtn.classList.remove('hidden');
                         document.getElementById('reader-welcome-name').innerText = currentUserData.name;
                         setupReaderListeners(currentUserData.phone);
-                        navigate('reader-view'); 
+                        navigate('reader-view');
                     }
                     showToast(`${t('msgWelcome')} ${currentUserData.name}`);
                 } else {
                     showToast("User record missing.", "error"); auth.signOut();
                 }
-            } catch (error) { 
-                console.error("Auth:", error); showToast("Permission Denied.", "error"); auth.signOut(); 
+            } catch (error) {
+                console.error("Auth:", error); showToast("Permission Denied.", "error"); auth.signOut();
             } finally {
                 document.getElementById('auth-loading').classList.add('hidden');
             }
@@ -872,10 +929,10 @@
             document.getElementById('modal-b-title').innerText = b.title; document.getElementById('modal-b-author').innerText = b.author || 'Unknown Author';
             document.getElementById('modal-b-id').innerText = b.id; document.getElementById('modal-b-callno').innerText = b.callNumber || '-';
             document.getElementById('modal-b-shelf').innerText = b.shelfLocation || '-'; document.getElementById('modal-b-section').innerText = b.sectionCode || '-';
-            
+
             const statusBadge = document.getElementById('modal-b-status'); statusBadge.innerText = b.status;
             statusBadge.className = `font-bold px-2 py-0.5 rounded text-xs inline-block ${b.status === 'Available' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
-            
+
             document.getElementById('modal-b-publisher').innerText = b.publisher || '-'; document.getElementById('modal-b-yearedition').innerText = `${b.year || '-'} / ${b.edition || '-'}`;
             document.getElementById('modal-b-lang').innerText = b.language || '-'; document.getElementById('modal-b-category').innerText = b.category || '-'; document.getElementById('modal-b-isbn').innerText = b.isbn || '-';
             document.getElementById('modal-b-condition').innerText = b.condition || '-'; document.getElementById('modal-b-verifydate').innerText = b.verificationDate || '-'; document.getElementById('modal-b-verifiedby').innerText = b.verifiedBy || '-';
@@ -928,10 +985,22 @@
         };
 
         // --- Admin Listeners ---
+        const updateAdminDashboard = () => {
+            if (!currentUserData || currentUserData.role !== 'admin') return;
+            document.getElementById('dash-total-books').innerText = allBooks.length;
+            document.getElementById('dash-available-books').innerText = allBooks.filter(b => b.status === 'Available').length;
+            document.getElementById('dash-issued-books').innerText = allBooks.filter(b => b.status === 'Issued').length;
+            document.getElementById('dash-readers').innerText = allUsers.filter(u => u.role !== 'admin' && u.status !== 'blocked').length;
+            const box = document.getElementById('dash-active-issues');
+            if (box) {
+                box.innerHTML = allTransactions.length ? allTransactions.slice(0, 8).map(t => `<div class="p-3 rounded-xl bg-white/50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700"><b>${t.bookTitle || t.bookId}</b><br><span class="text-gray-500">${t.userName || t.userPhone} · ${formatDate(t.issueDate)}</span></div>`).join('') : '<p class="text-gray-500 font-bold">No active issued books.</p>';
+            }
+        };
+
         const setupAdminListeners = () => {
             unsubUsers = onSnapshot(collection(db, "users"), (snapshot) => {
                 allUsers = []; snapshot.forEach(doc => allUsers.push(doc.data()));
-                if(!document.getElementById('admin-users-view').classList.contains('hidden-tab')) renderAdminUsers();
+                if(!document.getElementById('admin-users-view').classList.contains('hidden-tab')) renderAdminUsers(); updateAdminDashboard();
             });
 
             const qTrans = query(collection(db, "transactions"), where("status", "==", "Active"));
@@ -943,7 +1012,7 @@
                     li.innerHTML = `<div class="flex-1 min-w-0"><p class="text-sm font-black text-gray-900 dark:text-white truncate">${tData.bookTitle} <span class="text-xs text-gray-500 font-normal">(${tData.bookId})</span></p><p class="text-xs text-gray-600 dark:text-gray-400 mt-1 truncate"><span class="font-bold text-indigo-600 dark:text-indigo-400">${tData.userName}</span> (${tData.userPhone})</p><p class="text-xs text-gray-400 dark:text-gray-500 mt-1">${formatDate(tData.issueDate)}</p></div><button onclick="returnBook('${tData.id}', '${tData.bookId}')" class="shrink-0 bg-green-500/10 text-green-600 dark:text-green-400 hover:bg-green-500 hover:text-white border border-green-200 dark:border-green-800 px-4 py-2 rounded-xl text-xs font-black transition-colors">${t('btnReturn')}</button>`;
                     ul.appendChild(li);
                 });
-                if(allTransactions.length === 0) document.getElementById('no-active-issues').classList.remove('hidden'); else document.getElementById('no-active-issues').classList.add('hidden');
+                if(allTransactions.length === 0) document.getElementById('no-active-issues').classList.remove('hidden'); else document.getElementById('no-active-issues').classList.add('hidden'); updateAdminDashboard();
             });
         };
 
@@ -954,7 +1023,7 @@
             const isEdit = document.getElementById('b-is-edit').value === 'true';
             btn.disabled = true; spinner.classList.remove('hidden'); btnText.innerText = "Saving Record...";
             const bookId = document.getElementById('b-id').value.toUpperCase().trim();
-            
+
             try {
                 if(!isEdit) {
                     const docSnap = await getDoc(doc(db, "books", bookId));
@@ -976,7 +1045,7 @@
 
                 await setDoc(doc(db, "books", bookId), bookData, { merge: true });
                 showToast(t('msgBookAdded')); resetAddBookForm();
-            } catch (error) { 
+            } catch (error) {
                 if(error.message !== "Exists") { console.error(error); showToast(t('msgError'), "error"); }
             } finally { btn.disabled = false; spinner.classList.add('hidden'); btnText.innerText = isEdit ? "Update Book Record" : t('saveBtn'); }
         });
@@ -1051,7 +1120,7 @@
         const parseCSV = (text) => {
             const lines = text.split('\n'); const result = [];
             for (let i = 1; i < lines.length; i++) {
-                if (!lines[i].trim()) continue; 
+                if (!lines[i].trim()) continue;
                 const cols = lines[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || []; const clean = cols.map(c => c.replace(/^"|"$/g, '').trim());
                 if (clean.length >= 5 && clean[1]) {
                     result.push({
@@ -1107,8 +1176,8 @@
         document.getElementById('issue-phone').addEventListener('keyup', (e) => {
             const phoneVal = e.target.value; const nameInput = document.getElementById('issue-name'); const badge = document.getElementById('issue-user-badge');
             if(phoneVal.length >= 4) {
-                const matchedUser = allUsers.find(u => u.phone === phoneVal && u.status !== 'blocked'); 
-                if(matchedUser) { nameInput.value = matchedUser.name; nameInput.readOnly = true; nameInput.classList.add('bg-green-50/50', 'dark:bg-green-900/20', 'border-green-300', 'dark:border-green-700'); badge.classList.remove('hidden'); } 
+                const matchedUser = allUsers.find(u => u.phone === phoneVal && u.status !== 'blocked');
+                if(matchedUser) { nameInput.value = matchedUser.name; nameInput.readOnly = true; nameInput.classList.add('bg-green-50/50', 'dark:bg-green-900/20', 'border-green-300', 'dark:border-green-700'); badge.classList.remove('hidden'); }
                 else { nameInput.value = ''; nameInput.readOnly = false; nameInput.classList.remove('bg-green-50/50', 'dark:bg-green-900/20', 'border-green-300', 'dark:border-green-700'); badge.classList.add('hidden'); }
             } else { nameInput.value = ''; nameInput.readOnly = false; nameInput.classList.remove('bg-green-50/50', 'dark:bg-green-900/20', 'border-green-300', 'dark:border-green-700'); badge.classList.add('hidden'); }
         });
