@@ -26,9 +26,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Manjari:wght@400;700&family=Tajawal:wght@400;700&display=swap');
         
-        body { 
-            transition: background-color 0.5s ease, color 0.5s ease; 
-        }
+        body { transition: background-color 0.5s ease, color 0.5s ease; }
         
         /* Glassmorphism Utilities */
         .glass-panel {
@@ -43,7 +41,9 @@
         }
 
         .toast { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .hidden-tab { display: none; }
+        .hidden-tab { display: none !important; }
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
         /* Custom Scrollbar for premium feel */
         ::-webkit-scrollbar { width: 8px; }
@@ -58,48 +58,115 @@
 </head>
 <body class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-indigo-950 dark:to-gray-900 text-gray-800 dark:text-gray-100 antialiased h-screen flex flex-col transition-colors duration-500 overflow-hidden">
 
-    <!-- Premium Navigation Bar -->
+    <!-- Navigation Bar -->
     <nav class="glass-panel shadow-lg z-20 sticky top-0 border-b border-white/20 dark:border-gray-700/50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center">
-                <div class="flex items-center cursor-pointer group" onclick="navigate('public-view')">
-                    <div class="bg-indigo-600 p-2 rounded-xl text-white group-hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/30">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                <div class="flex items-center gap-4">
+                    <!-- Hamburger Icon -->
+                    <button onclick="toggleSidebar()" class="p-2 rounded-xl text-gray-700 dark:text-gray-200 hover:bg-white/50 dark:hover:bg-gray-800/50 transition">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    </button>
+
+                    <!-- Logo -->
+                    <div class="flex items-center cursor-pointer group" onclick="navigate('public-view')">
+                        <div class="bg-indigo-600 p-2 rounded-xl text-white group-hover:bg-indigo-500 transition shadow-lg shadow-indigo-500/30 hidden sm:block">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                        </div>
+                        <span class="font-extrabold text-xl sm:text-2xl tracking-wide ms-2 sm:ms-3 text-indigo-900 dark:text-white drop-shadow-sm" data-i18n="appTitle">Library Register</span>
                     </div>
-                    <span class="font-extrabold text-2xl tracking-wide ms-3 text-indigo-900 dark:text-white drop-shadow-sm" data-i18n="appTitle">Library Register</span>
                 </div>
                 
                 <div class="flex items-center gap-2 sm:gap-4">
                     <!-- Controls (Theme & Lang) -->
                     <div class="flex items-center bg-white/50 dark:bg-gray-800/50 rounded-2xl p-1 shadow-inner border border-gray-200 dark:border-gray-700">
-                        <!-- Theme Toggle -->
                         <button onclick="toggleTheme()" class="p-2 rounded-xl hover:bg-white dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 transition-all" aria-label="Toggle Theme">
                             <svg id="theme-icon-light" class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                             <svg id="theme-icon-dark" class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                         </button>
-                        <!-- Language Switcher -->
                         <select id="lang-selector" onchange="changeLanguage(this.value)" class="bg-transparent border-none text-sm font-bold text-gray-700 dark:text-gray-200 focus:ring-0 cursor-pointer outline-none pe-8 ps-2 py-2">
                             <option value="en" class="text-gray-900">EN</option>
                             <option value="ml" class="text-gray-900">ML</option>
                             <option value="ar" class="text-gray-900">AR</option>
                         </select>
                     </div>
-
-                    <!-- Navigation Buttons -->
-                    <button id="nav-home-btn" onclick="navigate('public-view')" class="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 rounded-xl text-sm font-bold transition" data-i18n="navHome">Home</button>
-                    <button id="nav-login-btn" onclick="navigate('login-view')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition shadow-lg shadow-indigo-500/30" data-i18n="navLogin">Login</button>
-                    <button id="nav-admin-btn" onclick="navigate('admin-view')" class="hidden bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition shadow-lg" data-i18n="navAdmin">Admin Panel</button>
-                    <button id="nav-reader-btn" onclick="navigate('reader-view')" class="hidden text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 rounded-xl text-sm font-bold transition" data-i18n="navReader">My Books</button>
-                    <button id="nav-logout-btn" class="hidden bg-red-500/10 text-red-600 dark:text-red-400 hover:bg-red-500 hover:text-white px-5 py-2.5 rounded-xl text-sm font-bold transition" data-i18n="navLogout">Logout</button>
                 </div>
             </div>
         </div>
     </nav>
 
+    <!-- Sidebar & Overlay -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 hidden transition-opacity" onclick="toggleSidebar()"></div>
+    <aside id="sidebar" class="fixed top-0 bottom-0 start-0 w-72 bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl z-40 transform -translate-x-full rtl:translate-x-full transition-transform duration-300 ease-in-out border-e border-white/20 dark:border-gray-700/50 shadow-2xl flex flex-col">
+        <div class="h-20 flex items-center justify-between px-6 border-b border-gray-200/50 dark:border-gray-700/50">
+            <span class="font-black text-xl text-indigo-700 dark:text-indigo-400">Menu</span>
+            <button onclick="toggleSidebar()" class="p-2 text-gray-500 hover:text-gray-900 dark:hover:text-white rounded-full bg-gray-100 dark:bg-gray-800 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        <div class="p-6 flex flex-col gap-3 flex-grow overflow-y-auto">
+            <button onclick="navigate('public-view')" class="flex items-center gap-3 w-full text-start px-4 py-3 rounded-xl hover:bg-indigo-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 font-bold transition">
+                <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <span data-i18n="navHome">Home</span>
+            </button>
+            <button id="nav-login-btn" onclick="openLoginModal()" class="flex items-center gap-3 w-full text-start px-4 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold transition shadow-md">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
+                <span data-i18n="navLogin">Login</span>
+            </button>
+            <button id="nav-admin-btn" onclick="navigate('admin-view')" class="hidden flex items-center gap-3 w-full text-start px-4 py-3 rounded-xl hover:bg-amber-50 dark:hover:bg-amber-900/20 text-gray-700 dark:text-gray-200 font-bold transition">
+                <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <span data-i18n="navAdmin">Admin Panel</span>
+            </button>
+            <button id="nav-reader-btn" onclick="navigate('reader-view')" class="hidden flex items-center gap-3 w-full text-start px-4 py-3 rounded-xl hover:bg-indigo-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 font-bold transition">
+                <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                <span data-i18n="navReader">My Books</span>
+            </button>
+            <button id="nav-profile-btn" onclick="navigate('profile-view')" class="hidden flex items-center gap-3 w-full text-start px-4 py-3 rounded-xl hover:bg-indigo-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 font-bold transition">
+                <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                <span data-i18n="navProfile">Profile</span>
+            </button>
+            <div class="mt-auto">
+                <button id="nav-logout-btn" class="hidden flex items-center justify-center gap-2 w-full bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-500 hover:text-white px-4 py-3 rounded-xl font-bold transition border border-red-200 dark:border-red-800/50">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                    <span data-i18n="navLogout">Logout</span>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Login Modal (Pop-up) -->
+    <div id="login-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-md transition-opacity" onclick="closeLoginModal()"></div>
+        <div class="relative glass-panel w-full max-w-md p-8 sm:p-10 rounded-3xl shadow-2xl border border-white/40 dark:border-gray-600 fade-in">
+            <button onclick="closeLoginModal()" class="absolute top-4 end-4 p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <div class="mb-8 text-center">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 mb-4 shadow-inner">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8V7a4 4 0 00-8 0v4h8z"></path></svg>
+                </div>
+                <h2 class="text-3xl font-black text-gray-900 dark:text-white" data-i18n="loginTitle">Sign In</h2>
+            </div>
+            <form id="login-form" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2" data-i18n="usernameLbl">Username</label>
+                    <input type="text" id="login-username" required class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-shadow">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2" data-i18n="passwordLbl">Password</label>
+                    <input type="password" id="login-password" required class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-shadow">
+                </div>
+                <button type="submit" id="login-submit-btn" class="w-full flex justify-center py-3.5 px-4 rounded-xl shadow-lg text-sm font-black text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500/50 transition-all transform hover:-translate-y-0.5">
+                    <span data-i18n="loginBtn">Login</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- Main Content Area -->
-    <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 overflow-y-auto">
+    <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 overflow-y-auto relative">
         
-        <!-- 1. Public Search View -->
+        <!-- 1. Public Search View (DEFAULT) -->
         <div id="public-view" class="view-section fade-in h-full flex flex-col">
             <div class="text-center mb-12">
                 <h1 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 drop-shadow-sm mb-4" data-i18n="searchTitle">Search Books</h1>
@@ -127,7 +194,7 @@
                                 <th scope="col" class="px-6 py-4 text-start text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider" data-i18n="thStatus">Availability</th>
                             </tr>
                         </thead>
-                        <tbody id="public-books-list" class="divide-y divide-gray-100 dark:divide-gray-800/50">
+                        <tbody id="public-books-list" class="divide-y divide-gray-100 dark:divide-gray-800/50 text-start">
                             <!-- Books dynamically injected -->
                         </tbody>
                     </table>
@@ -137,28 +204,32 @@
             </div>
         </div>
 
-        <!-- 2. Login View -->
-        <div id="login-view" class="view-section hidden-tab max-w-md mx-auto fade-in mt-10">
-            <div class="glass-panel py-10 px-8 shadow-2xl rounded-3xl border border-white/50 dark:border-gray-700">
-                <div class="mb-8 text-center">
-                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 mb-4 shadow-inner">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8V7a4 4 0 00-8 0v4h8z"></path></svg>
+        <!-- 2. Profile View -->
+        <div id="profile-view" class="view-section hidden-tab fade-in max-w-3xl mx-auto w-full pt-10">
+            <div class="glass-panel p-8 sm:p-12 rounded-3xl shadow-2xl border border-white/40 dark:border-gray-700/50 text-center relative overflow-hidden">
+                <div class="absolute top-0 start-0 w-full h-32 bg-gradient-to-r from-indigo-500 to-purple-600 opacity-20"></div>
+                <div class="relative z-10">
+                    <div class="w-24 h-24 mx-auto bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 rounded-full flex items-center justify-center shadow-inner mb-6 border-4 border-white dark:border-gray-800">
+                        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                     </div>
-                    <h2 class="text-3xl font-black text-gray-900 dark:text-white" data-i18n="loginTitle">Sign In</h2>
+                    <h2 class="text-3xl font-black text-gray-900 dark:text-white mb-2" id="prof-name">Name</h2>
+                    <p class="text-indigo-600 dark:text-indigo-400 font-bold mb-8">@<span id="prof-username">username</span></p>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-start">
+                        <div class="bg-white/50 dark:bg-gray-800/50 p-4 rounded-2xl border border-gray-100 dark:border-gray-700">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase mb-1" data-i18n="phonePassLbl">Phone Number</p>
+                            <p class="text-lg font-black text-gray-800 dark:text-white" id="prof-phone">-</p>
+                        </div>
+                        <div class="bg-white/50 dark:bg-gray-800/50 p-4 rounded-2xl border border-gray-100 dark:border-gray-700">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase mb-1" data-i18n="roleLbl">Role</p>
+                            <p class="text-lg font-black text-gray-800 dark:text-white capitalize" id="prof-role">-</p>
+                        </div>
+                        <div class="bg-white/50 dark:bg-gray-800/50 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 sm:col-span-2">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase mb-1" data-i18n="joinedLbl">Joined Date</p>
+                            <p class="text-lg font-black text-gray-800 dark:text-white" id="prof-joined">-</p>
+                        </div>
+                    </div>
                 </div>
-                <form id="login-form" class="space-y-6">
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2" data-i18n="usernameLbl">Username</label>
-                        <input type="text" id="login-username" required class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-shadow">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2" data-i18n="passwordLbl">Password</label>
-                        <input type="password" id="login-password" required class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-shadow">
-                    </div>
-                    <button type="submit" id="login-submit-btn" class="w-full flex justify-center py-3.5 px-4 rounded-xl shadow-lg text-sm font-black text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500/50 transition-all transform hover:-translate-y-0.5">
-                        <span data-i18n="loginBtn">Login</span>
-                    </button>
-                </form>
             </div>
         </div>
 
@@ -235,7 +306,7 @@
                                         <th class="px-5 py-3 text-end text-xs font-bold text-gray-500 dark:text-gray-400 uppercase" data-i18n="actionLbl">Action</th>
                                     </tr>
                                 </thead>
-                                <tbody id="admin-books-list" class="divide-y divide-gray-100 dark:divide-gray-800/50 text-sm">
+                                <tbody id="admin-books-list" class="divide-y divide-gray-100 dark:divide-gray-800/50 text-sm text-start">
                                 </tbody>
                             </table>
                         </div>
@@ -253,18 +324,18 @@
                             <div>
                                 <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2" data-i18n="phoneFirstLbl">Phone Number (Type first)</label>
                                 <div class="relative">
-                                    <input type="tel" id="issue-phone" required autocomplete="off" placeholder="10 Digits" class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none font-bold tracking-wider dark:text-white">
+                                    <input type="tel" id="issue-phone" required autocomplete="off" placeholder="10 Digits" class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none font-bold tracking-wider dark:text-white text-start">
                                     <span id="issue-user-badge" class="absolute end-3 top-3 bg-green-100 text-green-800 text-xs font-bold px-2.5 py-1 rounded-md hidden">Registered</span>
                                 </div>
                             </div>
                             <div>
                                 <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2" data-i18n="readerNameLbl">Reader Name</label>
-                                <input type="text" id="issue-name" required class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white transition-colors">
+                                <input type="text" id="issue-name" required class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white transition-colors text-start">
                             </div>
                             <div class="relative">
                                 <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2" data-i18n="selectBookLbl">Select Book (Search)</label>
-                                <input type="text" id="issue-book-search" autocomplete="off" data-i18n-placeholder="searchPlaceholder" placeholder="Search..." class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white mb-1">
-                                <select id="issue-book-select" required size="4" class="absolute z-10 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl shadow-2xl p-2 focus:ring-2 focus:ring-indigo-500 outline-none text-sm hidden dark:text-white mt-1 max-h-40">
+                                <input type="text" id="issue-book-search" autocomplete="off" data-i18n-placeholder="searchPlaceholder" placeholder="Search..." class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white mb-1 text-start">
+                                <select id="issue-book-select" required size="4" class="absolute z-10 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl shadow-2xl p-2 focus:ring-2 focus:ring-indigo-500 outline-none text-sm hidden dark:text-white mt-1 max-h-40 text-start">
                                     <!-- Options injected -->
                                 </select>
                                 <input type="hidden" id="issue-book-id">
@@ -282,7 +353,7 @@
                             </span>
                         </div>
                         <div class="overflow-y-auto flex-grow pe-2">
-                            <ul id="active-issues-list" class="space-y-3">
+                            <ul id="active-issues-list" class="space-y-3 text-start">
                                 <!-- Transactions injected here -->
                             </ul>
                             <div id="no-active-issues" class="text-center py-16 text-gray-500 dark:text-gray-400 hidden font-bold flex flex-col items-center justify-center h-full">
@@ -302,15 +373,15 @@
                         <form id="add-user-form" class="space-y-5">
                             <div>
                                 <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1" data-i18n="usernameLbl">Username</label>
-                                <input type="text" id="u-username" required class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white">
+                                <input type="text" id="u-username" required class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white text-start">
                             </div>
                             <div>
                                 <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1" data-i18n="phonePassLbl">Phone (Used as Password)</label>
-                                <input type="tel" id="u-phone" required pattern="[0-9]{10}" class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white">
+                                <input type="tel" id="u-phone" required pattern="[0-9]{10}" class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white text-start">
                             </div>
                             <div>
                                 <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1" data-i18n="fullNameLbl">Full Name</label>
-                                <input type="text" id="u-name" required class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white">
+                                <input type="text" id="u-name" required class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white text-start">
                             </div>
                             <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white rounded-xl py-3.5 text-sm font-black shadow-lg shadow-green-500/30 transition-transform hover:-translate-y-0.5 mt-4" data-i18n="createAccBtn">Create Account</button>
                         </form>
@@ -328,7 +399,7 @@
                                         <th class="px-6 py-4 text-start text-xs font-black text-gray-500 dark:text-gray-400 uppercase" data-i18n="joinedLbl">Joined Date</th>
                                     </tr>
                                 </thead>
-                                <tbody id="admin-users-list" class="divide-y divide-gray-100 dark:divide-gray-800/50 text-sm">
+                                <tbody id="admin-users-list" class="divide-y divide-gray-100 dark:divide-gray-800/50 text-sm text-start">
                                 </tbody>
                             </table>
                         </div>
@@ -360,7 +431,7 @@
                     </h3>
                 </div>
                 <div class="overflow-y-auto p-4 flex-grow">
-                    <ul id="reader-history-list" class="space-y-3">
+                    <ul id="reader-history-list" class="space-y-3 text-start">
                         <!-- History injected -->
                     </ul>
                     <div id="reader-no-history" class="text-center py-20 text-gray-500 dark:text-gray-400 hidden flex flex-col items-center">
@@ -374,7 +445,7 @@
     </main>
 
     <!-- Premium Toast Container -->
-    <div id="toast-container" class="fixed bottom-6 right-6 sm:bottom-10 sm:right-10 z-50 flex flex-col gap-3 rtl:right-auto rtl:left-6 sm:rtl:left-10"></div>
+    <div id="toast-container" class="fixed bottom-6 end-6 sm:bottom-10 sm:end-10 z-50 flex flex-col gap-3"></div>
 
     <!-- Firebase Scripts -->
     <script type="module">
@@ -385,41 +456,41 @@
         // --- i18n Dictionary ---
         const i18n = {
             en: {
-                appTitle: "Library Register", navHome: "Home", navLogin: "Login", navAdmin: "Admin Panel", navReader: "My Books", navLogout: "Logout",
+                appTitle: "Library Register", navHome: "Home", navLogin: "Login", navAdmin: "Admin Panel", navReader: "My Books", navProfile: "Profile", navLogout: "Logout",
                 searchTitle: "Search Books", searchSubtitle: "Find available books and their shelf numbers here", searchPlaceholder: "Book name, author or category...",
                 thBook: "Book & Author", thCategory: "Category", thShelf: "Shelf No", thStatus: "Availability",
                 statusAvailable: "Available", statusIssued: "Issued", loading: "Loading data...", noBooksFound: "No books found.",
-                loginTitle: "Sign In", usernameLbl: "Username", passwordLbl: "Password", loginBtn: "Login",
+                loginTitle: "Sign In", usernameLbl: "Username", passwordLbl: "Password", loginBtn: "Login", roleLbl: "Role",
                 adminTabBooks: "Books", adminTabIssue: "Issue/Return", adminTabUsers: "Users",
                 addBookTitle: "Add New Book", bookIdLbl: "Accession No (Book ID)", bookTitleLbl: "Book Title", bookAuthorLbl: "Author / Translator", priceLbl: "Price (₹)", saveBtn: "Save Book",
                 registryTitle: "Books Registry", actionLbl: "Action",
                 issueBookTitle: "Issue Book", phoneFirstLbl: "Phone Number (Type first)", readerNameLbl: "Reader Name", selectBookLbl: "Select Book (Search)", recordIssueBtn: "Record Issue",
                 activeIssuesTitle: "Active Issues", noIssuesFound: "No active issued books.", btnReturn: "Return Book",
-                addReaderTitle: "Add New Reader", phonePassLbl: "Phone (Used as Password)", fullNameLbl: "Full Name", createAccBtn: "Create Account", regReadersTitle: "Registered Readers", nameLbl: "Name", contactLbl: "Phone & Username", joinedLbl: "Joined Date",
+                addReaderTitle: "Add New Reader", phonePassLbl: "Phone Number", fullNameLbl: "Full Name", createAccBtn: "Create Account", regReadersTitle: "Registered Readers", nameLbl: "Name", contactLbl: "Phone & Username", joinedLbl: "Joined Date",
                 greeting: "Hello, ", readerSubtitle: "Your reading history is below.", totalReadLbl: "Total Read", myHistoryTitle: "My Books (History)", noHistoryFound: "You haven't borrowed any books yet.",
                 msgLoginFail: "Login failed. Check credentials.", msgWelcome: "Welcome", msgLogout: "Logged out successfully.", msgBookAdded: "Book added successfully.", msgBookExists: "Accession ID already exists!", msgBookDeleted: "Book deleted.", msgUserAdded: "Reader added successfully.", msgUserExists: "Username/Phone combination already exists.", msgSelectBook: "Please select a book.", msgIssued: "Book issued successfully.", msgReturned: "Book returned successfully.", msgError: "An error occurred."
             },
             ml: {
-                appTitle: "ലൈബ്രറി രജിസ്റ്റർ", navHome: "ഹോം", navLogin: "ലോഗിൻ", navAdmin: "അഡ്മിൻ പാനൽ", navReader: "എന്റെ പുസ്തകങ്ങൾ", navLogout: "ലോഗൗട്ട്",
+                appTitle: "ലൈബ്രറി രജിസ്റ്റർ", navHome: "ഹോം", navLogin: "ലോഗിൻ", navAdmin: "അഡ്മിൻ പാനൽ", navReader: "എന്റെ പുസ്തകങ്ങൾ", navProfile: "പ്രൊഫൈൽ", navLogout: "ലോഗൗട്ട്",
                 searchTitle: "പുസ്തകങ്ങൾ തിരയുക", searchSubtitle: "ലഭ്യമായ പുസ്തകങ്ങളും അവയുടെ ഷെൽഫ് നമ്പറും ഇവിടെ കണ്ടെത്താം", searchPlaceholder: "പുസ്തകത്തിന്റെ പേര്, ഗ്രന്ഥകർത്താവ് അല്ലെങ്കിൽ കാറ്റഗറി...",
                 thBook: "പുസ്തകം & ഗ്രന്ഥകർത്താവ്", thCategory: "കാറ്റഗറി", thShelf: "ഷെൽഫ് നമ്പർ", thStatus: "ലഭ്യത",
                 statusAvailable: "ലഭ്യമാണ്", statusIssued: "നൽകിയിരിക്കുന്നു", loading: "ഡാറ്റ ലോഡ് ചെയ്യുന്നു...", noBooksFound: "പുസ്തകങ്ങൾ ഒന്നും കണ്ടെത്തിയില്ല.",
-                loginTitle: "ലോഗിൻ ചെയ്യുക", usernameLbl: "യൂസർ നെയിം", passwordLbl: "പാസ്‌വേർഡ്", loginBtn: "ലോഗിൻ",
+                loginTitle: "ലോഗിൻ ചെയ്യുക", usernameLbl: "യൂസർ നെയിം", passwordLbl: "പാസ്‌വേർഡ്", loginBtn: "ലോഗിൻ", roleLbl: "റോൾ",
                 adminTabBooks: "പുസ്തകങ്ങൾ", adminTabIssue: "ഇഷ്യൂ / റിട്ടേൺ", adminTabUsers: "യൂസർമാർ",
                 addBookTitle: "പുതിയ പുസ്തകം ചേർക്കുക", bookIdLbl: "അക്സഷൻ നമ്പർ (Book ID)", bookTitleLbl: "പുസ്തകത്തിന്റെ പേര്", bookAuthorLbl: "ഗ്രന്ഥകർത്താവ് / വിവർത്തകൻ", priceLbl: "വില (₹)", saveBtn: "സേവ് ചെയ്യുക",
                 registryTitle: "രജിസ്റ്ററിലെ പുസ്തകങ്ങൾ", actionLbl: "Action",
                 issueBookTitle: "പുസ്തകം നൽകുക (Issue)", phoneFirstLbl: "ഫോൺ നമ്പർ (ആദ്യം നൽകുക)", readerNameLbl: "വായനക്കാരന്റെ പേര്", selectBookLbl: "പുസ്തകം തിരഞ്ഞെടുക്കുക", recordIssueBtn: "ഇഷ്യൂ റെക്കോർഡ് ചെയ്യുക",
                 activeIssuesTitle: "നൽകിയിട്ടുള്ള പുസ്തകങ്ങൾ", noIssuesFound: "നിലവിൽ നൽകിയ പുസ്തകങ്ങൾ ഒന്നുമില്ല.", btnReturn: "മടക്കി നൽകുക",
-                addReaderTitle: "പുതിയ വായനക്കാരനെ ചേർക്കുക", phonePassLbl: "ഫോൺ നമ്പർ (ഇതായിരിക്കും പാസ്‌വേർഡ്)", fullNameLbl: "മുഴുവൻ പേര്", createAccBtn: "അക്കൗണ്ട് നിർമ്മിക്കുക", regReadersTitle: "രജിസ്റ്റർ ചെയ്ത വായനക്കാർ", nameLbl: "പേര്", contactLbl: "ഫോൺ & യൂസർനെയിം", joinedLbl: "ചേർന്ന തിയ്യതി",
+                addReaderTitle: "പുതിയ വായനക്കാരനെ ചേർക്കുക", phonePassLbl: "ഫോൺ നമ്പർ (പാസ്‌വേർഡും ഇതാണ്)", fullNameLbl: "മുഴുവൻ പേര്", createAccBtn: "അക്കൗണ്ട് നിർമ്മിക്കുക", regReadersTitle: "രജിസ്റ്റർ ചെയ്ത വായനക്കാർ", nameLbl: "പേര്", contactLbl: "ഫോൺ & യൂസർനെയിം", joinedLbl: "ചേർന്ന തിയ്യതി",
                 greeting: "നമസ്കാരം, ", readerSubtitle: "നിങ്ങളുടെ വായനാ വിവരങ്ങൾ താഴെ കാണാം.", totalReadLbl: "ആകെ വായിച്ചവ", myHistoryTitle: "എന്റെ പുസ്തകങ്ങൾ (History)", noHistoryFound: "നിങ്ങൾ ഇതുവരെ പുസ്തകങ്ങൾ ഒന്നും എടുത്തിട്ടില്ല.",
                 msgLoginFail: "ലോഗിൻ പരാജയപ്പെട്ടു. വിവരങ്ങൾ പരിശോധിക്കുക.", msgWelcome: "സ്വാഗതം", msgLogout: "ലോഗൗട്ട് ചെയ്തു", msgBookAdded: "പുസ്തകം വിജയകരമായി ചേർത്തു", msgBookExists: "ഈ അക്സഷൻ നമ്പർ നിലവിലുണ്ട്!", msgBookDeleted: "പുസ്തകം നീക്കം ചെയ്തു", msgUserAdded: "പുതിയ വായനക്കാരനെ വിജയകരമായി ചേർത്തു", msgUserExists: "ഈ യൂസർനെയിം/ഫോൺ നിലവിലുണ്ട്", msgSelectBook: "ദയവായി ഒരു പുസ്തകം തിരഞ്ഞെടുക്കുക", msgIssued: "പുസ്തകം വിജയകരമായി ഇഷ്യൂ ചെയ്തു", msgReturned: "പുസ്തകം മടക്കി നൽകൽ പൂർത്തിയായി", msgError: "ഒരു പിശക് സംഭവിച്ചു"
             },
             ar: {
-                appTitle: "سجل المكتبة", navHome: "الرئيسية", navLogin: "دخول", navAdmin: "لوحة الإدارة", navReader: "كتبي", navLogout: "خروج",
+                appTitle: "سجل المكتبة", navHome: "الرئيسية", navLogin: "دخول", navAdmin: "لوحة الإدارة", navReader: "كتبي", navProfile: "الملف الشخصي", navLogout: "خروج",
                 searchTitle: "البحث عن الكتب", searchSubtitle: "ابحث عن الكتب المتوفرة وأرقام رفوفها هنا", searchPlaceholder: "اسم الكتاب، المؤلف أو الفئة...",
                 thBook: "الكتاب والمؤلف", thCategory: "الفئة", thShelf: "رقم الرف", thStatus: "التوفر",
                 statusAvailable: "متاح", statusIssued: "مُعار", loading: "جاري التحميل...", noBooksFound: "لم يتم العثور على كتب.",
-                loginTitle: "تسجيل الدخول", usernameLbl: "اسم المستخدم", passwordLbl: "كلمة المرور", loginBtn: "تسجيل الدخول",
+                loginTitle: "تسجيل الدخول", usernameLbl: "اسم المستخدم", passwordLbl: "كلمة المرور", loginBtn: "تسجيل الدخول", roleLbl: "وظيفة",
                 adminTabBooks: "الكتب", adminTabIssue: "إعارة / إرجاع", adminTabUsers: "المستخدمون",
                 addBookTitle: "إضافة كتاب جديد", bookIdLbl: "رقم الكتاب (ID)", bookTitleLbl: "عنوان الكتاب", bookAuthorLbl: "المؤلف / المترجم", priceLbl: "السعر (₹)", saveBtn: "حفظ الكتاب",
                 registryTitle: "سجل الكتب", actionLbl: "إجراء",
@@ -480,8 +551,7 @@
 
         // Initialize Theme & Lang
         applyTheme();
-        window.onload = () => changeLanguage(currentLang);
-
+        window.onload = () => { changeLanguage(currentLang); navigate('public-view'); }; // Ensure public view on load
 
         // --- Firebase Configuration ---
         const firebaseConfig = {
@@ -507,14 +577,38 @@
         let allTransactions = [];
         let unsubBooks, unsubUsers, unsubTransactions;
 
-        // UI Utils
+        // UI Utils - Routing & Modals
         window.navigate = (viewId) => {
-            ['public-view', 'login-view', 'admin-view', 'reader-view'].forEach(v => document.getElementById(v).classList.add('hidden-tab'));
+            // Hide all views
+            ['public-view', 'admin-view', 'reader-view', 'profile-view'].forEach(v => document.getElementById(v).classList.add('hidden-tab'));
+            // Show targeted view
             document.getElementById(viewId).classList.remove('hidden-tab');
-            
-            // Adjust Nav Buttons
-            document.getElementById('nav-home-btn').style.display = viewId === 'public-view' ? 'none' : 'block';
+            // Close Sidebar if open
+            if(!document.getElementById('sidebar').classList.contains('-translate-x-full') && !document.getElementById('sidebar').classList.contains('rtl:translate-x-full')){
+                toggleSidebar();
+            }
             if (viewId === 'public-view') renderPublicBooks();
+            if (viewId === 'profile-view') renderProfile();
+        };
+
+        window.toggleSidebar = () => {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('-translate-x-full');
+            sidebar.classList.toggle('rtl:translate-x-full');
+            overlay.classList.toggle('hidden');
+        };
+
+        window.openLoginModal = () => {
+            if(!document.getElementById('sidebar').classList.contains('-translate-x-full') && !document.getElementById('sidebar').classList.contains('rtl:translate-x-full')){
+                toggleSidebar(); // Close sidebar if open
+            }
+            document.getElementById('login-modal').classList.remove('hidden');
+        };
+
+        window.closeLoginModal = () => {
+            document.getElementById('login-modal').classList.add('hidden');
+            document.getElementById('login-form').reset();
         };
 
         window.switchAdminTab = (tabId) => {
@@ -532,7 +626,7 @@
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             const color = type === 'success' ? 'bg-green-500/90 dark:bg-green-600/90 border-green-400' : (type === 'error' ? 'bg-red-500/90 dark:bg-red-600/90 border-red-400' : 'bg-indigo-500/90 dark:bg-indigo-600/90 border-indigo-400');
-            toast.className = `${color} backdrop-blur-md text-white px-6 py-3 rounded-2xl shadow-xl border-t border-l transform transition-all duration-300 translate-y-0 opacity-100 font-bold text-sm flex items-center gap-2`;
+            toast.className = `${color} backdrop-blur-md text-white px-6 py-3 rounded-2xl shadow-xl border-t border-s transform transition-all duration-300 translate-y-0 opacity-100 font-bold text-sm flex items-center gap-2`;
             toast.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${type==='success'?'M5 13l4 4L19 7':'M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'}"></path></svg> ${message}`;
             container.appendChild(toast);
             setTimeout(() => {
@@ -547,20 +641,24 @@
             return d.toLocaleDateString(currentLang === 'ml' ? 'ml-IN' : 'en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
         };
 
-        // --- Authentication ---
+        // --- STREAMING_CHUNK:Authentication Logic---
         onAuthStateChanged(auth, async (user) => {
             const loginBtn = document.getElementById('nav-login-btn');
             const logoutBtn = document.getElementById('nav-logout-btn');
             const adminBtn = document.getElementById('nav-admin-btn');
             const readerBtn = document.getElementById('nav-reader-btn');
+            const profileBtn = document.getElementById('nav-profile-btn');
 
             if (user) {
                 try {
                     const userDoc = await getDoc(doc(db, "users", user.uid));
                     if (userDoc.exists()) {
                         currentUserData = userDoc.data();
+                        
+                        // Setup Sidebar State
                         loginBtn.classList.add('hidden');
                         logoutBtn.classList.remove('hidden');
+                        profileBtn.classList.remove('hidden');
 
                         if (currentUserData.role === 'admin') {
                             adminBtn.classList.remove('hidden');
@@ -581,16 +679,20 @@
                 } catch (error) { console.error("Auth error:", error); }
             } else {
                 currentUserData = null;
+                // Reset Sidebar State
                 loginBtn.classList.remove('hidden');
                 logoutBtn.classList.add('hidden');
                 adminBtn.classList.add('hidden');
                 readerBtn.classList.add('hidden');
+                profileBtn.classList.add('hidden');
+                
                 if(unsubBooks) unsubBooks(); if(unsubUsers) unsubUsers(); if(unsubTransactions) unsubTransactions();
                 navigate('public-view');
             }
         });
 
         document.getElementById('nav-logout-btn').addEventListener('click', () => {
+            toggleSidebar(); // Close sidebar on logout
             signOut(auth).then(() => { showToast(t('msgLogout')); }).catch(e => showToast(e.message, 'error'));
         });
 
@@ -605,7 +707,7 @@
 
             try {
                 await signInWithEmailAndPassword(auth, pseudoEmail, password);
-                document.getElementById('login-form').reset();
+                closeLoginModal(); // Close modal on success
             } catch (error) {
                 showToast(t('msgLoginFail'), "error");
             } finally {
@@ -613,8 +715,16 @@
             }
         });
 
+        const renderProfile = () => {
+            if(!currentUserData) return;
+            document.getElementById('prof-name').innerText = currentUserData.name;
+            document.getElementById('prof-username').innerText = currentUserData.username;
+            document.getElementById('prof-phone').innerText = currentUserData.phone || '-';
+            document.getElementById('prof-role').innerText = currentUserData.role;
+            document.getElementById('prof-joined').innerText = formatDate(currentUserData.createdAt);
+        };
 
-        // --- Public Portal ---
+        // --- STREAMING_CHUNK:Public Portal Logic ---
         const fetchPublicBooks = () => {
             document.getElementById('public-loading').classList.remove('hidden');
             const q = query(collection(db, "books"));
@@ -673,7 +783,7 @@
         document.getElementById('public-search-input').addEventListener('input', renderPublicBooks);
 
 
-        // --- Admin Portal ---
+        // --- STREAMING_CHUNK:Admin Portal Logic ---
         const setupAdminListeners = () => {
             unsubUsers = onSnapshot(collection(db, "users"), (snapshot) => {
                 allUsers = [];
@@ -847,7 +957,7 @@
                 opt.style.display = opt.text.toLowerCase().includes(val) ? 'block' : 'none';
             });
         });
-        document.getElementById('issue-book-select').addEventListener('click', (e) => { // Changed to click for custom styling options
+        document.getElementById('issue-book-select').addEventListener('click', (e) => {
             if(e.target.tagName === 'OPTION') {
                 document.getElementById('issue-book-search').value = e.target.text;
                 document.getElementById('issue-book-id').value = e.target.value;
@@ -898,7 +1008,7 @@
             } catch(e) { showToast(t('msgError'), "error"); }
         };
 
-        // --- Reader Portal ---
+        // --- STREAMING_CHUNK:Reader Portal Logic ---
         const setupReaderListeners = (userPhone) => {
             const q = query(collection(db, "transactions"), where("userPhone", "==", userPhone));
             onSnapshot(q, (snapshot) => {
