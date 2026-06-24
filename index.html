@@ -54,13 +54,24 @@
         
         /* RTL Support Adjustments */
         [dir="rtl"] { font-family: 'Tajawal', sans-serif; }
+
+        /* Custom Tabs for Add Book */
+        .add-book-tab.active {
+            border-bottom: 2px solid #4f46e5; /* indigo-600 */
+            color: #4f46e5;
+            font-weight: bold;
+        }
+        .dark .add-book-tab.active {
+            border-bottom-color: #818cf8; /* indigo-400 */
+            color: #818cf8;
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-indigo-950 dark:to-gray-900 text-gray-800 dark:text-gray-100 antialiased h-screen flex flex-col transition-colors duration-500 overflow-hidden">
 
     <!-- Navigation Bar -->
     <nav class="glass-panel shadow-lg z-20 sticky top-0 border-b border-white/20 dark:border-gray-700/50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="w-full mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center">
                 <div class="flex items-center gap-4">
                     <!-- Hamburger Icon -->
@@ -98,6 +109,7 @@
     <!-- Sidebar & Overlay -->
     <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 hidden transition-opacity" onclick="toggleSidebar()"></div>
     <aside id="sidebar" class="fixed top-0 bottom-0 start-0 w-72 bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl z-40 transform -translate-x-full rtl:translate-x-full transition-transform duration-300 ease-in-out border-e border-white/20 dark:border-gray-700/50 shadow-2xl flex flex-col">
+        <!-- Sidebar content same as before -->
         <div class="h-20 flex items-center justify-between px-6 border-b border-gray-200/50 dark:border-gray-700/50">
             <span class="font-black text-xl text-indigo-700 dark:text-indigo-400">Menu</span>
             <button onclick="toggleSidebar()" class="p-2 text-gray-500 hover:text-gray-900 dark:hover:text-white rounded-full bg-gray-100 dark:bg-gray-800 transition">
@@ -164,16 +176,16 @@
     </div>
 
     <!-- Main Content Area -->
-    <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 overflow-y-auto relative">
+    <main class="flex-grow w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 overflow-y-auto relative">
         
-        <!-- 1. Public Search View (DEFAULT) -->
+        <!-- 1. Public Search View -->
         <div id="public-view" class="view-section fade-in h-full flex flex-col">
             <div class="text-center mb-12">
                 <h1 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 drop-shadow-sm mb-4" data-i18n="searchTitle">Search Books</h1>
                 <p class="max-w-2xl mx-auto text-lg text-gray-600 dark:text-gray-400 font-medium" data-i18n="searchSubtitle">Find available books and their shelf numbers here</p>
             </div>
             
-            <div class="max-w-4xl mx-auto w-full mb-10">
+            <div class="w-full lg:w-3/4 mx-auto mb-10">
                 <div class="relative group">
                     <div class="absolute inset-y-0 start-0 ps-5 flex items-center pointer-events-none">
                         <svg class="w-6 h-6 text-indigo-400 group-focus-within:text-indigo-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
@@ -183,7 +195,7 @@
             </div>
 
             <!-- Search Results -->
-            <div class="max-w-6xl mx-auto w-full glass-panel rounded-3xl overflow-hidden shadow-2xl border border-white/40 dark:border-gray-700/50 flex flex-col flex-grow">
+            <div class="w-full glass-panel rounded-3xl overflow-hidden shadow-2xl border border-white/40 dark:border-gray-700/50 flex flex-col flex-grow">
                 <div class="overflow-x-auto flex-grow">
                     <table class="min-w-full divide-y divide-gray-200/50 dark:divide-gray-700/50">
                         <thead class="bg-gray-50/50 dark:bg-gray-800/50 backdrop-blur-md">
@@ -206,6 +218,7 @@
 
         <!-- 2. Profile View -->
         <div id="profile-view" class="view-section hidden-tab fade-in max-w-3xl mx-auto w-full pt-10">
+            <!-- Profile Content unchanged -->
             <div class="glass-panel p-8 sm:p-12 rounded-3xl shadow-2xl border border-white/40 dark:border-gray-700/50 text-center relative overflow-hidden">
                 <div class="absolute top-0 start-0 w-full h-32 bg-gradient-to-r from-indigo-500 to-purple-600 opacity-20"></div>
                 <div class="relative z-10">
@@ -236,73 +249,203 @@
         <!-- 3. Admin Dashboard View -->
         <div id="admin-view" class="view-section hidden-tab fade-in h-full flex flex-col">
             <div class="mb-8 flex flex-wrap gap-2 border-b border-gray-200/50 dark:border-gray-700/50 pb-4 shrink-0">
-                <button onclick="switchAdminTab('admin-books')" class="admin-tab-btn active bg-indigo-600 text-white shadow-md px-6 py-2.5 rounded-xl font-bold transition" data-i18n="adminTabBooks">Books</button>
+                <button onclick="switchAdminTab('admin-books')" class="admin-tab-btn active bg-indigo-600 text-white shadow-md px-6 py-2.5 rounded-xl font-bold transition" data-i18n="adminTabBooks">Books Register</button>
                 <button onclick="switchAdminTab('admin-bulk')" class="admin-tab-btn text-gray-600 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-800/50 px-6 py-2.5 rounded-xl font-bold transition" data-i18n="adminTabBulk">Bulk Import</button>
                 <button onclick="switchAdminTab('admin-issue')" class="admin-tab-btn text-gray-600 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-800/50 px-6 py-2.5 rounded-xl font-bold transition" data-i18n="adminTabIssue">Issue / Return</button>
                 <button onclick="switchAdminTab('admin-users')" class="admin-tab-btn text-gray-600 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-800/50 px-6 py-2.5 rounded-xl font-bold transition" data-i18n="adminTabUsers">Users</button>
             </div>
 
-            <!-- Admin Tab: Books Register -->
-            <div id="admin-books" class="admin-tab-content h-[calc(100vh-250px)]">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 h-full">
-                    <!-- Add Book Form -->
-                    <div class="glass-panel p-6 rounded-3xl md:col-span-1 overflow-y-auto">
-                        <h3 class="text-xl font-black mb-6 text-gray-800 dark:text-white flex items-center gap-2">
-                            <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                            <span data-i18n="addBookTitle">Add New Book</span>
-                        </h3>
-                        <form id="add-book-form" class="space-y-5">
-                            <div>
-                                <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1" data-i18n="bookIdLbl">Accession No (Book ID)</label>
-                                <input type="text" id="b-id" required class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+            <!-- Admin Tab: Books Register (Manual Add & List) -->
+            <div id="admin-books" class="admin-tab-content flex-grow flex flex-col min-h-0">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full">
+                    
+                    <!-- Advanced Add Book Form with Tabs -->
+                    <div class="glass-panel rounded-3xl lg:col-span-5 flex flex-col overflow-hidden shrink-0 lg:shrink h-[calc(100vh-250px)]">
+                        <div class="p-6 border-b border-gray-200/50 dark:border-gray-700/50 shrink-0">
+                            <h3 class="text-xl font-black text-gray-800 dark:text-white flex items-center gap-2">
+                                <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                <span data-i18n="addBookTitle">Add New Book</span>
+                            </h3>
+                            <!-- Form Navigation Tabs -->
+                            <div class="flex flex-wrap gap-4 mt-4 border-b border-gray-200 dark:border-gray-700">
+                                <button type="button" onclick="switchBookFormTab('tab-basic')" class="add-book-tab active pb-2 text-sm transition-colors" data-i18n="tabBasic">Basic Info</button>
+                                <button type="button" onclick="switchBookFormTab('tab-media')" class="add-book-tab pb-2 text-sm text-gray-500 dark:text-gray-400 transition-colors" data-i18n="tabMedia">Media</button>
+                                <button type="button" onclick="switchBookFormTab('tab-financial')" class="add-book-tab pb-2 text-sm text-gray-500 dark:text-gray-400 transition-colors" data-i18n="tabFinancial">Financials</button>
+                                <button type="button" onclick="switchBookFormTab('tab-audit')" class="add-book-tab pb-2 text-sm text-gray-500 dark:text-gray-400 transition-colors" data-i18n="tabAudit">Stock/Audit</button>
                             </div>
-                            <div>
-                                <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1" data-i18n="bookTitleLbl">Book Title</label>
-                                <input type="text" id="b-title" required class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1" data-i18n="bookAuthorLbl">Author / Translator</label>
-                                <input type="text" id="b-author" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
-                            </div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1" data-i18n="thCategory">Category</label>
-                                    <input type="text" id="b-category" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                        </div>
+
+                        <div class="flex-grow overflow-y-auto p-6">
+                            <form id="add-book-form" class="space-y-6 h-full flex flex-col">
+                                
+                                <!-- Tab 1: Basic Info -->
+                                <div id="tab-basic" class="book-form-section flex-grow">
+                                    <div class="grid grid-cols-2 gap-4 mb-4">
+                                        <div>
+                                            <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Serial No.</label>
+                                            <input type="text" id="b-serial" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-bold text-indigo-600 dark:text-indigo-400 mb-1">Accession No.*</label>
+                                            <input type="text" id="b-id" required class="w-full bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white font-bold">
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4 mb-4">
+                                        <div>
+                                            <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Call No / Class No</label>
+                                            <input type="text" id="b-callno" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Section / Division</label>
+                                            <input type="text" id="b-section" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                                        </div>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Book Title*</label>
+                                        <input type="text" id="b-title" required class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4 mb-4">
+                                        <div>
+                                            <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Author / Translator</label>
+                                            <input type="text" id="b-author" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Publisher</label>
+                                            <input type="text" id="b-publisher" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-3 gap-4 mb-4">
+                                        <div>
+                                            <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Year</label>
+                                            <input type="text" id="b-year" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Edition</label>
+                                            <input type="text" id="b-edition" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Language</label>
+                                            <input type="text" id="b-lang" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4 mb-4">
+                                        <div>
+                                            <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Category / Subject</label>
+                                            <input type="text" id="b-category" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">ISBN</label>
+                                            <input type="text" id="b-isbn" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                                        </div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1" data-i18n="thShelf">Shelf No</label>
-                                    <input type="text" id="b-shelf" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+
+                                <!-- Tab 2: Media (Images) -->
+                                <div id="tab-media" class="book-form-section hidden-tab flex-grow">
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">Upload up to 3 images (JPG/PNG). Max 200KB per image.</p>
+                                    <div class="space-y-4">
+                                        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
+                                            <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-2">Photo 1 (Front Cover)</label>
+                                            <input type="file" id="b-photo1" accept=".jpg, .jpeg, .png" class="text-sm w-full text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-gray-800 dark:file:text-indigo-400">
+                                        </div>
+                                        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
+                                            <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-2">Photo 2</label>
+                                            <input type="file" id="b-photo2" accept=".jpg, .jpeg, .png" class="text-sm w-full text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-gray-800 dark:file:text-indigo-400">
+                                        </div>
+                                        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
+                                            <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-2">Photo 3</label>
+                                            <input type="file" id="b-photo3" accept=".jpg, .jpeg, .png" class="text-sm w-full text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-gray-800 dark:file:text-indigo-400">
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1" data-i18n="priceLbl">Price (₹)</label>
-                                    <input type="number" id="b-price" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+
+                                <!-- Tab 3: Financials -->
+                                <div id="tab-financial" class="book-form-section hidden-tab flex-grow">
+                                    <div class="grid grid-cols-2 gap-4 mb-4">
+                                        <div>
+                                            <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Price (₹)</label>
+                                            <input type="number" id="b-price" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Date of Purchase</label>
+                                            <input type="date" id="b-purchasedate" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                                        </div>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Grant / Budget Head</label>
+                                        <input type="text" id="b-budget" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Supplier / Vendor</label>
+                                        <input type="text" id="b-vendor" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1" data-i18n="thStatus">Availability</label>
-                                    <select id="b-status" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
-                                        <option value="Available" data-i18n="statusAvailable">Available</option>
-                                        <option value="Issued" data-i18n="statusIssued">Issued</option>
-                                    </select>
+
+                                <!-- Tab 4: Stock & Audit -->
+                                <div id="tab-audit" class="book-form-section hidden-tab flex-grow">
+                                    <div class="grid grid-cols-2 gap-4 mb-4">
+                                        <div>
+                                            <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Shelf No.</label>
+                                            <input type="text" id="b-shelf" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Book Condition</label>
+                                            <select id="b-condition" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                                                <option value="Good">Good</option>
+                                                <option value="Fair">Fair</option>
+                                                <option value="Poor">Poor</option>
+                                                <option value="Damaged">Damaged</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4 mb-4">
+                                        <div>
+                                            <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Status</label>
+                                            <select id="b-status" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                                                <option value="Available">Available</option>
+                                                <option value="Issued">Issued</option>
+                                                <option value="Lost">Lost</option>
+                                                <option value="Withdrawn">Withdrawn (Condemned)</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Verification Date</label>
+                                            <input type="date" id="b-verifydate" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white">
+                                        </div>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Remarks</label>
+                                        <textarea id="b-remarks" rows="2" class="w-full bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg py-2 px-3 focus:ring-2 focus:ring-indigo-500 outline-none text-sm dark:text-white"></textarea>
+                                    </div>
+                                    <!-- Auto Signature Note -->
+                                    <p class="text-[10px] text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 p-2 rounded italic">
+                                        * Saving this record will automatically capture your Digital Signature (Admin Name & Timestamp) for Audit and Verification purposes.
+                                    </p>
                                 </div>
-                            </div>
-                            <button type="submit" class="w-full bg-indigo-600 text-white rounded-xl py-3 text-sm font-black hover:bg-indigo-700 transition-colors shadow-md mt-2" data-i18n="saveBtn">Save Book</button>
-                        </form>
+
+                                <div class="mt-auto shrink-0 pt-4 border-t border-gray-200 dark:border-gray-700">
+                                    <button type="submit" id="btn-save-book" class="w-full bg-indigo-600 text-white rounded-xl py-3 text-sm font-black hover:bg-indigo-700 transition-colors shadow-md flex items-center justify-center gap-2">
+                                        <svg class="w-5 h-5 hidden animate-spin" id="save-spinner" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                        <span id="save-btn-text" data-i18n="saveBtn">Save Book Record</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                    <!-- Books List -->
-                    <div class="glass-panel rounded-3xl md:col-span-2 flex flex-col h-full overflow-hidden">
-                        <div class="p-5 border-b border-gray-200/50 dark:border-gray-700/50 bg-white/30 dark:bg-gray-800/30 flex justify-between items-center">
+
+                    <!-- Books List & Advanced View -->
+                    <div class="glass-panel rounded-3xl lg:col-span-7 flex flex-col h-[calc(100vh-250px)] overflow-hidden">
+                        <div class="p-5 border-b border-gray-200/50 dark:border-gray-700/50 bg-white/30 dark:bg-gray-800/30 flex justify-between items-center shrink-0">
                             <h3 class="text-xl font-black text-gray-800 dark:text-white" data-i18n="registryTitle">Books Registry</h3>
-                            <input type="text" id="admin-book-search" data-i18n-placeholder="searchPlaceholder" placeholder="Search..." class="bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-700 rounded-lg py-1.5 px-4 text-sm focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white w-1/3 min-w-[200px]">
+                            <input type="text" id="admin-book-search" data-i18n-placeholder="searchPlaceholder" placeholder="Search ID or Title..." class="bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-700 rounded-lg py-1.5 px-4 text-sm focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white w-1/3 min-w-[200px]">
                         </div>
                         <div class="overflow-y-auto flex-grow p-0">
                             <table class="min-w-full divide-y divide-gray-200/50 dark:divide-gray-700/50">
                                 <thead class="bg-gray-50/50 dark:bg-gray-800/50 sticky top-0 backdrop-blur-md">
                                     <tr>
-                                        <th class="px-5 py-3 text-start text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">ID</th>
+                                        <th class="px-5 py-3 text-start text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">Accession No</th>
                                         <th class="px-5 py-3 text-start text-xs font-bold text-gray-500 dark:text-gray-400 uppercase" data-i18n="thBook">Title & Author</th>
-                                        <th class="px-5 py-3 text-start text-xs font-bold text-gray-500 dark:text-gray-400 uppercase" data-i18n="thShelf">Shelf</th>
+                                        <th class="px-5 py-3 text-start text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">Cond.</th>
                                         <th class="px-5 py-3 text-start text-xs font-bold text-gray-500 dark:text-gray-400 uppercase" data-i18n="thStatus">Status</th>
                                         <th class="px-5 py-3 text-end text-xs font-bold text-gray-500 dark:text-gray-400 uppercase" data-i18n="actionLbl">Action</th>
                                     </tr>
@@ -372,6 +515,61 @@
 
             <!-- Admin Tab: Issue / Return -->
             <div id="admin-issue" class="admin-tab-content hidden-tab flex-grow flex flex-col min-h-0">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
+                    <!-- Issue Form -->
+                    <div class="glass-panel p-8 rounded-3xl border-t-4 border-t-indigo-500 flex flex-col justify-center">
+                        <h3 class="text-2xl font-black mb-6 text-indigo-700 dark:text-indigo-400" data-i18n="issueBookTitle">Issue Book</h3>
+                        <form id="issue-book-form" class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2" data-i18n="phoneFirstLbl">Phone Number (Type first)</label>
+                                <div class="relative">
+                                    <input type="tel" id="issue-phone" required autocomplete="off" placeholder="10 Digits" class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none font-bold tracking-wider dark:text-white text-start">
+                                    <span id="issue-user-badge" class="absolute end-3 top-3 bg-green-100 text-green-800 text-xs font-bold px-2.5 py-1 rounded-md hidden">Registered</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2" data-i18n="readerNameLbl">Reader Name</label>
+                                <input type="text" id="issue-name" required class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white transition-colors text-start">
+                            </div>
+                            <div class="relative">
+                                <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2" data-i18n="selectBookLbl">Select Book (Search)</label>
+                                <input type="text" id="issue-book-search" autocomplete="off" data-i18n-placeholder="searchPlaceholder" placeholder="Search..." class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white mb-1 text-start">
+                                <select id="issue-book-select" required size="4" class="absolute z-10 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl shadow-2xl p-2 focus:ring-2 focus:ring-indigo-500 outline-none text-sm hidden dark:text-white mt-1 max-h-40 text-start">
+                                    <!-- Options injected -->
+                                </select>
+                                <input type="hidden" id="issue-book-id">
+                            </div>
+                            <button type="submit" class="w-full bg-indigo-600 text-white rounded-xl py-4 text-sm font-black hover:bg-indigo-700 shadow-xl shadow-indigo-500/20 mt-4 transition-transform hover:-translate-y-0.5" data-i18n="recordIssueBtn">Record Issue</button>
+                        </form>
+                    </div>
+
+                    <!-- Active Issues List -->
+                    <div class="glass-panel p-6 rounded-3xl flex flex-col h-full overflow-hidden">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-black text-gray-800 dark:text-white" data-i18n="activeIssuesTitle">Active Issues</h3>
+                            <span class="bg-yellow-100 text-yellow-800 text-xs font-bold px-3 py-1 rounded-full animate-pulse flex items-center gap-1">
+                                <span class="w-2 h-2 rounded-full bg-yellow-500"></span> Live
+                            </span>
+                        </div>
+                        <div class="overflow-y-auto flex-grow pe-2">
+                            <ul id="active-issues-list" class="space-y-3 text-start">
+                                <!-- Transactions injected here -->
+                            </ul>
+                            <div id="no-active-issues" class="text-center py-16 text-gray-500 dark:text-gray-400 hidden font-bold flex flex-col items-center justify-center h-full">
+                                <svg class="w-12 h-12 mb-3 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span data-i18n="noIssuesFound">No active issued books.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Tab: Users (Readers) -->
+            <div id="admin-users" class="admin-tab-content hidden-tab flex-grow flex flex-col min-h-0">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
+                    <div class="glass-panel p-6 rounded-3xl lg:col-span-1 flex flex-col justify-center">
+                        <h3 class="text-xl font-black mb-6 text-gray-800 dark:text-white" data-i18n="addReaderTitle">Add New Reader</h3>
+                        <form id="add-user-form" class="space-y-5">
                             <div>
                                 <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1" data-i18n="usernameLbl">Username</label>
                                 <input type="text" id="u-username" required class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white text-start">
@@ -387,7 +585,7 @@
                             <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white rounded-xl py-3.5 text-sm font-black shadow-lg shadow-green-500/30 transition-transform hover:-translate-y-0.5 mt-4" data-i18n="createAccBtn">Create Account</button>
                         </form>
                     </div>
-                    <div class="glass-panel rounded-3xl md:col-span-2 overflow-hidden flex flex-col h-full">
+                    <div class="glass-panel rounded-3xl lg:col-span-2 overflow-hidden flex flex-col h-full">
                         <div class="p-5 border-b border-gray-200/50 dark:border-gray-700/50 bg-white/30 dark:bg-gray-800/30">
                             <h3 class="text-xl font-black text-gray-800 dark:text-white" data-i18n="regReadersTitle">Registered Readers</h3>
                         </div>
@@ -445,6 +643,71 @@
 
     </main>
 
+    <!-- Full Book Details Modal (View Only) -->
+    <div id="book-details-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-gray-900/80 backdrop-blur-md transition-opacity" onclick="closeBookDetailsModal()"></div>
+        <div class="relative glass-panel w-full max-w-2xl max-h-[90vh] flex flex-col rounded-3xl shadow-2xl border border-white/40 dark:border-gray-600 fade-in">
+            <button onclick="closeBookDetailsModal()" class="absolute top-4 end-4 p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition z-10">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 rounded-t-3xl shrink-0">
+                <div class="flex items-start gap-4">
+                    <div class="bg-indigo-100 dark:bg-indigo-900/50 p-3 rounded-xl text-indigo-600 dark:text-indigo-400">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-black text-gray-900 dark:text-white" id="modal-b-title">Book Title</h2>
+                        <p class="text-indigo-600 dark:text-indigo-400 font-bold" id="modal-b-author">Author Name</p>
+                    </div>
+                </div>
+            </div>
+            <div class="p-6 overflow-y-auto flex-grow text-start">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <!-- Identity -->
+                    <div class="space-y-3">
+                        <h4 class="font-bold text-gray-800 dark:text-gray-200 border-b border-gray-200 dark:border-gray-700 pb-1">Identity & Location</h4>
+                        <div class="grid grid-cols-2 gap-x-2 gap-y-3 text-sm">
+                            <span class="text-gray-500">Accession No:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-id">-</span>
+                            <span class="text-gray-500">Call No:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-callno">-</span>
+                            <span class="text-gray-500">Shelf No:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-shelf">-</span>
+                            <span class="text-gray-500">Section:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-section">-</span>
+                            <span class="text-gray-500">Status:</span> <span class="font-bold px-2 py-0.5 rounded text-xs inline-block" id="modal-b-status">-</span>
+                        </div>
+                    </div>
+                    <!-- Publication -->
+                    <div class="space-y-3">
+                        <h4 class="font-bold text-gray-800 dark:text-gray-200 border-b border-gray-200 dark:border-gray-700 pb-1">Publication Details</h4>
+                        <div class="grid grid-cols-2 gap-x-2 gap-y-3 text-sm">
+                            <span class="text-gray-500">Publisher:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-publisher">-</span>
+                            <span class="text-gray-500">Year/Edition:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-yearedition">-</span>
+                            <span class="text-gray-500">Language:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-lang">-</span>
+                            <span class="text-gray-500">Category:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-category">-</span>
+                            <span class="text-gray-500">ISBN:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-isbn">-</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Audit & Financial (Visible mostly for Admin, hidden for public usually, but shown here for completeness) -->
+                <div class="mt-6 space-y-3">
+                    <h4 class="font-bold text-gray-800 dark:text-gray-200 border-b border-gray-200 dark:border-gray-700 pb-1">Audit & Condition</h4>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-x-2 gap-y-3 text-sm bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
+                        <span class="text-gray-500">Condition:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-condition">-</span>
+                        <span class="text-gray-500">Verified On:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-verifydate">-</span>
+                        <span class="text-gray-500 col-span-2">Verified By:</span> <span class="font-bold text-indigo-600 dark:text-indigo-400 col-span-2 text-xs" id="modal-b-verifiedby">-</span>
+                    </div>
+                </div>
+
+                <div class="mt-6 space-y-3">
+                    <h4 class="font-bold text-gray-800 dark:text-gray-200 border-b border-gray-200 dark:border-gray-700 pb-1">Media / Photos</h4>
+                    <div class="flex gap-4" id="modal-b-photos">
+                        <!-- Photos will be injected here -->
+                        <span class="text-sm text-gray-500">No photos available.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Premium Toast Container -->
     <div id="toast-container" class="fixed bottom-6 end-6 sm:bottom-10 sm:end-10 z-50 flex flex-col gap-3"></div>
 
@@ -452,7 +715,9 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, setDoc, doc, getDoc, updateDoc, deleteDoc, query, where, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, setDoc, doc, getDoc, updateDoc, deleteDoc, query, where, onSnapshot, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        // Import Storage for Photos
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
         // --- i18n Dictionary ---
         const i18n = {
@@ -463,7 +728,8 @@
                 statusAvailable: "Available", statusIssued: "Issued", loading: "Loading data...", noBooksFound: "No books found.",
                 loginTitle: "Sign In", usernameLbl: "Username", passwordLbl: "Password", loginBtn: "Login", roleLbl: "Role",
                 adminTabBooks: "Books", adminTabBulk: "Bulk Import", adminTabIssue: "Issue/Return", adminTabUsers: "Users",
-                addBookTitle: "Add New Book", bookIdLbl: "Accession No (Book ID)", bookTitleLbl: "Book Title", bookAuthorLbl: "Author / Translator", priceLbl: "Price (₹)", saveBtn: "Save Book",
+                addBookTitle: "Add New Book", bookIdLbl: "Accession No (Book ID)", bookTitleLbl: "Book Title", bookAuthorLbl: "Author / Translator", priceLbl: "Price (₹)", saveBtn: "Save Book Record",
+                tabBasic: "Basic Info", tabMedia: "Media", tabFinancial: "Financials", tabAudit: "Stock/Audit",
                 registryTitle: "Books Registry", actionLbl: "Action",
                 bulkTitle: "Bulk Import Books (CSV)", bulkDesc: "Upload an Excel (.csv) file to add multiple books at once. Make sure your file matches the template structure exactly. Existing Book IDs will be skipped to prevent duplicates.", btnTemplate: "Download CSV Template", dragDropMsg: "Select a CSV file to upload", btnBrowse: "Browse File", previewTitle: "Data Preview", btnUploadBooks: "Upload Data", noPreviewMsg: "No file selected for preview.",
                 issueBookTitle: "Issue Book", phoneFirstLbl: "Phone Number (Type first)", readerNameLbl: "Reader Name", selectBookLbl: "Select Book (Search)", recordIssueBtn: "Record Issue",
@@ -480,6 +746,7 @@
                 loginTitle: "ലോഗിൻ ചെയ്യുക", usernameLbl: "യൂസർ നെയിം", passwordLbl: "പാസ്‌വേർഡ്", loginBtn: "ലോഗിൻ", roleLbl: "റോൾ",
                 adminTabBooks: "പുസ്തകങ്ങൾ", adminTabBulk: "ബൾക്ക് ഇമ്പോർട്ട്", adminTabIssue: "ഇഷ്യൂ / റിട്ടേൺ", adminTabUsers: "യൂസർമാർ",
                 addBookTitle: "പുതിയ പുസ്തകം ചേർക്കുക", bookIdLbl: "അക്സഷൻ നമ്പർ (Book ID)", bookTitleLbl: "പുസ്തകത്തിന്റെ പേര്", bookAuthorLbl: "ഗ്രന്ഥകർത്താവ് / വിവർത്തകൻ", priceLbl: "വില (₹)", saveBtn: "സേവ് ചെയ്യുക",
+                tabBasic: "വിവരങ്ങൾ", tabMedia: "ഫോട്ടോകൾ", tabFinancial: "സാമ്പത്തികം", tabAudit: "സ്റ്റോക്ക് & ഓഡിറ്റ്",
                 registryTitle: "രജിസ്റ്ററിലെ പുസ്തകങ്ങൾ", actionLbl: "Action",
                 bulkTitle: "ഒന്നിച്ച് പുസ്തകങ്ങൾ ചേർക്കുക (CSV)", bulkDesc: "നിരവധി പുസ്തകങ്ങൾ ഒന്നിച്ച് അപ്‌ലോഡ് ചെയ്യാൻ CSV ഫയൽ ഉപയോഗിക്കുക. ടെംപ്ലേറ്റ് ഡൗൺലോഡ് ചെയ്ത് അതേ ഫോർമാറ്റിൽ ഡാറ്റ നൽകുക. നിലവിലുള്ള ബുക്ക് ഐഡികൾ ഒഴിവാക്കപ്പെടും.", btnTemplate: "CSV ടെംപ്ലേറ്റ് ഡൗൺലോഡ്", dragDropMsg: "അപ്‌ലോഡ് ചെയ്യാൻ ഒരു CSV ഫയൽ തിരഞ്ഞെടുക്കുക", btnBrowse: "ഫയൽ എടുക്കുക", previewTitle: "ഡാറ്റ പ്രിവ്യൂ", btnUploadBooks: "അപ്‌ലോഡ് ചെയ്യുക", noPreviewMsg: "പ്രിവ്യൂ കാണാൻ ഫയൽ തിരഞ്ഞെടുക്കുക.",
                 issueBookTitle: "പുസ്തകം നൽകുക (Issue)", phoneFirstLbl: "ഫോൺ നമ്പർ (ആദ്യം നൽകുക)", readerNameLbl: "വായനക്കാരന്റെ പേര്", selectBookLbl: "പുസ്തകം തിരഞ്ഞെടുക്കുക", recordIssueBtn: "ഇഷ്യൂ റെക്കോർഡ് ചെയ്യുക",
@@ -495,7 +762,8 @@
                 statusAvailable: "متاح", statusIssued: "مُعار", loading: "جاري التحميل...", noBooksFound: "لم يتم العثور على كتب.",
                 loginTitle: "تسجيل الدخول", usernameLbl: "اسم المستخدم", passwordLbl: "كلمة المرور", loginBtn: "تسجيل الدخول", roleLbl: "وظيفة",
                 adminTabBooks: "الكتب", adminTabBulk: "استيراد جماعي", adminTabIssue: "إعارة / إرجاع", adminTabUsers: "المستخدمون",
-                addBookTitle: "إضافة كتاب جديد", bookIdLbl: "رقم الكتاب (ID)", bookTitleLbl: "عنوان الكتاب", bookAuthorLbl: "المؤلف / المترجم", priceLbl: "السعر (₹)", saveBtn: "حفظ الكتاب",
+                addBookTitle: "إضافة كتاب جديد", bookIdLbl: "رقم الكتاب (ID)", bookTitleLbl: "عنوان الكتاب", bookAuthorLbl: "المؤلف / المترجم", priceLbl: "السعر (₹)", saveBtn: "حفظ السجل",
+                tabBasic: "المعلومات", tabMedia: "الوسائط", tabFinancial: "المالية", tabAudit: "المراجعة",
                 registryTitle: "سجل الكتب", actionLbl: "إجراء",
                 bulkTitle: "استيراد الكتب (CSV)", bulkDesc: "قم بتحميل ملف CSV لإضافة كتب متعددة. تأكد من مطابقة القالب. سيتم تخطي أرقام الكتب الموجودة.", btnTemplate: "تنزيل قالب CSV", dragDropMsg: "اختر ملف CSV للتحميل", btnBrowse: "تصفح الملف", previewTitle: "معاينة البيانات", btnUploadBooks: "تحميل البيانات", noPreviewMsg: "لم يتم تحديد ملف للمعاينة.",
                 issueBookTitle: "إعارة كتاب", phoneFirstLbl: "رقم الهاتف (اكتب أولاً)", readerNameLbl: "اسم القارئ", selectBookLbl: "اختر كتاباً", recordIssueBtn: "تسجيل الإعارة",
@@ -562,7 +830,7 @@
             apiKey: "AIzaSyAAvxaW7bL7S_oD_xrElO4-XvuxnhfJKxc",
             authDomain: "noorul-islam-91eae.firebaseapp.com",
             projectId: "noorul-islam-91eae",
-            storageBucket: "noorul-islam-91eae.firebasestorage.app",
+            storageBucket: "noorul-islam-91eae.firebasestorage.app", // Important for Photos
             messagingSenderId: "1034149016792",
             appId: "1:1034149016792:web:befc9bf1eadcf2bd8653ad",
             measurementId: "G-ZFSQDL9MTB"
@@ -571,6 +839,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const storage = getStorage(app); // Storage instance
         const secondaryApp = initializeApp(firebaseConfig, "Secondary");
         const secondaryAuth = getAuth(secondaryApp);
 
@@ -579,16 +848,13 @@
         let allBooks = [];
         let allUsers = [];
         let allTransactions = [];
-        let parsedCSVData = []; // Array to hold parsed CSV rows
+        let parsedCSVData = []; 
         let unsubBooks, unsubUsers, unsubTransactions;
 
         // UI Utils - Routing & Modals
         window.navigate = (viewId) => {
-            // Hide all views
             ['public-view', 'admin-view', 'reader-view', 'profile-view'].forEach(v => document.getElementById(v).classList.add('hidden-tab'));
-            // Show targeted view
             document.getElementById(viewId).classList.remove('hidden-tab');
-            // Close Sidebar if open
             if(!document.getElementById('sidebar').classList.contains('-translate-x-full') && !document.getElementById('sidebar').classList.contains('rtl:translate-x-full')){
                 toggleSidebar();
             }
@@ -606,7 +872,7 @@
 
         window.openLoginModal = () => {
             if(!document.getElementById('sidebar').classList.contains('-translate-x-full') && !document.getElementById('sidebar').classList.contains('rtl:translate-x-full')){
-                toggleSidebar(); // Close sidebar if open
+                toggleSidebar(); 
             }
             document.getElementById('login-modal').classList.remove('hidden');
         };
@@ -614,6 +880,18 @@
         window.closeLoginModal = () => {
             document.getElementById('login-modal').classList.add('hidden');
             document.getElementById('login-form').reset();
+        };
+
+        // Add Book Form Tabs Logic
+        window.switchBookFormTab = (tabId) => {
+            document.querySelectorAll('.book-form-section').forEach(el => el.classList.add('hidden-tab'));
+            document.querySelectorAll('.add-book-tab').forEach(el => {
+                el.classList.remove('active', 'text-indigo-600', 'dark:text-indigo-400');
+                el.classList.add('text-gray-500', 'dark:text-gray-400');
+            });
+            document.getElementById(tabId).classList.remove('hidden-tab');
+            event.target.classList.remove('text-gray-500', 'dark:text-gray-400');
+            event.target.classList.add('active');
         };
 
         window.switchAdminTab = (tabId) => {
@@ -631,7 +909,7 @@
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             const color = type === 'success' ? 'bg-green-500/90 dark:bg-green-600/90 border-green-400' : (type === 'error' ? 'bg-red-500/90 dark:bg-red-600/90 border-red-400' : 'bg-indigo-500/90 dark:bg-indigo-600/90 border-indigo-400');
-            toast.className = `${color} backdrop-blur-md text-white px-6 py-3 rounded-2xl shadow-xl border-t border-s transform transition-all duration-300 translate-y-0 opacity-100 font-bold text-sm flex items-center gap-2`;
+            toast.className = `${color} backdrop-blur-md text-white px-6 py-3 rounded-2xl shadow-xl border-t border-s transform transition-all duration-300 translate-y-0 opacity-100 font-bold text-sm flex items-center gap-2 z-50`;
             toast.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${type==='success'?'M5 13l4 4L19 7':'M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'}"></path></svg> ${message}`;
             container.appendChild(toast);
             setTimeout(() => {
@@ -646,7 +924,7 @@
             return d.toLocaleDateString(currentLang === 'ml' ? 'ml-IN' : 'en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
         };
 
-        // --- STREAMING_CHUNK:Authentication Logic---
+        // --- Authentication Logic---
         onAuthStateChanged(auth, async (user) => {
             const loginBtn = document.getElementById('nav-login-btn');
             const logoutBtn = document.getElementById('nav-logout-btn');
@@ -660,7 +938,6 @@
                     if (userDoc.exists()) {
                         currentUserData = userDoc.data();
                         
-                        // Setup Sidebar State
                         loginBtn.classList.add('hidden');
                         logoutBtn.classList.remove('hidden');
                         profileBtn.classList.remove('hidden');
@@ -685,11 +962,10 @@
                 } catch (error) { 
                     console.error("Auth error:", error); 
                     showToast("Database Permission Error. Please check Firestore Rules.", "error");
-                    auth.signOut(); // Force sign out to prevent getting stuck
+                    auth.signOut(); 
                 }
             } else {
                 currentUserData = null;
-                // Reset Sidebar State
                 loginBtn.classList.remove('hidden');
                 logoutBtn.classList.add('hidden');
                 adminBtn.classList.add('hidden');
@@ -702,7 +978,7 @@
         });
 
         document.getElementById('nav-logout-btn').addEventListener('click', () => {
-            toggleSidebar(); // Close sidebar on logout
+            toggleSidebar(); 
             signOut(auth).then(() => { showToast(t('msgLogout')); }).catch(e => showToast(e.message, 'error'));
         });
 
@@ -717,7 +993,7 @@
 
             try {
                 await signInWithEmailAndPassword(auth, pseudoEmail, password);
-                closeLoginModal(); // Close modal on success
+                closeLoginModal();
             } catch (error) {
                 showToast(t('msgLoginFail'), "error");
             } finally {
@@ -734,7 +1010,56 @@
             document.getElementById('prof-joined').innerText = formatDate(currentUserData.createdAt);
         };
 
-        // --- STREAMING_CHUNK:Public Portal Logic ---
+        // --- Book Details Modal Logic ---
+        window.openBookDetails = (bookId) => {
+            const b = allBooks.find(book => book.id === bookId);
+            if(!b) return;
+
+            document.getElementById('modal-b-title').innerText = b.title;
+            document.getElementById('modal-b-author').innerText = b.author || 'Unknown Author';
+            
+            // Identity
+            document.getElementById('modal-b-id').innerText = b.id;
+            document.getElementById('modal-b-callno').innerText = b.callNumber || '-';
+            document.getElementById('modal-b-shelf').innerText = b.shelfLocation || '-';
+            document.getElementById('modal-b-section').innerText = b.sectionCode || '-';
+            
+            // Status Badge
+            const statusBadge = document.getElementById('modal-b-status');
+            statusBadge.innerText = b.status;
+            statusBadge.className = `font-bold px-2 py-0.5 rounded text-xs inline-block ${b.status === 'Available' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
+            
+            // Publication
+            document.getElementById('modal-b-publisher').innerText = b.publisher || '-';
+            document.getElementById('modal-b-yearedition').innerText = `${b.year || '-'} / ${b.edition || '-'}`;
+            document.getElementById('modal-b-lang').innerText = b.language || '-';
+            document.getElementById('modal-b-category').innerText = b.category || '-';
+            document.getElementById('modal-b-isbn').innerText = b.isbn || '-';
+
+            // Audit
+            document.getElementById('modal-b-condition').innerText = b.condition || '-';
+            document.getElementById('modal-b-verifydate').innerText = b.verificationDate || '-';
+            document.getElementById('modal-b-verifiedby').innerText = b.verifiedBy || '-';
+
+            // Photos
+            const photosContainer = document.getElementById('modal-b-photos');
+            photosContainer.innerHTML = '';
+            let hasPhotos = false;
+            if(b.photo1) { photosContainer.innerHTML += `<img src="${b.photo1}" class="h-20 w-16 object-cover rounded shadow border border-gray-200 cursor-pointer hover:opacity-80" onclick="window.open('${b.photo1}', '_blank')">`; hasPhotos = true; }
+            if(b.photo2) { photosContainer.innerHTML += `<img src="${b.photo2}" class="h-20 w-16 object-cover rounded shadow border border-gray-200 cursor-pointer hover:opacity-80" onclick="window.open('${b.photo2}', '_blank')">`; hasPhotos = true; }
+            if(b.photo3) { photosContainer.innerHTML += `<img src="${b.photo3}" class="h-20 w-16 object-cover rounded shadow border border-gray-200 cursor-pointer hover:opacity-80" onclick="window.open('${b.photo3}', '_blank')">`; hasPhotos = true; }
+            
+            if(!hasPhotos) photosContainer.innerHTML = '<span class="text-sm text-gray-500">No photos available.</span>';
+
+            document.getElementById('book-details-modal').classList.remove('hidden');
+        };
+
+        window.closeBookDetailsModal = () => {
+            document.getElementById('book-details-modal').classList.add('hidden');
+        };
+
+
+        // --- Public Portal Logic ---
         const fetchPublicBooks = () => {
             document.getElementById('public-loading').classList.remove('hidden');
             const q = query(collection(db, "books"));
@@ -771,7 +1096,8 @@
                     const statusText = b.status === 'Available' ? t('statusAvailable') : t('statusIssued');
                     
                     const tr = document.createElement('tr');
-                    tr.className = 'hover:bg-white/40 dark:hover:bg-gray-800/40 transition-colors group';
+                    tr.className = 'hover:bg-white/40 dark:hover:bg-gray-800/40 transition-colors group cursor-pointer';
+                    tr.onclick = () => openBookDetails(b.id);
                     tr.innerHTML = `
                         <td class="px-6 py-4">
                             <div class="text-sm font-black text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">${b.title}</div>
@@ -793,7 +1119,7 @@
         document.getElementById('public-search-input').addEventListener('input', renderPublicBooks);
 
 
-        // --- STREAMING_CHUNK:Admin Portal Logic ---
+        // --- Admin Portal Logic ---
         const setupAdminListeners = () => {
             unsubUsers = onSnapshot(collection(db, "users"), (snapshot) => {
                 allUsers = [];
@@ -839,33 +1165,106 @@
             });
         };
 
+        // Helper function for uploading images
+        const uploadImage = async (file, path) => {
+            if (!file) return null;
+            if (file.size > 200 * 1024) throw new Error(`File ${file.name} exceeds 200KB limit.`);
+            const storageRef = ref(storage, path);
+            await uploadBytes(storageRef, file);
+            return await getDownloadURL(storageRef);
+        };
+
         document.getElementById('add-book-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = e.target.querySelector('button');
+            const btn = document.getElementById('btn-save-book');
+            const spinner = document.getElementById('save-spinner');
+            const btnText = document.getElementById('save-btn-text');
+            
             btn.disabled = true;
+            spinner.classList.remove('hidden');
+            btnText.innerText = "Saving & Uploading...";
             
             const bookId = document.getElementById('b-id').value.toUpperCase().trim();
-            const bookData = {
-                title: document.getElementById('b-title').value,
-                author: document.getElementById('b-author').value,
-                category: document.getElementById('b-category').value,
-                shelfLocation: document.getElementById('b-shelf').value,
-                price: parseFloat(document.getElementById('b-price').value) || 0,
-                status: document.getElementById('b-status').value,
-                dateAdded: serverTimestamp()
-            };
-
+            
             try {
+                // 1. Check if exists
                 const docSnap = await getDoc(doc(db, "books", bookId));
                 if(docSnap.exists()) {
                     showToast(t('msgBookExists'), "error");
-                } else {
-                    await setDoc(doc(db, "books", bookId), bookData);
-                    showToast(t('msgBookAdded'));
-                    e.target.reset();
+                    throw new Error("Exists");
                 }
-            } catch (error) { showToast(t('msgError'), "error"); } 
-            finally { btn.disabled = false; }
+
+                // 2. Handle Image Uploads
+                const p1File = document.getElementById('b-photo1').files[0];
+                const p2File = document.getElementById('b-photo2').files[0];
+                const p3File = document.getElementById('b-photo3').files[0];
+                
+                let photo1Url = null, photo2Url = null, photo3Url = null;
+                
+                try {
+                    if (p1File) photo1Url = await uploadImage(p1File, `books/${bookId}/photo1_${Date.now()}`);
+                    if (p2File) photo2Url = await uploadImage(p2File, `books/${bookId}/photo2_${Date.now()}`);
+                    if (p3File) photo3Url = await uploadImage(p3File, `books/${bookId}/photo3_${Date.now()}`);
+                } catch (imgError) {
+                    showToast(imgError.message, "error");
+                    throw new Error("ImageUploadFailed");
+                }
+
+                // 3. Digital Audit Signature
+                const adminSignature = `${currentUserData.name} (${currentUserData.username}) at ${new Date().toISOString()}`;
+
+                // 4. Construct Data Object
+                const bookData = {
+                    // Identity
+                    serialNo: document.getElementById('b-serial').value,
+                    id: bookId, // Accession No acts as Doc ID
+                    callNumber: document.getElementById('b-callno').value,
+                    sectionCode: document.getElementById('b-section').value,
+                    // Details
+                    title: document.getElementById('b-title').value,
+                    author: document.getElementById('b-author').value,
+                    publisher: document.getElementById('b-publisher').value,
+                    year: document.getElementById('b-year').value,
+                    edition: document.getElementById('b-edition').value,
+                    language: document.getElementById('b-lang').value,
+                    category: document.getElementById('b-category').value,
+                    isbn: document.getElementById('b-isbn').value,
+                    // Financials
+                    price: parseFloat(document.getElementById('b-price').value) || 0,
+                    purchaseDate: document.getElementById('b-purchasedate').value,
+                    budgetHead: document.getElementById('b-budget').value,
+                    vendor: document.getElementById('b-vendor').value,
+                    // Status & Audit
+                    shelfLocation: document.getElementById('b-shelf').value,
+                    condition: document.getElementById('b-condition').value,
+                    status: document.getElementById('b-status').value, // Available, Issued, Lost, Withdrawn
+                    verificationDate: document.getElementById('b-verifydate').value,
+                    remarks: document.getElementById('b-remarks').value,
+                    verifiedBy: adminSignature, // Digital Audit Trail
+                    // Media
+                    photo1: photo1Url,
+                    photo2: photo2Url,
+                    photo3: photo3Url,
+                    // Meta
+                    dateAdded: serverTimestamp()
+                };
+
+                // 5. Save to Firestore
+                await setDoc(doc(db, "books", bookId), bookData);
+                showToast(t('msgBookAdded'));
+                e.target.reset();
+                switchBookFormTab('tab-basic'); // Reset tab view
+                
+            } catch (error) { 
+                if(error.message !== "Exists" && error.message !== "ImageUploadFailed") {
+                    console.error(error);
+                    showToast(t('msgError'), "error"); 
+                }
+            } finally { 
+                btn.disabled = false; 
+                spinner.classList.add('hidden');
+                btnText.innerText = t('saveBtn');
+            }
         });
 
         const renderAdminBooks = () => {
@@ -877,11 +1276,16 @@
             
             filtered.forEach(b => {
                 const statusClass = b.status === 'Available' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400';
+                const condClass = b.condition === 'Poor' || b.condition === 'Damaged' ? 'text-red-500 font-bold' : 'text-gray-500 dark:text-gray-400';
+                
                 tbody.innerHTML += `
                     <tr class="hover:bg-white/30 dark:hover:bg-gray-800/30">
-                        <td class="px-5 py-3 whitespace-nowrap text-xs font-black text-gray-500 dark:text-gray-400">${b.id}</td>
-                        <td class="px-5 py-3 whitespace-nowrap"><div class="text-sm font-bold text-gray-900 dark:text-white truncate max-w-[150px]">${b.title}</div></td>
-                        <td class="px-5 py-3 whitespace-nowrap text-xs text-gray-600 dark:text-gray-400 font-bold">${b.shelfLocation||'-'}</td>
+                        <td class="px-5 py-3 whitespace-nowrap text-xs font-black text-indigo-600 dark:text-indigo-400 cursor-pointer hover:underline" onclick="openBookDetails('${b.id}')">${b.id}</td>
+                        <td class="px-5 py-3 whitespace-nowrap cursor-pointer" onclick="openBookDetails('${b.id}')">
+                            <div class="text-sm font-bold text-gray-900 dark:text-white truncate max-w-[150px]">${b.title}</div>
+                            <div class="text-xs text-gray-500 truncate max-w-[150px]">${b.author || '-'}</div>
+                        </td>
+                        <td class="px-5 py-3 whitespace-nowrap text-xs ${condClass}">${b.condition||'-'}</td>
                         <td class="px-5 py-3 whitespace-nowrap text-xs font-black ${statusClass}">${b.status === 'Available' ? t('statusAvailable') : t('statusIssued')}</td>
                         <td class="px-5 py-3 whitespace-nowrap text-end">
                             <button onclick="deleteBook('${b.id}')" class="text-red-500 hover:text-red-700 bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded-md text-xs font-bold transition-colors">Del</button>
@@ -893,58 +1297,70 @@
         document.getElementById('admin-book-search').addEventListener('input', renderAdminBooks);
 
         window.deleteBook = async (id) => {
-            if(confirm('Are you sure?')) {
-                try { await deleteDoc(doc(db, "books", id)); showToast(t('msgBookDeleted')); } 
-                catch(e) { showToast(e.message, 'error'); }
+            if(confirm('Are you sure? This will delete the book record.')) {
+                try { 
+                    await deleteDoc(doc(db, "books", id)); 
+                    showToast(t('msgBookDeleted')); 
+                    // Note: Ideally, we should also delete images from Storage here to save space.
+                } catch(e) { showToast(e.message, 'error'); }
             }
         };
 
         // --- Bulk Import CSV Logic ---
         
-        // 1. Download Template
         window.downloadCSVTemplate = () => {
-            const headers = "Book ID,Title,Author,Category,Shelf No,Price\n";
-            const sampleData = "B001,Malayalam Grammar,John Doe,Education,A1,150\nB002,Kerala History,Jane Smith,History,B2,200\n";
+            const headers = "Serial No,Accession No (ID),Call No,Section,Book Title,Author,Publisher,Year,Edition,Language,Category,ISBN,Price,Purchase Date,Budget Head,Vendor,Shelf No,Condition\n";
+            const sampleData = "1,B001,808.8,FIC,Malayalam Grammar,John Doe,DC Books,2020,1st,Malayalam,Education,978-3-16-148410-0,150,2023-01-15,Govt Grant,Book House,A1,Good\n";
             const csvContent = headers + sampleData;
             
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             const url = URL.createObjectURL(blob);
             link.setAttribute("href", url);
-            link.setAttribute("download", "library_books_template.csv");
+            link.setAttribute("download", "library_books_full_template.csv");
             link.style.visibility = 'hidden';
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         };
 
-        // 2. Parse CSV (Basic Implementation avoiding external libs)
         const parseCSV = (text) => {
             const lines = text.split('\n');
             const result = [];
-            // Assuming first row is header
             for (let i = 1; i < lines.length; i++) {
-                if (!lines[i].trim()) continue; // Skip empty lines
-                
-                // Simple split by comma. Note: This will break if data fields contain commas inside quotes.
-                // For MVP, assuming simple clean data without internal commas.
-                const cols = lines[i].split(',');
-                
-                if (cols.length >= 2 && cols[0].trim()) { // Need at least ID and Title
+                if (!lines[i].trim()) continue; 
+                // Complex regex to handle commas inside quotes (standard CSV format)
+                const cols = lines[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || [];
+                // Clean quotes
+                const clean = cols.map(c => c.replace(/^"|"$/g, '').trim());
+
+                if (clean.length >= 5 && clean[1]) { // Need at least Accession ID and Title
                     result.push({
-                        id: cols[0].trim().toUpperCase(),
-                        title: cols[1].trim(),
-                        author: cols[2] ? cols[2].trim() : '',
-                        category: cols[3] ? cols[3].trim() : '',
-                        shelfLocation: cols[4] ? cols[4].trim() : '',
-                        price: cols[5] ? parseFloat(cols[5].trim()) || 0 : 0
+                        serialNo: clean[0] || '',
+                        id: clean[1].toUpperCase(),
+                        callNumber: clean[2] || '',
+                        sectionCode: clean[3] || '',
+                        title: clean[4] || '',
+                        author: clean[5] || '',
+                        publisher: clean[6] || '',
+                        year: clean[7] || '',
+                        edition: clean[8] || '',
+                        language: clean[9] || '',
+                        category: clean[10] || '',
+                        isbn: clean[11] || '',
+                        price: parseFloat(clean[12]) || 0,
+                        purchaseDate: clean[13] || '',
+                        budgetHead: clean[14] || '',
+                        vendor: clean[15] || '',
+                        shelfLocation: clean[16] || '',
+                        condition: clean[17] || 'Good',
+                        status: 'Available'
                     });
                 }
             }
             return result;
         };
 
-        // 3. Handle File Selection and Preview
         window.handleFileSelect = (event) => {
             const file = event.target.files[0];
             if (!file) return;
@@ -961,13 +1377,12 @@
             reader.readAsText(file);
         };
 
-        // 4. Render Preview checking for Duplicates
         const renderCSVPreview = () => {
             const tbody = document.getElementById('csv-preview-list');
             tbody.innerHTML = '';
             
             if (parsedCSVData.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="3" class="px-4 py-8 text-center text-gray-500">No valid data found in file.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="3" class="px-4 py-8 text-center text-gray-500">No valid data found in file. Check format.</td></tr>`;
                 document.getElementById('btn-process-csv').classList.add('hidden');
                 return;
             }
@@ -979,10 +1394,10 @@
                 let trClass = '';
 
                 if (exists) {
-                    statusHtml = '<span class="text-amber-500 font-bold">Exists (Skipping)</span>';
+                    statusHtml = '<span class="text-amber-500 font-bold">Exists (Skip)</span>';
                     trClass = 'bg-amber-50 dark:bg-amber-900/10 opacity-60';
                 } else {
-                    statusHtml = '<span class="text-green-500 font-bold">New (Ready)</span>';
+                    statusHtml = '<span class="text-green-500 font-bold">New</span>';
                     trClass = 'hover:bg-white/30 dark:hover:bg-gray-800/30';
                     validCount++;
                 }
@@ -990,7 +1405,7 @@
                 tbody.innerHTML += `
                     <tr class="${trClass}">
                         <td class="px-4 py-2 font-black">${row.id}</td>
-                        <td class="px-4 py-2 truncate max-w-[150px]">${row.title}</td>
+                        <td class="px-4 py-2 truncate max-w-[150px]" title="${row.title}">${row.title}</td>
                         <td class="px-4 py-2">${statusHtml}</td>
                     </tr>
                 `;
@@ -1003,37 +1418,24 @@
             }
         };
 
-        // 5. Process & Upload to Firestore using Batch
         window.processBulkImport = async () => {
             const newBooks = parsedCSVData.filter(row => !allBooks.some(b => b.id === row.id));
-            
-            if (newBooks.length === 0) {
-                showToast(t('msgBulkEmpty'), "error");
-                return;
-            }
+            if (newBooks.length === 0) { showToast(t('msgBulkEmpty'), "error"); return; }
 
             const overlay = document.getElementById('bulk-processing-overlay');
             const progressText = document.getElementById('bulk-progress-text');
             overlay.classList.remove('hidden');
-            overlay.style.display = 'flex'; // force flex display
+            overlay.style.display = 'flex';
 
             try {
-                // Firestore batches allow max 500 writes
-                // For safety and simplicity, if we have > 450, we might need chunks, 
-                // but for MVP, assuming moderate excel sizes (<400 rows)
                 const batch = writeBatch(db);
-                
+                const adminSignature = `${currentUserData.name} (Bulk Import) at ${new Date().toISOString()}`;
+
                 newBooks.forEach(book => {
                     const docRef = doc(db, "books", book.id);
-                    batch.set(docRef, {
-                        title: book.title,
-                        author: book.author,
-                        category: book.category,
-                        shelfLocation: book.shelfLocation,
-                        price: book.price,
-                        status: "Available",
-                        dateAdded: serverTimestamp()
-                    });
+                    book.dateAdded = serverTimestamp();
+                    book.verifiedBy = adminSignature;
+                    batch.set(docRef, book);
                 });
 
                 progressText.innerText = "Saving to database...";
@@ -1052,36 +1454,24 @@
         };
 
         const resetBulkImport = () => {
-            document.getElementById('csv-file-input').value = ""; // Clear file
+            document.getElementById('csv-file-input').value = ""; 
             document.getElementById('file-name-display').classList.add('hidden');
             parsedCSVData = [];
             document.getElementById('csv-preview-list').innerHTML = `<tr><td colspan="3" class="px-4 py-8 text-center text-gray-500" data-i18n="noPreviewMsg">${t('noPreviewMsg')}</td></tr>`;
             document.getElementById('btn-process-csv').classList.add('hidden');
         };
 
-        // Handle Drag and Drop for CSV
         const dropZone = document.getElementById('drop-zone');
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.classList.add('border-indigo-500', 'bg-indigo-50/50', 'dark:bg-indigo-900/20');
-        });
-        dropZone.addEventListener('dragleave', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('border-indigo-500', 'bg-indigo-50/50', 'dark:bg-indigo-900/20');
-        });
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-indigo-500', 'bg-indigo-50/50'); });
+        dropZone.addEventListener('dragleave', (e) => { e.preventDefault(); dropZone.classList.remove('border-indigo-500', 'bg-indigo-50/50'); });
         dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('border-indigo-500', 'bg-indigo-50/50', 'dark:bg-indigo-900/20');
-            
+            e.preventDefault(); dropZone.classList.remove('border-indigo-500', 'bg-indigo-50/50');
             if (e.dataTransfer.files.length) {
                 const file = e.dataTransfer.files[0];
                 if (file.name.endsWith('.csv')) {
-                    // Manually trigger the handleFileSelect logic
                     document.getElementById('csv-file-input').files = e.dataTransfer.files;
                     handleFileSelect({target: {files: e.dataTransfer.files}});
-                } else {
-                    showToast("Please drop a valid .csv file", "error");
-                }
+                } else { showToast("Please drop a valid .csv file", "error"); }
             }
         });
 
@@ -1161,7 +1551,6 @@
                 document.getElementById('issue-book-select').classList.add('hidden');
             }
         });
-        // Hide select on outside click
         document.addEventListener('click', (e) => {
             if(!e.target.closest('#issue-book-search') && !e.target.closest('#issue-book-select')) {
                 document.getElementById('issue-book-select').classList.add('hidden');
@@ -1205,7 +1594,7 @@
             } catch(e) { showToast(t('msgError'), "error"); }
         };
 
-        // --- STREAMING_CHUNK:Reader Portal Logic ---
+        // --- Reader Portal Logic ---
         const setupReaderListeners = (userPhone) => {
             const q = query(collection(db, "transactions"), where("userPhone", "==", userPhone));
             onSnapshot(q, (snapshot) => {
@@ -1249,4 +1638,27 @@
         };
     </script>
 </body>
-</html>
+</html>,document_type:CODE_BLOCK,title:Noorul Islam Library Register}
+**Engineering Review & Storage Setup Requirement**
+
+പുതിയ ആർക്കിടെക്ചർ പ്രകാരം പുസ്തകങ്ങളുടെ 3 ഫോട്ടോകൾ വരെ അപ്‌ലോഡ് ചെയ്യാനുള്ള സംവിധാനം കോഡിൽ ചേർത്തിട്ടുണ്ട്. ഫോട്ടോകൾ ഫയർബേസ് ഡാറ്റാബേസിൽ നേരിട്ട് സേവ് ചെയ്യാതെ, **Firebase Storage**-ൽ സേവ് ചെയ്ത് അതിന്റെ ലിങ്ക് മാത്രം ഡാറ്റാബേസിൽ സൂക്ഷിക്കുന്ന രീതിയിലാണ് ഇത് ചെയ്തിരിക്കുന്നത് (വേഗത കുറയാതിരിക്കാൻ).
+
+⚠️ **ശ്രദ്ധിക്കുക: ഫയർബേസ് സ്റ്റോറേജ് ആക്ടിവേറ്റ് ചെയ്യണം**
+
+ഈ ഫോട്ടോ അപ്‌ലോഡ് ഫീച്ചർ പ്രവർത്തിക്കണമെങ്കിൽ നിങ്ങളുടെ ഫയർബേസ് പ്രൊജക്റ്റിൽ ഒരു കാര്യം കൂടി സെറ്റ് ചെയ്യേണ്ടതുണ്ട്:
+
+1. നിങ്ങളുടെ Firebase Console-ൽ പോയി ഇടത് വശത്തെ മെനുവിൽ നിന്ന് **Storage** എടുക്കുക.
+2. **Get Started** ക്ലിക്ക് ചെയ്ത് സ്റ്റോറേജ് ആക്ടിവേറ്റ് ചെയ്യുക (ടെസ്റ്റ് മോഡ് അല്ലെങ്കിൽ ഡിഫോൾട്ട് സെറ്റിംഗ്സ് നൽകാം).
+3. സ്റ്റോറേജ് ആക്ടിവേറ്റ് ആയ ശേഷം അതിലെ **Rules** ടാബിൽ പോയി നിലവിലുള്ള റൂൾ മാറ്റി താഴെ പറയുന്ന റൂൾ കോപ്പി ചെയ്ത് പേസ്റ്റ് ചെയ്ത് **Publish** ചെയ്യുക:
+
+```javascript
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // അഡ്മിന് മാത്രം ഫോട്ടോ അപ്‌ലോഡ്/ഡിളീറ്റ് ചെയ്യാം. പബ്ലിക്കിന് ഫോട്ടോകൾ കാണാം.
+    match /books/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.auth != null && firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+  }
+}
