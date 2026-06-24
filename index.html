@@ -156,6 +156,7 @@
             </div>
             <div class="p-6 overflow-y-auto flex-grow text-start">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <!-- Identity -->
                     <div class="space-y-3">
                         <h4 class="font-bold text-gray-800 dark:text-gray-200 border-b border-gray-200 dark:border-gray-700 pb-1">Identity & Location</h4>
                         <div class="grid grid-cols-2 gap-x-2 gap-y-3 text-sm">
@@ -166,6 +167,7 @@
                             <span class="text-gray-500">Status:</span> <span class="font-bold px-2 py-0.5 rounded text-xs inline-block" id="modal-b-status">-</span>
                         </div>
                     </div>
+                    <!-- Publication -->
                     <div class="space-y-3">
                         <h4 class="font-bold text-gray-800 dark:text-gray-200 border-b border-gray-200 dark:border-gray-700 pb-1">Publication Details</h4>
                         <div class="grid grid-cols-2 gap-x-2 gap-y-3 text-sm">
@@ -178,6 +180,15 @@
                     </div>
                 </div>
                 
+                <div class="mt-6 space-y-3">
+                    <h4 class="font-bold text-gray-800 dark:text-gray-200 border-b border-gray-200 dark:border-gray-700 pb-1">Audit & Condition</h4>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-x-2 gap-y-3 text-sm bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
+                        <span class="text-gray-500">Condition:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-condition">-</span>
+                        <span class="text-gray-500">Verified On:</span> <span class="font-bold text-gray-900 dark:text-white" id="modal-b-verifydate">-</span>
+                        <span class="text-gray-500 col-span-2">Verified By:</span> <span class="font-bold text-indigo-600 dark:text-indigo-400 col-span-2 text-xs" id="modal-b-verifiedby">-</span>
+                    </div>
+                </div>
+
                 <div class="mt-6 space-y-3">
                     <h4 class="font-bold text-gray-800 dark:text-gray-200 border-b border-gray-200 dark:border-gray-700 pb-1">Media / Photos</h4>
                     <div class="flex gap-4" id="modal-b-photos">
@@ -192,7 +203,7 @@
     <!-- Premium Toast Container -->
     <div id="toast-container" class="fixed bottom-6 end-6 sm:bottom-10 sm:end-10 z-50 flex flex-col gap-3"></div>
 
-    <!-- Javascript Logic -->
+    <!-- Firebase Scripts -->
     <script type="module">
         import { auth, db, i18n } from './config.js';
         import { signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
