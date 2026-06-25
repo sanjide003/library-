@@ -344,7 +344,7 @@
     <script type="module">
         import { auth, db, i18n } from './config.js';
         import { signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { collection, query, doc, onSnapshot, getDocs, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { collection, query, doc, onSnapshot, getDocs, getDoc, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Theme Logic
         let currentLang = localStorage.getItem('appLang') || 'en';
@@ -476,8 +476,27 @@
         });
 
         // --- Authentication & Redirect ---
-        onAuthStateChanged(auth, (user) => {
-            if (user) { window.location.href = "admin.html"; } // Auto redirect to admin/reader portal
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                try {
+                    // Fetch user role to decide where to redirect
+                    const userDoc = await getDoc(doc(db, "users", user.uid));
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        if (userData.role === 'admin') {
+                            window.location.href = "admin.html";
+                        } else {
+                            window.location.href = "reader.html";
+                        }
+                    } else {
+                        // User exists in auth but not in database (rare edge case)
+                        console.error("User record not found in database.");
+                        auth.signOut();
+                    }
+                } catch (error) {
+                    console.error("Error fetching user data:", error);
+                }
+            } 
         });
 
         document.getElementById('login-form').addEventListener('submit', async (e) => {
@@ -498,6 +517,7 @@
 
                 const pseudoEmail = `${username}@noorulislam.local`;
                 await signInWithEmailAndPassword(auth, pseudoEmail, password);
+                // onAuthStateChanged will handle the redirect
             } catch (error) {
                 showToast(t('msgLoginFail'), "error");
                 btn.disabled = false; btn.style.opacity = '1';
@@ -755,11 +775,13 @@
             document.getElementById('bp-lang').innerText = b.language || '-';
             document.getElementById('bp-isbn').innerText = b.isbn || '-';
 
+            // Status Badge update
             const statusBadge = document.getElementById('bp-status-badge');
             const isAvailable = b.status === 'Available';
             statusBadge.innerText = isAvailable ? t('statusAvailable') : t('statusIssued');
             statusBadge.className = `absolute top-3 end-3 z-10 px-3 py-1.5 rounded-full text-xs font-black tracking-widest uppercase shadow-lg border ${isAvailable ? 'bg-green-100/90 text-green-800 border-green-300 dark:bg-green-900/80 dark:text-green-300 dark:border-green-800 backdrop-blur-sm' : 'bg-red-100/90 text-red-800 border-red-300 dark:bg-red-900/80 dark:text-red-300 dark:border-red-800 backdrop-blur-sm'}`;
 
+            // Image Slider Setup
             currentBookImages = [b.photo1, b.photo2, b.photo3].filter(Boolean);
             currentImageIndex = 0;
             const track = document.getElementById('bp-image-track');
@@ -768,12 +790,14 @@
             const nextBtn = document.getElementById('bp-next-img');
 
             if(currentBookImages.length > 0) {
+                // Populate Images
                 track.innerHTML = currentBookImages.map(img => `
                     <div class="w-full h-full flex-shrink-0 flex items-center justify-center p-2">
                         <img src="${img}" class="max-w-full max-h-full object-contain cursor-pointer" onclick="window.open(this.src, '_blank')">
                     </div>
                 `).join('');
 
+                // Populate Dots
                 if (currentBookImages.length > 1) {
                     dots.innerHTML = currentBookImages.map((_, i) => `
                         <button onclick="goToImage(${i})" class="w-2.5 h-2.5 rounded-full border border-white/40 shadow-sm transition-all ${i === 0 ? 'bg-indigo-600 scale-125' : 'bg-white/70 hover:bg-white'}"></button>
@@ -800,6 +824,7 @@
             renderSuggestions(b);
         };
 
+        // Slider Navigation Functions
         window.goToImage = (index) => {
             currentImageIndex = index;
             updateSliderPosition();
@@ -821,6 +846,7 @@
             const track = document.getElementById('bp-image-track');
             track.style.transform = `translateX(-${currentImageIndex * 100}%)`;
             
+            // Update dots
             const dots = document.getElementById('bp-image-dots').children;
             Array.from(dots).forEach((dot, i) => {
                 if (i === currentImageIndex) {
@@ -830,6 +856,7 @@
                 }
             });
         }
+
 
         // --- BOOK SUGGESTIONS WITH ARROW SCROLLING ---
         function renderSuggestions(currentBook) {
@@ -847,11 +874,13 @@
             const currentCat = currentBook.category || 'General';
             let rowCount = 0;
 
+            // Show books from the same category first
             if(categories[currentCat] && categories[currentCat].length > 0) {
                 container.appendChild(createSuggestionRow(`More in ${currentCat}`, categories[currentCat]));
                 rowCount++;
             }
 
+            // Show other categories
             for(const [cat, books] of Object.entries(categories)) {
                 if(cat === currentCat) continue;
                 if(books.length > 0 && rowCount < 4) {
@@ -865,6 +894,7 @@
             const row = document.createElement('div');
             row.className = 'w-full relative mb-8';
 
+            // Unique ID for the slider to link arrow buttons
             const sliderId = 'slider-' + Math.random().toString(36).substring(2, 9);
             
             const header = document.createElement('div');
@@ -872,19 +902,23 @@
             header.innerHTML = `<h3 class="text-xl sm:text-2xl font-black text-gray-900 dark:text-white capitalize tracking-wide border-s-4 border-indigo-500 ps-3">${title}</h3>`;
             row.appendChild(header);
 
+            // Wrapper for slider and arrows
             const wrapper = document.createElement('div');
             wrapper.className = 'relative group w-full';
 
+            // Left Arrow
             const leftBtn = document.createElement('button');
             leftBtn.className = 'absolute start-0 top-1/2 -translate-y-1/2 -translate-x-3 z-10 bg-white dark:bg-gray-700 p-2 sm:p-3 rounded-full shadow-xl border border-gray-200 dark:border-gray-600 opacity-0 group-hover:opacity-100 transition-all hover:scale-110 hidden sm:block';
             leftBtn.innerHTML = '<svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>';
             leftBtn.onclick = () => document.getElementById(sliderId).scrollBy({ left: -400, behavior: 'smooth' });
 
+            // Right Arrow
             const rightBtn = document.createElement('button');
             rightBtn.className = 'absolute end-0 top-1/2 -translate-y-1/2 translate-x-3 z-10 bg-white dark:bg-gray-700 p-2 sm:p-3 rounded-full shadow-xl border border-gray-200 dark:border-gray-600 opacity-0 group-hover:opacity-100 transition-all hover:scale-110 hidden sm:block';
             rightBtn.innerHTML = '<svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>';
             rightBtn.onclick = () => document.getElementById(sliderId).scrollBy({ left: 400, behavior: 'smooth' });
 
+            // Slider track
             const slider = document.createElement('div');
             slider.id = sliderId;
             slider.className = 'flex overflow-x-auto gap-4 sm:gap-6 pb-6 pt-2 hide-scrollbar snap-x px-2 scroll-smooth';
