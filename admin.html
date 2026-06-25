@@ -32,8 +32,8 @@
         .dark ::-webkit-scrollbar-thumb { background: #4b5563; }
         [dir="rtl"] { font-family: 'Tajawal', sans-serif; }
         .hidden-tab { display: none !important; }
-        .add-book-tab.active { border-bottom: 2px solid #4f46e5; color: #4f46e5; font-weight: bold; }
-        .dark .add-book-tab.active { border-bottom-color: #818cf8; color: #818cf8; }
+        .add-book-tab.active, .edit-book-tab.active { border-bottom: 2px solid #4f46e5; color: #4f46e5; font-weight: bold; }
+        .dark .add-book-tab.active, .dark .edit-book-tab.active { border-bottom-color: #818cf8; color: #818cf8; }
         .custom-dropdown-menu::-webkit-scrollbar { width: 5px; }
         .custom-dropdown-menu::-webkit-scrollbar-thumb { background: #a5b4fc; border-radius: 5px; }
         .dark .custom-dropdown-menu::-webkit-scrollbar-thumb { background: #4f46e5; }
@@ -256,7 +256,6 @@
                         <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                         <span id="add-edit-book-title" data-i18n="addBookTitle">Add New Book</span>
                     </h3>
-                    <button type="button" onclick="resetAddBookForm()" class="text-sm font-bold text-gray-500 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 hidden" id="btn-cancel-edit">Cancel Edit</button>
                 </div>
                 <div class="px-6 pt-4 flex flex-wrap gap-4 border-b border-gray-200 dark:border-gray-700 shrink-0 bg-white/20 dark:bg-gray-800/20">
                     <button type="button" onclick="switchBookFormTab('tab-basic', event)" class="add-book-tab active pb-2 text-sm transition-colors" data-i18n="tabBasic">Basic Info</button>
@@ -266,7 +265,6 @@
                 </div>
                 <div class="flex-grow overflow-y-auto p-6 md:p-8">
                     <form id="add-book-form" class="space-y-6 h-full flex flex-col">
-                        <input type="hidden" id="b-is-edit" value="false">
                         <div id="tab-basic" class="book-form-section flex-grow">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6"><div><label class="block text-xs font-bold mb-1">Serial No.</label><input type="text" id="b-serial" class="w-full rounded-xl py-2.5 px-4 bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 dark:text-white"></div><div><label class="block text-xs font-bold text-indigo-600 mb-1">Accession No.*</label><input type="text" id="b-id" required class="w-full rounded-xl py-2.5 px-4 bg-indigo-50 border border-indigo-200 dark:bg-indigo-900/20 dark:border-indigo-700 font-bold dark:text-white"></div></div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6"><div><label class="block text-xs font-bold mb-1">Call No</label><input type="text" id="b-callno" class="w-full rounded-xl py-2.5 px-4 bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 dark:text-white"></div><div><label class="block text-xs font-bold mb-1">Section</label><input type="text" id="b-section" class="w-full rounded-xl py-2.5 px-4 bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 dark:text-white"></div></div>
@@ -303,8 +301,8 @@
             </div>
         </div>
 
-        <!-- 4. Admin Registry View -->
-        <div id="admin-registry-view" class="view-section hidden-tab fade-in h-full flex flex-col">
+        <!-- 4. Admin Registry View with Edit Modal -->
+        <div id="admin-registry-view" class="view-section hidden-tab fade-in h-full flex flex-col relative">
             <div class="w-full glass-panel rounded-3xl flex flex-col h-[calc(100vh-100px)] overflow-hidden shadow-2xl">
                 <div class="p-6 border-b border-gray-200/50 dark:border-gray-700/50 bg-white/30 dark:bg-gray-800/30 flex flex-col sm:flex-row justify-between items-center gap-4 shrink-0">
                     <h3 class="text-2xl font-black text-gray-800 dark:text-white flex items-center gap-2">
@@ -316,13 +314,80 @@
                 <div class="overflow-y-auto flex-grow p-0">
                     <table class="min-w-full divide-y divide-gray-200/50 dark:divide-gray-700/50">
                         <thead class="bg-gray-50/50 dark:bg-gray-800/50 sticky top-0 backdrop-blur-md z-10">
-                            <tr><th class="px-6 py-4 text-start text-xs font-black text-gray-500 uppercase">Accession No</th><th class="px-6 py-4 text-start text-xs font-black text-gray-500 uppercase" data-i18n="thBook">Title & Author</th><th class="px-6 py-4 text-start text-xs font-black text-gray-500 uppercase">Category</th><th class="px-6 py-4 text-start text-xs font-black text-gray-500 uppercase">Status</th><th class="px-6 py-4 text-end text-xs font-black text-gray-500 uppercase" data-i18n="actionLbl">Action</th></tr>
+                            <tr>
+                                <th class="px-6 py-4 text-start text-xs font-black text-gray-500 uppercase">Accession No</th>
+                                <th class="px-6 py-4 text-start text-xs font-black text-gray-500 uppercase" data-i18n="thBook">Title & Author</th>
+                                <th class="px-6 py-4 text-start text-xs font-black text-gray-500 uppercase">Category</th>
+                                <th class="px-6 py-4 text-start text-xs font-black text-gray-500 uppercase">Condition</th>
+                                <th class="px-6 py-4 text-start text-xs font-black text-gray-500 uppercase">Status</th>
+                                <th class="px-6 py-4 text-end text-xs font-black text-gray-500 uppercase" data-i18n="actionLbl">Action</th>
+                            </tr>
                         </thead>
                         <tbody id="admin-books-list" class="divide-y divide-gray-100 dark:divide-gray-800/50 text-sm text-start"></tbody>
                     </table>
                 </div>
             </div>
+
+            <!-- Inline Edit Book Modal -->
+            <div id="edit-book-modal" class="absolute inset-0 z-50 hidden flex flex-col rounded-3xl overflow-hidden shadow-2xl border border-gray-200 dark:border-gray-700 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl">
+                <div class="p-6 border-b border-gray-200/50 dark:border-gray-700/50 shrink-0 bg-indigo-50/50 dark:bg-indigo-900/20 flex justify-between items-center">
+                    <h3 class="text-xl font-black text-gray-800 dark:text-white flex items-center gap-2">
+                        <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                        <span>Edit Book: <span id="edit-modal-title-id" class="text-indigo-600 dark:text-indigo-400"></span></span>
+                    </h3>
+                    <button type="button" onclick="closeEditBookModal()" class="p-2 text-gray-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+                <div class="px-6 pt-4 flex flex-wrap gap-4 border-b border-gray-200 dark:border-gray-700 shrink-0">
+                    <button type="button" onclick="switchEditFormTab('edit-tab-basic', event)" class="edit-book-tab active pb-2 text-sm transition-colors" data-i18n="tabBasic">Basic Info</button>
+                    <button type="button" onclick="switchEditFormTab('edit-tab-media', event)" class="edit-book-tab pb-2 text-sm text-gray-500 dark:text-gray-400 transition-colors" data-i18n="tabMedia">Media</button>
+                    <button type="button" onclick="switchEditFormTab('edit-tab-financial', event)" class="edit-book-tab pb-2 text-sm text-gray-500 dark:text-gray-400 transition-colors" data-i18n="tabFinancial">Financials</button>
+                    <button type="button" onclick="switchEditFormTab('edit-tab-audit', event)" class="edit-book-tab pb-2 text-sm text-gray-500 dark:text-gray-400 transition-colors" data-i18n="tabAudit">Stock/Audit</button>
+                </div>
+                <div class="flex-grow overflow-y-auto p-6">
+                    <form id="edit-book-form" class="space-y-6 h-full flex flex-col">
+                        <input type="hidden" id="e-id">
+                        
+                        <div id="edit-tab-basic" class="edit-form-section flex-grow">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6"><div><label class="block text-xs font-bold mb-1">Serial No.</label><input type="text" id="e-serial" class="w-full rounded-xl py-2.5 px-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 dark:text-white"></div><div><label class="block text-xs font-bold mb-1">Call No</label><input type="text" id="e-callno" class="w-full rounded-xl py-2.5 px-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 dark:text-white"></div></div>
+                            <div class="mb-6"><label class="block text-xs font-bold mb-1">Book Title*</label><input type="text" id="e-title" required class="w-full rounded-xl py-2.5 px-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 font-bold dark:text-white"></div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6"><div><label class="block text-xs font-bold mb-1">Author</label><input type="text" id="e-author" class="w-full rounded-xl py-2.5 px-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 dark:text-white"></div><div><label class="block text-xs font-bold mb-1">Publisher</label><input type="text" id="e-publisher" class="w-full rounded-xl py-2.5 px-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 dark:text-white"></div></div>
+                            <div class="grid grid-cols-3 gap-6 mb-6"><div><label class="block text-xs font-bold mb-1">Year</label><input type="text" id="e-year" class="w-full rounded-xl py-2.5 px-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 dark:text-white"></div><div><label class="block text-xs font-bold mb-1">Edition</label><input type="text" id="e-edition" class="w-full rounded-xl py-2.5 px-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 dark:text-white"></div><div><label class="block text-xs font-bold mb-1">Language</label><input type="text" id="e-lang" class="w-full rounded-xl py-2.5 px-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 dark:text-white"></div></div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6"><div><label class="block text-xs font-bold mb-1">Category</label><input type="text" id="e-category" class="w-full rounded-xl py-2.5 px-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 dark:text-white"></div><div><label class="block text-xs font-bold mb-1">ISBN</label><input type="text" id="e-isbn" class="w-full rounded-xl py-2.5 px-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 dark:text-white"></div></div>
+                        </div>
+                        
+                        <div id="edit-tab-media" class="edit-form-section hidden-tab flex-grow">
+                            <p class="text-sm font-medium text-gray-500 mb-6">Upload up to 3 images (JPG/PNG). Max <span class="text-red-500 font-bold">150KB</span> per image.</p>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-4 bg-gray-50 dark:bg-gray-800"><label class="block text-sm font-bold mb-2">Photo 1 (Front)</label><input type="file" accept=".jpg, .jpeg, .png" onchange="handleImageUpload(event, 'e-photo1-base64', 'e-photo1-preview', 'Photo 1')" class="text-sm w-full text-gray-500"><input type="hidden" id="e-photo1-base64"><div id="e-photo1-preview"></div></div>
+                                <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-4 bg-gray-50 dark:bg-gray-800"><label class="block text-sm font-bold mb-2">Photo 2</label><input type="file" accept=".jpg, .jpeg, .png" onchange="handleImageUpload(event, 'e-photo2-base64', 'e-photo2-preview', 'Photo 2')" class="text-sm w-full text-gray-500"><input type="hidden" id="e-photo2-base64"><div id="e-photo2-preview"></div></div>
+                                <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-4 bg-gray-50 dark:bg-gray-800"><label class="block text-sm font-bold mb-2">Photo 3</label><input type="file" accept=".jpg, .jpeg, .png" onchange="handleImageUpload(event, 'e-photo3-base64', 'e-photo3-preview', 'Photo 3')" class="text-sm w-full text-gray-500"><input type="hidden" id="e-photo3-base64"><div id="e-photo3-preview"></div></div>
+                            </div>
+                        </div>
+                        
+                        <div id="edit-tab-financial" class="edit-form-section hidden-tab flex-grow">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6"><div><label class="block text-xs font-bold mb-1">Price (₹)</label><input type="number" id="e-price" class="w-full rounded-xl py-2.5 px-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 dark:text-white"></div><div><label class="block text-xs font-bold mb-1">Date of Purchase</label><input type="date" id="e-purchasedate" class="w-full rounded-xl py-2.5 px-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 dark:text-white"></div></div>
+                            <div class="mb-6"><label class="block text-xs font-bold mb-1">Grant / Budget Head</label><input type="text" id="e-budget" class="w-full rounded-xl py-2.5 px-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 dark:text-white"></div>
+                            <div class="mb-6"><label class="block text-xs font-bold mb-1">Supplier / Vendor</label><input type="text" id="e-vendor" class="w-full rounded-xl py-2.5 px-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 dark:text-white"></div>
+                        </div>
+                        
+                        <div id="edit-tab-audit" class="edit-form-section hidden-tab flex-grow">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6"><div><label class="block text-xs font-bold mb-1">Shelf No.</label><input type="text" id="e-shelf" class="w-full rounded-xl py-2.5 px-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 dark:text-white"></div><div><label class="block text-xs font-bold mb-1">Condition</label><select id="e-condition" class="w-full rounded-xl py-2.5 px-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 dark:text-white"><option>Good</option><option>Fair</option><option>Poor</option><option>Damaged</option><option>Lost</option></select></div></div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6"><div><label class="block text-xs font-bold mb-1">Status</label><select id="e-status" class="w-full rounded-xl py-2.5 px-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 dark:text-white"><option>Available</option><option>Issued</option><option>Lost</option><option>Withdrawn</option></select></div><div><label class="block text-xs font-bold mb-1">Verification Date</label><input type="date" id="e-verifydate" class="w-full rounded-xl py-2.5 px-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 dark:text-white"></div></div>
+                            <div class="mb-6"><label class="block text-xs font-bold mb-1">Remarks</label><textarea id="e-remarks" rows="3" class="w-full rounded-xl py-2.5 px-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 dark:text-white"></textarea></div>
+                        </div>
+                        
+                        <div class="mt-auto shrink-0 pt-6 border-t border-gray-200 dark:border-gray-700">
+                            <button type="submit" id="btn-update-book" class="w-full bg-indigo-600 text-white rounded-xl py-3.5 text-sm font-black hover:bg-indigo-700 transition-colors shadow-lg">
+                                Update Book Record
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
+        <!-- End of Registry View -->
 
         <!-- 5. Admin Bulk View -->
         <div id="admin-bulk-view" class="view-section hidden-tab fade-in h-full flex flex-col items-center">
@@ -487,8 +552,8 @@
                                 </button>
                             </div>
                             <div class="flex-1">
-                                <input type="file" id="s-logo-upload" accept=".jpg, .png" onchange="handleLogoUpload(event)" class="text-sm dark:text-gray-400 w-full file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900/30 dark:file:text-indigo-400">
-                                <p class="text-xs text-gray-500 mt-1">Recommended: Square PNG/JPG.</p>
+                                <input type="file" id="s-logo-upload" accept=".jpg, .png" onchange="handleSettingsLogoUpload(event)" class="text-sm dark:text-gray-400 w-full file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900/30 dark:file:text-indigo-400">
+                                <p class="text-xs text-gray-500 mt-1">Recommended: Square PNG/JPG. <span class="text-red-500 font-bold">Max 150KB</span>.</p>
                             </div>
                             <input type="hidden" id="s-logo-base64">
                             <input type="hidden" id="s-logo-deleted" value="false">
@@ -594,8 +659,20 @@
         };
 
         window.switchBookFormTab = (tabId, evt = null) => {
-            document.querySelectorAll('.book-form-section').forEach(el => el.classList.add('hidden-tab'));
-            document.querySelectorAll('.add-book-tab').forEach(el => { el.classList.remove('active', 'text-indigo-600', 'dark:text-indigo-400'); el.classList.add('text-gray-500', 'dark:text-gray-400'); });
+            document.querySelectorAll('#add-book-view .book-form-section').forEach(el => el.classList.add('hidden-tab'));
+            document.querySelectorAll('#add-book-view .add-book-tab').forEach(el => { el.classList.remove('active', 'text-indigo-600', 'dark:text-indigo-400'); el.classList.add('text-gray-500', 'dark:text-gray-400'); });
+            document.getElementById(tabId).classList.remove('hidden-tab');
+            const clickedTab = evt?.currentTarget || document.querySelector(`[onclick*="${tabId}"]`);
+            if (clickedTab) {
+                clickedTab.classList.remove('text-gray-500', 'dark:text-gray-400');
+                clickedTab.classList.add('active');
+            }
+        };
+
+        // Edit Book Modal Tabs Logic
+        window.switchEditFormTab = (tabId, evt = null) => {
+            document.querySelectorAll('#edit-book-modal .edit-form-section').forEach(el => el.classList.add('hidden-tab'));
+            document.querySelectorAll('#edit-book-modal .edit-book-tab').forEach(el => { el.classList.remove('active', 'text-indigo-600', 'dark:text-indigo-400'); el.classList.add('text-gray-500', 'dark:text-gray-400'); });
             document.getElementById(tabId).classList.remove('hidden-tab');
             const clickedTab = evt?.currentTarget || document.querySelector(`[onclick*="${tabId}"]`);
             if (clickedTab) {
@@ -665,9 +742,13 @@
             }
         });
 
-        window.handleLogoUpload = function(event) {
+        window.handleSettingsLogoUpload = function(event) {
             const file = event.target.files?.[0]; if(!file) return;
-            if(file.size > 200 * 1024) { showToast(`Logo max 200 KB`, 'error'); event.target.value = ''; return; }
+            if(file.size > 150 * 1024) { 
+                showToast(`Logo size exceeds 150 KB. Please choose a smaller image.`, 'error'); 
+                event.target.value = ''; 
+                return; 
+            }
             const reader = new FileReader();
             reader.onload = () => { 
                 document.getElementById('s-logo-base64').value = reader.result; 
@@ -770,10 +851,10 @@
             });
         };
 
-        // --- 1. ADD / EDIT BOOK ---
+        // --- 1. ADD NEW BOOK ---
         window.handleImageUpload = function(event, hiddenInputId, previewId, label) {
             const file = event.target.files?.[0]; if(!file) return;
-            if(file.size > 150 * 1024) { showToast(`${label} max 150 KB`, 'error'); event.target.value = ''; return; }
+            if(file.size > 150 * 1024) { showToast(`${label}: Max size 150 KB exceeded. Please upload a smaller image.`, 'error'); event.target.value = ''; return; }
             const reader = new FileReader();
             reader.onload = () => { document.getElementById(hiddenInputId).value = reader.result; document.getElementById(previewId).innerHTML = `<img src="${reader.result}" class="h-16 w-16 object-cover border mt-2 rounded">`; };
             reader.readAsDataURL(file);
@@ -783,7 +864,6 @@
             document.getElementById('add-book-form').reset(); 
             document.getElementById('b-is-edit').value = 'false'; 
             document.getElementById('b-id').readOnly = false; 
-            document.getElementById('btn-cancel-edit').classList.add('hidden');
             document.getElementById('add-edit-book-title').innerText = t('addBookTitle');
             document.getElementById('save-btn-text').innerText = t('saveBtn');
             ['b-photo1-preview', 'b-photo2-preview', 'b-photo3-preview'].forEach(id => document.getElementById(id).innerHTML = '');
@@ -796,7 +876,6 @@
             const btn = document.getElementById('btn-save-book'); btn.disabled = true; btn.style.opacity = '0.5';
             
             const bookId = document.getElementById('b-id').value.trim();
-            const isEdit = document.getElementById('b-is-edit').value === 'true';
 
             const bookData = {
                 serialNo: document.getElementById('b-serial').value.trim(),
@@ -826,13 +905,12 @@
             };
 
             try {
-                if (!isEdit) {
-                    const docSnap = await getDoc(doc(db, "books", bookId));
-                    if (docSnap.exists()) throw new Error(t('msgBookExists'));
-                    bookData.createdAt = serverTimestamp();
-                    bookData.addedBy = currentUserData.username;
-                }
-                await setDoc(doc(db, "books", bookId), bookData, { merge: true });
+                const docSnap = await getDoc(doc(db, "books", bookId));
+                if (docSnap.exists()) throw new Error(t('msgBookExists'));
+                bookData.createdAt = serverTimestamp();
+                bookData.addedBy = currentUserData.username;
+                
+                await setDoc(doc(db, "books", bookId), bookData);
                 showToast(t('msgBookAdded'));
                 resetAddBookForm();
             } catch (error) {
@@ -842,7 +920,7 @@
             }
         });
 
-        // 2. BOOKS REGISTRY
+        // 2. BOOKS REGISTRY & INLINE EDIT MODAL
         window.renderAdminBooks = () => {
             const list = document.getElementById('admin-books-list'); list.innerHTML = '';
             const queryText = document.getElementById('admin-book-search').value.toLowerCase();
@@ -853,13 +931,18 @@
                 const statusClass = b.status === 'Available' ? 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/40 dark:text-green-300 dark:border-green-800' : 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/40 dark:text-red-300 dark:border-red-800';
                 const statusText = b.status === 'Available' ? t('statusAvailable') : t('statusIssued');
                 
+                let conditionColor = 'text-gray-500 dark:text-gray-400';
+                if(b.condition === 'Damaged' || b.condition === 'Poor') conditionColor = 'text-amber-500 font-bold';
+                if(b.condition === 'Lost') conditionColor = 'text-red-500 font-bold';
+
                 tr.innerHTML = `
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900 dark:text-white">${b.id}</td>
                     <td class="px-6 py-4 whitespace-nowrap"><div class="flex items-center"><div class="flex-shrink-0 h-10 w-10"><img class="h-10 w-10 rounded-lg object-cover" src="${b.photo1 || noImageSvg}" alt=""></div><div class="ms-4"><div class="text-sm font-bold text-gray-900 dark:text-white truncate w-48">${b.title}</div><div class="text-xs text-gray-500 dark:text-gray-400 truncate w-48">${b.author || '-'}</div></div></div></td>
                     <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-500 dark:text-gray-400 font-bold">${b.category || '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-xs ${conditionColor}">${b.condition || 'Good'}</td>
                     <td class="px-6 py-4 whitespace-nowrap"><span class="px-2.5 py-1 inline-flex text-[10px] leading-5 font-black uppercase tracking-wider rounded-full border ${statusClass}">${statusText}</span></td>
                     <td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
-                        <button onclick="editBook('${b.id}')" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 me-3 font-bold bg-indigo-50 dark:bg-indigo-900/30 px-3 py-1.5 rounded-lg border border-indigo-100 dark:border-indigo-800 transition-colors">Edit</button>
+                        <button onclick="openEditBookModal('${b.id}')" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 me-3 font-bold bg-indigo-50 dark:bg-indigo-900/30 px-3 py-1.5 rounded-lg border border-indigo-100 dark:border-indigo-800 transition-colors">Edit</button>
                         <button onclick="deleteBook('${b.id}')" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 font-bold bg-red-50 dark:bg-red-900/30 px-3 py-1.5 rounded-lg border border-red-100 dark:border-red-800 transition-colors">Delete</button>
                     </td>`;
                 list.appendChild(tr);
@@ -867,27 +950,78 @@
         };
         document.getElementById('admin-book-search').addEventListener('input', renderAdminBooks);
 
-        window.editBook = (id) => {
+        window.openEditBookModal = (id) => {
             const b = allBooks.find(bk => bk.id === id); if(!b) return;
-            navigate('admin-add-book-view');
             
-            document.getElementById('b-is-edit').value = 'true';
-            document.getElementById('b-id').value = b.id; document.getElementById('b-id').readOnly = true;
-            document.getElementById('add-edit-book-title').innerText = `Edit Book: ${b.id}`;
-            document.getElementById('save-btn-text').innerText = "Update Book";
-            document.getElementById('btn-cancel-edit').classList.remove('hidden');
-
+            document.getElementById('edit-modal-title-id').innerText = b.id;
+            document.getElementById('e-id').value = b.id;
+            
             ['serialNo','callNo','section','title','author','publisher','year','edition','language','category','isbn','price','purchaseDate','budgetHead','vendor','shelfLocation','condition','status','verificationDate','remarks'].forEach(key => {
-                if(document.getElementById(`b-${key.toLowerCase()}`)) document.getElementById(`b-${key.toLowerCase()}`).value = b[key] || '';
+                if(document.getElementById(`e-${key.toLowerCase()}`)) document.getElementById(`e-${key.toLowerCase()}`).value = b[key] || '';
             });
 
             [1,2,3].forEach(i => {
                 if(b[`photo${i}`]) {
-                    document.getElementById(`b-photo${i}-base64`).value = b[`photo${i}`];
-                    document.getElementById(`b-photo${i}-preview`).innerHTML = `<img src="${b[`photo${i}`]}" class="h-16 w-16 object-cover border mt-2 rounded">`;
+                    document.getElementById(`e-photo${i}-base64`).value = b[`photo${i}`];
+                    document.getElementById(`e-photo${i}-preview`).innerHTML = `<img src="${b[`photo${i}`]}" class="h-16 w-16 object-cover border mt-2 rounded">`;
+                } else {
+                    document.getElementById(`e-photo${i}-base64`).value = '';
+                    document.getElementById(`e-photo${i}-preview`).innerHTML = '';
                 }
             });
+            
+            switchEditFormTab('edit-tab-basic');
+            document.getElementById('edit-book-modal').classList.remove('hidden');
         };
+
+        window.closeEditBookModal = () => {
+            document.getElementById('edit-book-modal').classList.add('hidden');
+            document.getElementById('edit-book-form').reset();
+        };
+
+        document.getElementById('edit-book-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-update-book'); btn.disabled = true; btn.innerText = "Updating...";
+            
+            const bookId = document.getElementById('e-id').value;
+
+            const bookData = {
+                serialNo: document.getElementById('e-serial').value.trim(),
+                callNo: document.getElementById('e-callno').value.trim(),
+                section: document.getElementById('e-section').value.trim(),
+                title: document.getElementById('e-title').value.trim(),
+                author: document.getElementById('e-author').value.trim(),
+                publisher: document.getElementById('e-publisher').value.trim(),
+                year: document.getElementById('e-year').value.trim(),
+                edition: document.getElementById('e-edition').value.trim(),
+                language: document.getElementById('e-lang').value.trim(),
+                category: document.getElementById('e-category').value.trim(),
+                isbn: document.getElementById('e-isbn').value.trim(),
+                photo1: document.getElementById('e-photo1-base64').value,
+                photo2: document.getElementById('e-photo2-base64').value,
+                photo3: document.getElementById('e-photo3-base64').value,
+                price: document.getElementById('e-price').value,
+                purchaseDate: document.getElementById('e-purchasedate').value,
+                budgetHead: document.getElementById('e-budget').value.trim(),
+                vendor: document.getElementById('e-vendor').value.trim(),
+                shelfLocation: document.getElementById('e-shelf').value.trim(),
+                condition: document.getElementById('e-condition').value,
+                status: document.getElementById('e-status').value,
+                verificationDate: document.getElementById('e-verifydate').value,
+                remarks: document.getElementById('e-remarks').value.trim(),
+                updatedAt: serverTimestamp()
+            };
+
+            try {
+                await setDoc(doc(db, "books", bookId), bookData, { merge: true });
+                showToast("Book updated successfully!");
+                closeEditBookModal();
+            } catch (error) {
+                showToast(error.message, "error");
+            } finally {
+                btn.disabled = false; btn.innerText = "Update Book Record";
+            }
+        });
 
         window.deleteBook = async (id) => {
             if(await confirmAction("Delete Book", `Are you sure you want to delete book ID: ${id}?`)) {
