@@ -186,45 +186,57 @@
             </button>
 
             <!-- Book Info Container -->
-            <div class="glass-panel rounded-3xl overflow-hidden shadow-2xl border border-white/40 dark:border-gray-700/50 mb-10">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-0">
-                    <!-- Images (Left) -->
-                    <div class="bg-gray-100/50 dark:bg-gray-800/50 p-6 sm:p-10 flex flex-col items-center justify-center relative border-b lg:border-b-0 lg:border-e border-gray-200/50 dark:border-gray-700/50">
-                        <div id="bp-images" class="w-full max-w-sm aspect-[3/4] relative rounded-2xl overflow-hidden shadow-2xl bg-white dark:bg-gray-800"></div>
+            <div class="glass-panel rounded-3xl overflow-hidden shadow-2xl border border-white/40 dark:border-gray-700/50 mb-10 p-6 sm:p-10">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10">
+                    <!-- Images Section (Left - 5 columns) -->
+                    <div class="lg:col-span-5 flex flex-col sm:flex-row-reverse gap-4 items-start">
+                         <!-- Main Image -->
+                         <div id="bp-main-image-container" class="w-full aspect-[3/4] sm:aspect-auto sm:h-[450px] bg-white dark:bg-gray-800 rounded-2xl shadow-inner border border-gray-200 dark:border-gray-700 overflow-hidden relative flex items-center justify-center shrink-0 group">
+                              <!-- injected via JS -->
+                         </div>
+                         <!-- Thumbnails -->
+                         <div id="bp-thumbnails" class="flex sm:flex-col gap-3 overflow-x-auto sm:overflow-y-auto hide-scrollbar sm:h-[450px] sm:w-24 shrink-0 w-full snap-x">
+                              <!-- injected via JS -->
+                         </div>
                     </div>
-                    <!-- Details (Right) -->
-                    <div class="p-6 sm:p-10 flex flex-col justify-center bg-white/30 dark:bg-gray-900/30 text-start">
-                        <div class="mb-3 flex flex-wrap items-center gap-2">
+
+                    <!-- Details (Right - 7 columns) -->
+                    <div class="lg:col-span-7 flex flex-col text-start">
+                        <div class="mb-2 flex flex-wrap items-center gap-2">
                             <span id="bp-category" class="text-[10px] font-black uppercase tracking-widest text-indigo-700 dark:text-indigo-300 bg-indigo-100/80 dark:bg-indigo-900/50 border border-indigo-200 dark:border-indigo-800 px-3 py-1 rounded-lg">Category</span>
-                            <span id="bp-status" class="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-lg border">Status</span>
                         </div>
                         <h2 id="bp-title" class="text-3xl sm:text-4xl font-black text-gray-900 dark:text-white mb-2 leading-tight">Title</h2>
-                        <p id="bp-author" class="text-lg font-bold text-gray-500 dark:text-gray-400 mb-8">Author</p>
+                        <p id="bp-author" class="text-lg font-bold text-indigo-600 dark:text-indigo-400 mb-4 hover:underline cursor-pointer">Author</p>
+                        
+                        <div class="flex items-center gap-3 mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+                            <span id="bp-status" class="text-xs font-black uppercase tracking-widest px-4 py-1.5 rounded-lg border">Status</span>
+                            <span class="text-sm font-medium text-gray-500 dark:text-gray-400" id="bp-status-text">Available in library</span>
+                        </div>
 
                         <div class="grid grid-cols-2 gap-4 mb-8">
-                            <div class="bg-white/60 dark:bg-gray-800/60 p-5 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm">
+                            <div class="bg-gray-50 dark:bg-gray-800/80 p-5 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col justify-center">
                                 <p class="text-xs text-gray-500 dark:text-gray-400 uppercase font-black tracking-wider mb-1">Shelf Location</p>
-                                <p id="bp-shelf" class="text-2xl font-black text-indigo-600 dark:text-indigo-400 flex items-center gap-2">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                                <p id="bp-shelf" class="text-2xl font-black text-gray-900 dark:text-white flex items-center gap-2">
+                                    <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
                                     <span>-</span>
                                 </p>
                             </div>
-                            <div class="bg-white/60 dark:bg-gray-800/60 p-5 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm">
+                            <div class="bg-gray-50 dark:bg-gray-800/80 p-5 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col justify-center">
                                 <p class="text-xs text-gray-500 dark:text-gray-400 uppercase font-black tracking-wider mb-1">Accession No.</p>
                                 <p id="bp-id" class="text-2xl font-black text-gray-900 dark:text-white">-</p>
                             </div>
                         </div>
 
-                        <div class="space-y-4">
-                            <h4 class="font-bold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2 flex items-center gap-2">
+                        <div class="space-y-4 bg-white/50 dark:bg-gray-900/50 p-6 rounded-2xl border border-gray-100 dark:border-gray-800">
+                            <h4 class="font-bold text-gray-900 dark:text-white pb-2 flex items-center gap-2">
                                 <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                More Information
+                                Product Details
                             </h4>
-                            <div class="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
-                                <span class="text-gray-500 dark:text-gray-400 font-medium">Publisher:</span> <span class="font-bold text-gray-900 dark:text-white" id="bp-publisher">-</span>
-                                <span class="text-gray-500 dark:text-gray-400 font-medium">Year / Edition:</span> <span class="font-bold text-gray-900 dark:text-white" id="bp-yearedition">-</span>
-                                <span class="text-gray-500 dark:text-gray-400 font-medium">Language:</span> <span class="font-bold text-gray-900 dark:text-white" id="bp-lang">-</span>
-                                <span class="text-gray-500 dark:text-gray-400 font-medium">ISBN:</span> <span class="font-bold text-gray-900 dark:text-white" id="bp-isbn">-</span>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm">
+                                <div class="flex flex-col"><span class="text-gray-500 dark:text-gray-400 text-xs font-bold uppercase">Publisher</span> <span class="font-bold text-gray-900 dark:text-white text-base" id="bp-publisher">-</span></div>
+                                <div class="flex flex-col"><span class="text-gray-500 dark:text-gray-400 text-xs font-bold uppercase">Year / Edition</span> <span class="font-bold text-gray-900 dark:text-white text-base" id="bp-yearedition">-</span></div>
+                                <div class="flex flex-col"><span class="text-gray-500 dark:text-gray-400 text-xs font-bold uppercase">Language</span> <span class="font-bold text-gray-900 dark:text-white text-base" id="bp-lang">-</span></div>
+                                <div class="flex flex-col"><span class="text-gray-500 dark:text-gray-400 text-xs font-bold uppercase">ISBN</span> <span class="font-bold text-gray-900 dark:text-white text-base" id="bp-isbn">-</span></div>
                             </div>
                         </div>
                     </div>
@@ -567,7 +579,7 @@
             document.getElementById('bp-id').innerText = b.id;
             
             const shelfEl = document.getElementById('bp-shelf');
-            shelfEl.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg> <span>${b.shelfLocation || '-'}</span>`;
+            shelfEl.innerHTML = `<svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg> <span>${b.shelfLocation || '-'}</span>`;
             
             document.getElementById('bp-publisher').innerText = b.publisher || '-';
             document.getElementById('bp-yearedition').innerText = `${b.year || '-'} / ${b.edition || '-'}`;
@@ -575,23 +587,41 @@
             document.getElementById('bp-isbn').innerText = b.isbn || '-';
 
             const statusBadge = document.getElementById('bp-status');
-            statusBadge.innerText = b.status === 'Available' ? t('statusAvailable') : t('statusIssued');
-            statusBadge.className = `text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-lg border ${b.status === 'Available' ? 'bg-green-100 text-green-800 border-green-300 dark:bg-green-900/40 dark:text-green-300 dark:border-green-800' : 'bg-red-100 text-red-800 border-red-300 dark:bg-red-900/40 dark:text-red-300 dark:border-red-800'}`;
+            const statusText = document.getElementById('bp-status-text');
+            const isAvailable = b.status === 'Available';
+            
+            statusBadge.innerText = isAvailable ? t('statusAvailable') : t('statusIssued');
+            statusBadge.className = `text-xs font-black uppercase tracking-widest px-4 py-1.5 rounded-lg border ${isAvailable ? 'bg-green-100 text-green-800 border-green-300 dark:bg-green-900/40 dark:text-green-300 dark:border-green-800' : 'bg-red-100 text-red-800 border-red-300 dark:bg-red-900/40 dark:text-red-300 dark:border-red-800'}`;
+            
+            if(statusText) {
+                statusText.innerText = isAvailable ? "Currently available in library" : "Currently checked out by a reader";
+            }
 
-            const photosContainer = document.getElementById('bp-images');
+            const mainImgContainer = document.getElementById('bp-main-image-container');
+            const thumbnailsContainer = document.getElementById('bp-thumbnails');
             const images = [b.photo1, b.photo2, b.photo3].filter(Boolean);
+            
             if(images.length > 0) {
-                photosContainer.innerHTML = `
-                    <div class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar h-full w-full">
-                        ${images.map(img => `<img src="${img}" class="flex-none w-full h-full object-cover snap-center cursor-pointer" onclick="window.open('${img}', '_blank')">`).join('')}
-                    </div>
-                    ${images.length > 1 ? `
-                    <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-2 pointer-events-none">
-                        ${images.map((_, i) => `<div class="w-2 h-2 rounded-full ${i===0?'bg-indigo-600':'bg-white/50'} shadow-md border border-white/20"></div>`).join('')}
-                    </div>` : ''}
-                `;
+                mainImgContainer.innerHTML = `<img id="bp-main-image" src="${images[0]}" class="w-full h-full object-contain p-2 transition-transform duration-300 group-hover:scale-105 cursor-pointer" alt="Book Cover" onclick="if(this.src) window.open(this.src, '_blank')">`;
+                
+                if(images.length > 1) {
+                    thumbnailsContainer.style.display = 'flex';
+                    thumbnailsContainer.innerHTML = images.map((img, index) => `
+                        <div class="w-16 h-16 sm:w-20 sm:h-24 shrink-0 rounded-xl border-2 ${index === 0 ? 'border-indigo-500' : 'border-gray-200 dark:border-gray-700'} overflow-hidden cursor-pointer hover:border-indigo-400 transition-colors snap-center bg-white dark:bg-gray-800" 
+                             onclick="document.getElementById('bp-main-image').src='${img}'; 
+                                      Array.from(this.parentElement.children).forEach(c => { c.classList.remove('border-indigo-500'); c.classList.add('border-gray-200', 'dark:border-gray-700'); });
+                                      this.classList.remove('border-gray-200', 'dark:border-gray-700'); this.classList.add('border-indigo-500');">
+                            <img src="${img}" class="w-full h-full object-cover">
+                        </div>
+                    `).join('');
+                } else {
+                    thumbnailsContainer.style.display = 'none';
+                    thumbnailsContainer.innerHTML = '';
+                }
             } else {
-                photosContainer.innerHTML = `<div class="w-full h-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center"><svg class="w-16 h-16 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg></div>`;
+                thumbnailsContainer.style.display = 'none';
+                thumbnailsContainer.innerHTML = '';
+                mainImgContainer.innerHTML = `<div class="w-full h-full flex items-center justify-center text-gray-300 dark:text-gray-600"><svg class="w-20 h-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg></div>`;
             }
 
             renderSuggestions(b);
