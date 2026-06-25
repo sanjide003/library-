@@ -37,6 +37,36 @@
         .custom-dropdown-menu::-webkit-scrollbar { width: 5px; }
         .custom-dropdown-menu::-webkit-scrollbar-thumb { background: #a5b4fc; border-radius: 5px; }
         .dark .custom-dropdown-menu::-webkit-scrollbar-thumb { background: #4f46e5; }
+        
+        /* New styles for suggestions */
+        .suggestion-box {
+            position: absolute;
+            z-index: 50;
+            width: 100%;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+            margin-top: 4px;
+        }
+        .dark .suggestion-box {
+            background: #1f2937;
+            border-color: #374151;
+        }
+        .suggestion-item {
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .suggestion-item:hover {
+            background-color: #f3f4f6;
+        }
+        .dark .suggestion-item:hover {
+            background-color: #374151;
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-indigo-950 dark:to-gray-900 text-gray-800 dark:text-gray-100 antialiased h-screen flex flex-col overflow-hidden">
@@ -311,24 +341,85 @@
         <!-- 6. Admin Issue View -->
         <div id="admin-issue-view" class="view-section hidden-tab fade-in h-full flex flex-col items-center">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 h-full w-full max-w-6xl">
-                <div class="glass-panel p-8 rounded-3xl flex flex-col justify-center">
+                <!-- Issue Book Panel -->
+                <div class="glass-panel p-8 rounded-3xl flex flex-col justify-center h-fit">
                     <h3 class="text-2xl font-black mb-6" data-i18n="issueBookTitle">Issue Book</h3>
-                    <form id="issue-book-form" class="space-y-4">
-                        <input type="tel" id="issue-phone" required placeholder="Phone Number" class="w-full bg-white dark:bg-gray-900 border border-gray-200 rounded-xl px-4 py-3 font-bold">
-                        <input type="text" id="issue-name" required placeholder="Reader Name" class="w-full bg-white dark:bg-gray-900 border border-gray-200 rounded-xl px-4 py-3 font-bold">
+                    <form id="issue-book-form" class="space-y-4 relative">
+                        <!-- Date fields -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold mb-1 text-gray-600 dark:text-gray-300">Issue Date</label>
+                                <input type="date" id="issue-date" required class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2 font-bold dark:text-white">
+                            </div>
+                        </div>
+
+                        <!-- Phone Number -->
                         <div class="relative">
-                            <input type="text" id="issue-book-search" placeholder="Search Book..." autocomplete="off" class="w-full bg-white dark:bg-gray-900 border border-gray-200 rounded-xl px-4 py-3">
-                            <select id="issue-book-select" size="5" class="absolute z-10 w-full bg-white dark:bg-gray-800 border border-gray-200 rounded-xl p-2 hidden mt-1"></select>
+                            <input type="tel" id="issue-phone" required placeholder="Phone Number" autocomplete="off" class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 font-bold dark:text-white">
+                            <div id="issue-phone-suggestions" class="suggestion-box"></div>
+                        </div>
+
+                        <!-- Reader Name -->
+                        <div class="relative">
+                            <input type="text" id="issue-name" required placeholder="Reader Name" autocomplete="off" class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 font-bold dark:text-white">
+                            <div id="issue-name-suggestions" class="suggestion-box"></div>
+                        </div>
+
+                        <!-- Book Search -->
+                        <div class="relative">
+                            <input type="text" id="issue-book-search" placeholder="Search Book to Issue..." autocomplete="off" class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 dark:text-white">
+                            <div id="issue-book-suggestions" class="suggestion-box"></div>
                             <input type="hidden" id="issue-book-id">
                         </div>
+                        
                         <button type="submit" class="w-full bg-indigo-600 text-white rounded-xl py-3 font-black" data-i18n="recordIssueBtn">Record Issue</button>
                     </form>
                 </div>
+                
+                <!-- Active Issues Panel -->
                 <div class="glass-panel p-8 rounded-3xl overflow-hidden flex flex-col">
                     <h3 class="text-2xl font-black mb-4 border-b pb-2" data-i18n="activeIssuesTitle">Active Issues</h3>
                     <ul id="active-issues-list" class="space-y-3 overflow-y-auto flex-grow text-sm"></ul>
                     <div id="no-active-issues" class="text-center py-10 hidden font-bold text-gray-500">No active issued books.</div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Return Book Modal -->
+        <div id="return-modal" class="fixed inset-0 z-[80] hidden flex items-center justify-center p-4">
+            <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity" onclick="closeReturnModal()"></div>
+            <div class="relative bg-white dark:bg-gray-800 w-full max-w-md p-6 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 fade-in">
+                <h3 class="text-xl font-black text-gray-900 dark:text-white mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">Return Book</h3>
+                <form id="return-book-form" class="space-y-4">
+                    <input type="hidden" id="return-transaction-id">
+                    <input type="hidden" id="return-book-id">
+                    
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Return Date</label>
+                        <input type="date" id="return-date" required class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2 font-bold dark:text-white">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Book Condition on Return</label>
+                        <select id="return-condition" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2 dark:text-white">
+                            <option value="Good">Good (No damage)</option>
+                            <option value="Fair">Fair (Slight wear)</option>
+                            <option value="Damaged">Damaged (Needs repair)</option>
+                            <option value="Lost">Lost</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Fine Collected (₹)</label>
+                        <input type="number" id="return-fine" placeholder="0" min="0" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2 font-bold dark:text-white">
+                        <p class="text-xs text-gray-500 mt-1">Leave empty or 0 if no fine.</p>
+                    </div>
+
+                    <div class="flex gap-3 mt-6">
+                        <button type="button" onclick="closeReturnModal()" class="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 py-2.5 rounded-xl font-bold border border-gray-300 dark:border-gray-600 transition-colors hover:bg-gray-200 dark:hover:bg-gray-600">Cancel</button>
+                        <button type="submit" class="flex-1 bg-green-600 text-white py-2.5 rounded-xl font-black hover:bg-green-700 transition-colors shadow-md">Confirm Return</button>
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -339,9 +430,9 @@
                     <h3 class="text-xl font-black mb-6" data-i18n="addReaderTitle">Add Reader</h3>
                     <form id="add-user-form" class="space-y-4">
                         <input type="text" id="u-username" required placeholder="Username" class="w-full rounded-xl px-4 py-3 border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 dark:text-white">
-                        <input type="tel" id="u-phone" required pattern="[0-9]{10}" placeholder="Phone (10 digits)" class="w-full rounded-xl px-4 py-3 border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 dark:text-white">
+                        <input type="tel" id="u-phone" required pattern="[0-9]{10,12}" placeholder="Phone Number" class="w-full rounded-xl px-4 py-3 border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 dark:text-white">
                         <input type="text" id="u-name" required placeholder="Full Name" class="w-full rounded-xl px-4 py-3 border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 dark:text-white">
-                        <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white rounded-xl py-3 font-black transition-colors" data-i18n="createAccBtn">Create Account</button>
+                        <button type="submit" id="btn-add-user" class="w-full bg-green-500 hover:bg-green-600 text-white rounded-xl py-3 font-black transition-colors" data-i18n="createAccBtn">Create Account</button>
                     </form>
                 </div>
                 <div class="glass-panel rounded-3xl lg:col-span-2 overflow-hidden flex flex-col">
@@ -357,21 +448,54 @@
         <div id="admin-settings-view" class="view-section hidden-tab fade-in h-full flex flex-col items-center">
             <div class="glass-panel w-full max-w-3xl rounded-3xl flex flex-col overflow-y-auto h-[calc(100vh-100px)] p-8">
                 <h2 class="text-3xl font-black mb-6 dark:text-white">Library Settings</h2>
-                <form id="settings-form" class="space-y-4">
-                    <div class="grid grid-cols-2 gap-4">
-                        <input type="text" id="s-name" placeholder="Library Name" class="border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 dark:text-white p-3 rounded-xl w-full">
-                        <input type="tel" id="s-phone" placeholder="Phone" class="border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 dark:text-white p-3 rounded-xl w-full">
+                <form id="settings-form" class="space-y-6">
+                    
+                    <!-- Basic Info -->
+                    <div class="space-y-4">
+                        <h4 class="font-bold text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700 pb-1">Basic Information</h4>
+                        <div class="grid grid-cols-2 gap-4">
+                            <input type="text" id="s-name" placeholder="Library Name" class="border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 dark:text-white p-3 rounded-xl w-full">
+                            <input type="text" id="s-subtitle" placeholder="Subtitle" class="border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 dark:text-white p-3 rounded-xl w-full">
+                        </div>
+                        <textarea id="s-desc" rows="3" placeholder="Library Description (Shown in footer)" class="border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 dark:text-white p-3 rounded-xl w-full"></textarea>
                     </div>
-                    <input type="text" id="s-subtitle" placeholder="Subtitle" class="border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 dark:text-white p-3 rounded-xl w-full">
-                    <input type="email" id="s-email" placeholder="Email" class="border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 dark:text-white p-3 rounded-xl w-full">
-                    <textarea id="s-desc" rows="2" placeholder="Description" class="border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 dark:text-white p-3 rounded-xl w-full"></textarea>
-                    <div class="border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 p-4 rounded-xl">
-                        <label class="block font-bold mb-2 dark:text-white">Logo</label>
-                        <input type="file" id="s-logo-upload" accept=".jpg, .png" onchange="handleImageUpload(event, 's-logo-base64', 's-logo-preview', 'Logo')" class="dark:text-gray-400">
-                        <input type="hidden" id="s-logo-base64">
-                        <div id="s-logo-preview"></div>
+
+                    <!-- Contact & Social -->
+                    <div class="space-y-4">
+                        <h4 class="font-bold text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700 pb-1">Contact & Social Links</h4>
+                        <div class="grid grid-cols-2 gap-4">
+                            <input type="tel" id="s-phone" placeholder="Phone Number" class="border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 dark:text-white p-3 rounded-xl w-full">
+                            <input type="email" id="s-email" placeholder="Email Address" class="border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 dark:text-white p-3 rounded-xl w-full">
+                            <input type="url" id="s-social-facebook" placeholder="Facebook URL" class="border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 dark:text-white p-3 rounded-xl w-full">
+                            <input type="url" id="s-social-instagram" placeholder="Instagram URL" class="border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 dark:text-white p-3 rounded-xl w-full">
+                            <input type="url" id="s-social-youtube" placeholder="YouTube URL" class="border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 dark:text-white p-3 rounded-xl w-full">
+                            <input type="url" id="s-social-whatsapp" placeholder="WhatsApp Number/Link" class="border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 dark:text-white p-3 rounded-xl w-full">
+                        </div>
                     </div>
-                    <button type="submit" id="btn-save-settings" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-xl font-black transition-colors"><span id="settings-btn-text">Save Settings</span></button>
+
+                    <!-- Logo -->
+                    <div class="border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 p-5 rounded-2xl">
+                        <label class="block font-bold mb-3 dark:text-white">Library Logo</label>
+                        <div class="flex items-center gap-4">
+                            <div id="s-logo-preview-container" class="relative group">
+                                <div id="s-logo-preview" class="w-16 h-16 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden">
+                                    <span class="text-xs text-gray-400 font-bold">None</span>
+                                </div>
+                                <!-- Delete Logo Button -->
+                                <button type="button" onclick="deleteLogo()" id="btn-delete-logo" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hidden shadow-md hover:bg-red-600 transition-colors">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </button>
+                            </div>
+                            <div class="flex-1">
+                                <input type="file" id="s-logo-upload" accept=".jpg, .png" onchange="handleLogoUpload(event)" class="text-sm dark:text-gray-400 w-full file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900/30 dark:file:text-indigo-400">
+                                <p class="text-xs text-gray-500 mt-1">Recommended: Square PNG/JPG.</p>
+                            </div>
+                            <input type="hidden" id="s-logo-base64">
+                            <input type="hidden" id="s-logo-deleted" value="false">
+                        </div>
+                    </div>
+
+                    <button type="submit" id="btn-save-settings" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-xl font-black transition-colors shadow-lg mt-4"><span id="settings-btn-text">Save All Settings</span></button>
                 </form>
             </div>
         </div>
@@ -456,6 +580,12 @@
             if (viewId === 'profile-view') renderProfile();
             if (viewId === 'admin-registry-view' && currentUserData?.role === 'admin') renderAdminBooks();
             if (viewId === 'admin-users-view' && currentUserData?.role === 'admin') renderAdminUsers();
+            
+            // Set today's date in Issue view
+            if (viewId === 'admin-issue-view') {
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('issue-date').value = today;
+            }
         };
 
         window.toggleSidebar = () => {
@@ -491,32 +621,70 @@
             });
         };
 
-        const formatDate = (timestamp) => {
-            if (!timestamp) return '-'; const d = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+        const formatDate = (dateInput) => {
+            if (!dateInput) return '-'; 
+            let d;
+            if (typeof dateInput === 'string') { d = new Date(dateInput); }
+            else { d = dateInput.toDate ? dateInput.toDate() : new Date(dateInput); }
             return d.toLocaleDateString(currentLang === 'ml' ? 'ml-IN' : 'en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
         };
 
-        // --- Settings Fetch ---
+        // --- Settings Fetch & Logo Handling ---
         onSnapshot(doc(db, "settings", "general"), (docSnap) => {
             if(docSnap.exists()) {
                 const s = docSnap.data();
                 const titleElements = document.querySelectorAll('#brand-title');
                 if(s.libraryName) { titleElements.forEach(el => el.innerText = s.libraryName); document.title = s.libraryName + " - Admin"; }
                 const brandImg = document.getElementById('brand-logo-img');
-                if(s.logo) { brandImg.src = s.logo; brandImg.classList.remove('hidden'); }
+                if(s.logo) { brandImg.src = s.logo; brandImg.classList.remove('hidden'); } else { brandImg.classList.add('hidden'); }
                 
                 // Populate inputs in settings form if they exist
-                ['s-name', 's-phone', 's-subtitle', 's-email', 's-desc'].forEach(id => {
-                    if (document.getElementById(id) && s[id.replace('s-', '') === 'name' ? 'libraryName' : id.replace('s-', '')]) {
-                        document.getElementById(id).value = s[id.replace('s-', '') === 'name' ? 'libraryName' : id.replace('s-', '')];
-                    }
+                if(document.getElementById('s-name')) document.getElementById('s-name').value = s.libraryName || '';
+                ['phone', 'subtitle', 'email', 'description'].forEach(id => {
+                    if (document.getElementById(`s-${id}`)) document.getElementById(`s-${id}`).value = s[id] || '';
                 });
-                if (s.logo && document.getElementById('s-logo-preview')) {
-                    document.getElementById('s-logo-preview').innerHTML = `<img src="${s.logo}" class="h-16 w-16 object-cover border mt-2 rounded">`;
-                    document.getElementById('s-logo-base64').value = s.logo;
+                
+                // Populate Socials
+                if(s.socialLinks) {
+                    ['facebook', 'instagram', 'youtube', 'whatsapp'].forEach(platform => {
+                        if (document.getElementById(`s-social-${platform}`)) document.getElementById(`s-social-${platform}`).value = s.socialLinks[platform] || '';
+                    });
                 }
+
+                // Populate Logo in settings
+                if (s.logo && document.getElementById('s-logo-preview')) {
+                    document.getElementById('s-logo-preview').innerHTML = `<img src="${s.logo}" class="h-full w-full object-cover">`;
+                    document.getElementById('s-logo-base64').value = s.logo;
+                    document.getElementById('btn-delete-logo').classList.remove('hidden');
+                } else if (document.getElementById('s-logo-preview')) {
+                    document.getElementById('s-logo-preview').innerHTML = `<span class="text-xs text-gray-400 font-bold">None</span>`;
+                    document.getElementById('s-logo-base64').value = '';
+                    document.getElementById('btn-delete-logo').classList.add('hidden');
+                }
+                document.getElementById('s-logo-deleted').value = 'false'; // reset deleted flag
             }
         });
+
+        window.handleLogoUpload = function(event) {
+            const file = event.target.files?.[0]; if(!file) return;
+            if(file.size > 200 * 1024) { showToast(`Logo max 200 KB`, 'error'); event.target.value = ''; return; }
+            const reader = new FileReader();
+            reader.onload = () => { 
+                document.getElementById('s-logo-base64').value = reader.result; 
+                document.getElementById('s-logo-preview').innerHTML = `<img src="${reader.result}" class="h-full w-full object-cover">`;
+                document.getElementById('btn-delete-logo').classList.remove('hidden');
+                document.getElementById('s-logo-deleted').value = 'false';
+            };
+            reader.readAsDataURL(file);
+        };
+
+        window.deleteLogo = function() {
+            document.getElementById('s-logo-preview').innerHTML = `<span class="text-xs text-gray-400 font-bold">None</span>`;
+            document.getElementById('s-logo-base64').value = '';
+            document.getElementById('s-logo-upload').value = '';
+            document.getElementById('btn-delete-logo').classList.add('hidden');
+            document.getElementById('s-logo-deleted').value = 'true';
+        }
 
         // --- Authentication & Protection Logic ---
         onAuthStateChanged(auth, async (user) => {
@@ -534,11 +702,11 @@
                         return; 
                     }
 
-                    // Global Data Fetch (Books)
+                    // Global Data Fetch
                     onSnapshot(query(collection(db, "books")), (snapshot) => {
                         allBooks = []; snapshot.forEach(d => allBooks.push({ id: d.id, ...d.data() }));
                         if(!document.getElementById('admin-registry-view').classList.contains('hidden-tab')) renderAdminBooks();
-                        updateAdminDashboard(); populateIssueBookSelect();
+                        updateAdminDashboard();
                     });
 
                     setupAdminListeners();
@@ -593,7 +761,7 @@
                 snapshot.forEach(docSnap => {
                     const tData = { id: docSnap.id, ...docSnap.data() }; allTransactions.push(tData);
                     const li = document.createElement('li'); li.className = 'p-4 bg-white/50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow flex justify-between items-center gap-4';
-                    li.innerHTML = `<div class="flex-1 min-w-0"><p class="text-sm font-black text-gray-900 dark:text-white truncate">${tData.bookTitle} <span class="text-xs text-gray-500 font-normal">(${tData.bookId})</span></p><p class="text-xs text-gray-600 dark:text-gray-400 mt-1 truncate"><span class="font-bold text-indigo-600 dark:text-indigo-400">${tData.userName}</span> (${tData.userPhone})</p><p class="text-xs text-gray-400 dark:text-gray-500 mt-1">${formatDate(tData.issueDate)}</p></div><button onclick="returnBook('${tData.id}', '${tData.bookId}')" class="shrink-0 bg-green-500/10 text-green-600 dark:text-green-400 hover:bg-green-500 hover:text-white border border-green-200 dark:border-green-800 px-4 py-2 rounded-xl text-xs font-black transition-colors">${t('btnReturn')}</button>`;
+                    li.innerHTML = `<div class="flex-1 min-w-0"><p class="text-sm font-black text-gray-900 dark:text-white truncate">${tData.bookTitle} <span class="text-xs text-gray-500 font-normal">(${tData.bookId})</span></p><p class="text-xs text-gray-600 dark:text-gray-400 mt-1 truncate"><span class="font-bold text-indigo-600 dark:text-indigo-400">${tData.userName}</span> (${tData.userPhone})</p><p class="text-xs text-gray-400 dark:text-gray-500 mt-1">Issued: ${formatDate(tData.issueDate)}</p></div><button onclick="openReturnModal('${tData.id}', '${tData.bookId}')" class="shrink-0 bg-green-500/10 text-green-600 dark:text-green-400 hover:bg-green-500 hover:text-white border border-green-200 dark:border-green-800 px-4 py-2 rounded-xl text-xs font-black transition-colors">Return</button>`;
                     ul.appendChild(li);
                 });
                 if(allTransactions.length === 0) { document.getElementById('no-active-issues').classList.remove('hidden'); }
@@ -602,9 +770,7 @@
             });
         };
 
-        // --- FULLY RESTORED JAVASCRIPT FUNCTIONS ---
-
-        // 1. ADD / EDIT BOOK
+        // --- 1. ADD / EDIT BOOK ---
         window.handleImageUpload = function(event, hiddenInputId, previewId, label) {
             const file = event.target.files?.[0]; if(!file) return;
             if(file.size > 150 * 1024) { showToast(`${label} max 150 KB`, 'error'); event.target.value = ''; return; }
@@ -676,7 +842,7 @@
             }
         });
 
-        // 2. BOOKS REGISTRY (EDIT & DELETE)
+        // 2. BOOKS REGISTRY
         window.renderAdminBooks = () => {
             const list = document.getElementById('admin-books-list'); list.innerHTML = '';
             const queryText = document.getElementById('admin-book-search').value.toLowerCase();
@@ -730,28 +896,48 @@
             }
         };
 
-        // 3. USERS MANAGEMENT
+        // --- 3. USERS MANAGEMENT (Fix for Adding Users) ---
         document.getElementById('add-user-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = e.target.querySelector('button'); btn.disabled = true; btn.style.opacity = '0.5';
+            const btn = document.getElementById('btn-add-user'); 
+            const originalText = btn.innerText;
+            btn.disabled = true; btn.innerText = "Creating..."; btn.style.opacity = '0.5';
+            
             const username = document.getElementById('u-username').value.trim().toLowerCase();
             const phone = document.getElementById('u-phone').value.trim();
             const name = document.getElementById('u-name').value.trim();
             
             try {
+                // Check if username or phone already exists
                 const uQ = query(collection(db, "users"), where("username", "==", username));
                 const pQ = query(collection(db, "users"), where("phone", "==", phone));
                 if (!(await getDocs(uQ)).empty || !(await getDocs(pQ)).empty) throw new Error(t('msgUserExists'));
 
+                // Use secondary app to create user without signing out current admin
                 const pseudoEmail = `${username}@noorulislam.local`;
                 const userCredential = await createUserWithEmailAndPassword(secondaryAuth, pseudoEmail, phone);
                 
                 await setDoc(doc(db, "users", userCredential.user.uid), {
-                    uid: userCredential.user.uid, username: username, phone: phone, name: name, role: 'reader', status: 'active', createdAt: serverTimestamp()
+                    uid: userCredential.user.uid, 
+                    username: username, 
+                    phone: phone, 
+                    name: name, 
+                    role: 'reader', 
+                    status: 'active', 
+                    createdAt: serverTimestamp()
                 });
-                showToast(t('msgUserAdded')); e.target.reset(); secondaryAuth.signOut();
-            } catch (error) { showToast(error.message, "error"); }
-            finally { btn.disabled = false; btn.style.opacity = '1'; }
+                
+                showToast(t('msgUserAdded')); 
+                e.target.reset(); 
+            } catch (error) { 
+                showToast(error.message, "error"); 
+            } finally { 
+                btn.disabled = false; 
+                btn.innerText = originalText;
+                btn.style.opacity = '1'; 
+                // Always sign out the secondary auth to prevent state issues
+                try { await secondaryAuth.signOut(); } catch(e) {}
+            }
         });
 
         window.renderAdminUsers = () => {
@@ -771,68 +957,195 @@
             }
         };
 
-        // 4. ISSUE & RETURN
-        const populateIssueBookSelect = () => {
-            const select = document.getElementById('issue-book-select'); select.innerHTML = '';
-            allBooks.filter(b => b.status === 'Available').forEach(b => {
-                select.innerHTML += `<option value="${b.id}" class="p-2 border-b dark:border-gray-700 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white">${b.id} - ${b.title}</option>`;
-            });
-        };
-        
-        document.getElementById('issue-book-search').addEventListener('input', (e) => {
-            const val = e.target.value.toLowerCase(); const select = document.getElementById('issue-book-select');
-            select.classList.remove('hidden');
-            Array.from(select.options).forEach(opt => { opt.style.display = opt.text.toLowerCase().includes(val) ? 'block' : 'none'; });
-        });
-        
-        document.getElementById('issue-book-select').addEventListener('change', (e) => {
-            document.getElementById('issue-book-search').value = e.target.options[e.target.selectedIndex].text;
-            document.getElementById('issue-book-id').value = e.target.value;
-            e.target.classList.add('hidden');
-        });
+        // --- 4. SMART ISSUE & RETURN SYSTEM ---
 
-        // Hide book dropdown when clicking outside
-        document.addEventListener('click', (e) => {
-            if(e.target.id !== 'issue-book-search' && e.target.id !== 'issue-book-select') {
-                document.getElementById('issue-book-select')?.classList.add('hidden');
+        // 4A. Phone Number Autocomplete (Phone -> Name)
+        const issuePhoneInput = document.getElementById('issue-phone');
+        const issueNameInput = document.getElementById('issue-name');
+        const phoneSuggestions = document.getElementById('issue-phone-suggestions');
+        const nameSuggestions = document.getElementById('issue-name-suggestions');
+
+        issuePhoneInput.addEventListener('input', (e) => {
+            const val = e.target.value.trim();
+            phoneSuggestions.innerHTML = '';
+            
+            if (val.length < 3) { phoneSuggestions.style.display = 'none'; return; }
+
+            const matches = allUsers.filter(u => u.role !== 'admin' && u.phone && u.phone.includes(val));
+            if (matches.length > 0) {
+                matches.slice(0, 5).forEach(u => {
+                    const div = document.createElement('div');
+                    div.className = 'suggestion-item text-sm';
+                    div.innerHTML = `<span class="font-bold">${u.phone}</span> - <span class="text-gray-500">${u.name}</span>`;
+                    div.onclick = () => {
+                        issuePhoneInput.value = u.phone;
+                        issueNameInput.value = u.name;
+                        phoneSuggestions.style.display = 'none';
+                    };
+                    phoneSuggestions.appendChild(div);
+                });
+                phoneSuggestions.style.display = 'block';
+            } else {
+                phoneSuggestions.style.display = 'none';
             }
         });
 
-        document.getElementById('issue-phone').addEventListener('blur', async (e) => {
-            const phone = e.target.value; if(phone.length < 5) return;
-            const q = query(collection(db, "users"), where("phone", "==", phone));
-            const snap = await getDocs(q);
-            if(!snap.empty) document.getElementById('issue-name').value = snap.docs[0].data().name;
+        // 4B. Name Autocomplete (Name -> Phone)
+        issueNameInput.addEventListener('input', (e) => {
+            const val = e.target.value.toLowerCase().trim();
+            nameSuggestions.innerHTML = '';
+            
+            if (val.length < 2) { nameSuggestions.style.display = 'none'; return; }
+
+            const matches = allUsers.filter(u => u.role !== 'admin' && u.name && u.name.toLowerCase().includes(val));
+            if (matches.length > 0) {
+                matches.slice(0, 5).forEach(u => {
+                    const div = document.createElement('div');
+                    div.className = 'suggestion-item text-sm';
+                    div.innerHTML = `<span class="font-bold">${u.name}</span> - <span class="text-gray-500">${u.phone}</span>`;
+                    div.onclick = () => {
+                        issueNameInput.value = u.name;
+                        issuePhoneInput.value = u.phone;
+                        nameSuggestions.style.display = 'none';
+                    };
+                    nameSuggestions.appendChild(div);
+                });
+                nameSuggestions.style.display = 'block';
+            } else {
+                nameSuggestions.style.display = 'none';
+            }
         });
 
+        // 4C. Book Search Autocomplete (ID or Title)
+        const bookSearchInput = document.getElementById('issue-book-search');
+        const bookSuggestions = document.getElementById('issue-book-suggestions');
+        const bookIdHidden = document.getElementById('issue-book-id');
+
+        bookSearchInput.addEventListener('input', (e) => {
+            const val = e.target.value.toLowerCase().trim();
+            bookSuggestions.innerHTML = '';
+            
+            if (val.length < 2) { bookSuggestions.style.display = 'none'; bookIdHidden.value = ''; return; }
+
+            const matches = allBooks.filter(b => b.status === 'Available' && (b.id.toLowerCase().includes(val) || b.title.toLowerCase().includes(val)));
+            if (matches.length > 0) {
+                matches.slice(0, 6).forEach(b => {
+                    const div = document.createElement('div');
+                    div.className = 'suggestion-item text-sm flex justify-between items-center';
+                    div.innerHTML = `<div class="truncate pe-2"><span class="font-bold dark:text-white">${b.title}</span><br><span class="text-xs text-gray-500">${b.author || 'Unknown'}</span></div><span class="text-xs font-black bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded shrink-0">${b.id}</span>`;
+                    div.onclick = () => {
+                        bookSearchInput.value = `${b.title} (${b.id})`;
+                        bookIdHidden.value = b.id;
+                        bookSuggestions.style.display = 'none';
+                    };
+                    bookSuggestions.appendChild(div);
+                });
+                bookSuggestions.style.display = 'block';
+            } else {
+                bookSuggestions.innerHTML = '<div class="p-3 text-sm text-gray-500">No available books found.</div>';
+                bookSuggestions.style.display = 'block';
+            }
+        });
+
+        // Hide suggestions on outside click
+        document.addEventListener('click', (e) => {
+            if (!issuePhoneInput.contains(e.target)) phoneSuggestions.style.display = 'none';
+            if (!issueNameInput.contains(e.target)) nameSuggestions.style.display = 'none';
+            if (!bookSearchInput.contains(e.target)) bookSuggestions.style.display = 'none';
+        });
+
+        // Record Issue Submit
         document.getElementById('issue-book-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const bookId = document.getElementById('issue-book-id').value;
             if(!bookId) return showToast(t('msgSelectBook'), "error");
-            const phone = document.getElementById('issue-phone').value;
-            const name = document.getElementById('issue-name').value;
+            const phone = document.getElementById('issue-phone').value.trim();
+            const name = document.getElementById('issue-name').value.trim();
+            const issueDateVal = document.getElementById('issue-date').value;
             const book = allBooks.find(b => b.id === bookId);
 
             try {
+                // Determine timestamp (use selected date or server time)
+                let issueTimestamp = serverTimestamp();
+                if (issueDateVal) {
+                    const d = new Date(issueDateVal);
+                    // Add current time so it's not exactly midnight
+                    d.setHours(new Date().getHours());
+                    d.setMinutes(new Date().getMinutes());
+                    issueTimestamp = d;
+                }
+
                 await addDoc(collection(db, "transactions"), {
-                    bookId: bookId, bookTitle: book.title, userPhone: phone, userName: name, issueDate: serverTimestamp(), status: 'Active', issuedBy: currentUserData.username
+                    bookId: bookId, 
+                    bookTitle: book.title, 
+                    userPhone: phone, 
+                    userName: name, 
+                    issueDate: issueTimestamp, 
+                    status: 'Active', 
+                    issuedBy: currentUserData.username
                 });
                 await updateDoc(doc(db, "books", bookId), { status: 'Issued' });
-                showToast(t('msgIssued')); e.target.reset(); document.getElementById('issue-book-id').value = '';
+                showToast(t('msgIssued')); 
+                e.target.reset(); 
+                document.getElementById('issue-book-id').value = '';
+                document.getElementById('issue-date').value = new Date().toISOString().split('T')[0]; // reset date
             } catch (error) { showToast(error.message, "error"); }
         });
 
-        window.returnBook = async (transactionId, bookId) => {
-            if(await confirmAction("Return Book", "Confirm book return?")) {
-                try {
-                    await updateDoc(doc(db, "transactions", transactionId), { status: 'Returned', returnDate: serverTimestamp() });
-                    await updateDoc(doc(db, "books", bookId), { status: 'Available' });
-                    showToast(t('msgReturned'));
-                } catch(e) { showToast(e.message, "error"); }
-            }
+        // 4D. Return Modal Logic
+        window.openReturnModal = (transactionId, bookId) => {
+            document.getElementById('return-transaction-id').value = transactionId;
+            document.getElementById('return-book-id').value = bookId;
+            document.getElementById('return-date').value = new Date().toISOString().split('T')[0]; // Default to today
+            document.getElementById('return-condition').value = 'Good';
+            document.getElementById('return-fine').value = '';
+            document.getElementById('return-modal').classList.remove('hidden');
         };
 
-        // 5. BULK IMPORT (CSV via PapaParse)
+        window.closeReturnModal = () => {
+            document.getElementById('return-modal').classList.add('hidden');
+        };
+
+        document.getElementById('return-book-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const transactionId = document.getElementById('return-transaction-id').value;
+            const bookId = document.getElementById('return-book-id').value;
+            const returnDateVal = document.getElementById('return-date').value;
+            const condition = document.getElementById('return-condition').value;
+            const fineStr = document.getElementById('return-fine').value;
+            const fine = fineStr ? parseInt(fineStr, 10) : 0;
+
+            try {
+                let returnTimestamp = serverTimestamp();
+                if (returnDateVal) {
+                    const d = new Date(returnDateVal);
+                    d.setHours(new Date().getHours());
+                    returnTimestamp = d;
+                }
+
+                // Update Transaction
+                await updateDoc(doc(db, "transactions", transactionId), { 
+                    status: 'Returned', 
+                    returnDate: returnTimestamp,
+                    returnCondition: condition,
+                    fineCollected: fine
+                });
+
+                // Update Book
+                await updateDoc(doc(db, "books", bookId), { 
+                    status: condition === 'Lost' ? 'Lost' : 'Available',
+                    condition: condition !== 'Lost' ? condition : undefined // Update condition if not lost
+                });
+
+                showToast(t('msgReturned'));
+                closeReturnModal();
+            } catch(error) { 
+                showToast(error.message, "error"); 
+            }
+        });
+
+
+        // --- 5. BULK IMPORT ---
         window.downloadCSVTemplate = () => {
             const csv = "accessionNo,title,author,category,language,shelfLocation,price\n1001,Sample Book,John Doe,Fiction,English,A1,250\n";
             const blob = new Blob([csv], { type: 'text/csv' });
@@ -882,7 +1195,7 @@
             finally { btn.disabled = false; btn.innerText = "Upload Data"; document.getElementById('csv-file-input').value = ''; }
         };
 
-        // 6. SETTINGS
+        // --- 6. SETTINGS WITH SOCIAL LINKS ---
         document.getElementById('settings-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btn-save-settings'); btn.disabled = true; document.getElementById('settings-btn-text').innerText = "Saving...";
@@ -893,14 +1206,30 @@
                 phone: document.getElementById('s-phone').value.trim(),
                 email: document.getElementById('s-email').value.trim(),
                 description: document.getElementById('s-desc').value.trim(),
+                socialLinks: {
+                    facebook: document.getElementById('s-social-facebook').value.trim(),
+                    instagram: document.getElementById('s-social-instagram').value.trim(),
+                    youtube: document.getElementById('s-social-youtube').value.trim(),
+                    whatsapp: document.getElementById('s-social-whatsapp').value.trim()
+                }
             };
             
             const logoBase64 = document.getElementById('s-logo-base64').value;
-            if(logoBase64) data.logo = logoBase64;
+            const logoDeleted = document.getElementById('s-logo-deleted').value === 'true';
 
-            try { await setDoc(doc(db, "settings", "general"), data, { merge: true }); showToast("Settings updated successfully!"); } 
+            if(logoBase64 && !logoDeleted) {
+                data.logo = logoBase64;
+            } else if (logoDeleted) {
+                // If logo was marked as deleted, we set it to null or empty to remove it from firestore
+                data.logo = ""; 
+            }
+
+            try { 
+                await setDoc(doc(db, "settings", "general"), data, { merge: true }); 
+                showToast("Settings updated successfully!"); 
+            } 
             catch(error) { showToast(error.message, "error"); } 
-            finally { btn.disabled = false; document.getElementById('settings-btn-text').innerText = "Save Settings"; }
+            finally { btn.disabled = false; document.getElementById('settings-btn-text').innerText = "Save All Settings"; }
         });
 
     </script>
