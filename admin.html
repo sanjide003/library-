@@ -3,8 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Library Register - Admin & Reader Portal</title>
+    <title>Library Register - Admin Portal</title>
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js for Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- PapaParse for Bulk CSV Import -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -200,21 +209,45 @@
     <!-- Main Content Area -->
     <main class="flex-grow w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 overflow-y-auto relative">
 
-        <!-- 1. Admin Dashboard View -->
+        <!-- 1. Admin Dashboard View (Now with Analytics!) -->
         <div id="admin-dashboard-view" class="view-section hidden-tab fade-in max-w-7xl mx-auto w-full">
             <div class="mb-8">
                 <h1 class="text-4xl font-black text-gray-900 dark:text-white" data-i18n="dashboardTitle">Dashboard</h1>
-                <p class="text-gray-500 dark:text-gray-400 font-bold mt-2">Live library overview and quick actions.</p>
+                <p class="text-gray-500 dark:text-gray-400 font-bold mt-2">Live library overview, analytics, and quick actions.</p>
             </div>
+            
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
                 <div class="glass-panel p-6 rounded-3xl shadow-xl"><p class="text-xs uppercase font-black text-gray-500">Total Books</p><p id="dash-total-books" class="text-4xl font-black text-indigo-600 mt-2">0</p></div>
                 <div class="glass-panel p-6 rounded-3xl shadow-xl"><p class="text-xs uppercase font-black text-gray-500">Available</p><p id="dash-available-books" class="text-4xl font-black text-green-600 mt-2">0</p></div>
                 <div class="glass-panel p-6 rounded-3xl shadow-xl"><p class="text-xs uppercase font-black text-gray-500">Issued</p><p id="dash-issued-books" class="text-4xl font-black text-amber-600 mt-2">0</p></div>
                 <div class="glass-panel p-6 rounded-3xl shadow-xl"><p class="text-xs uppercase font-black text-gray-500">Readers</p><p id="dash-readers" class="text-4xl font-black text-purple-600 mt-2">0</p></div>
             </div>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div class="glass-panel rounded-3xl p-6 shadow-xl"><h2 class="text-xl font-black mb-4">Quick Actions</h2><div class="grid grid-cols-1 sm:grid-cols-2 gap-3"><button onclick="navigate('admin-add-book-view'); resetAddBookForm();" class="bg-indigo-600 text-white p-4 rounded-2xl font-black">Add Book</button><button onclick="navigate('admin-issue-view')" class="bg-amber-500 text-white p-4 rounded-2xl font-black">Issue / Return</button><button onclick="navigate('admin-users-view')" class="bg-green-500 text-white p-4 rounded-2xl font-black">Readers</button><button onclick="navigate('admin-bulk-view')" class="bg-purple-500 text-white p-4 rounded-2xl font-black">Bulk Import</button></div></div>
-                <div class="glass-panel rounded-3xl p-6 shadow-xl"><h2 class="text-xl font-black mb-4">Active Issues</h2><div id="dash-active-issues" class="space-y-3 text-sm max-h-72 overflow-y-auto"></div></div>
+
+            <!-- Analytics and Issues Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+                <div class="glass-panel rounded-3xl p-6 shadow-xl lg:col-span-1 flex flex-col justify-center items-center">
+                    <h2 class="text-xl font-black mb-4 w-full text-start">Library Stock Status</h2>
+                    <div class="w-full max-w-[250px]">
+                        <canvas id="booksChart"></canvas>
+                    </div>
+                </div>
+                <div class="glass-panel rounded-3xl p-6 shadow-xl lg:col-span-2">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-black">Active Issues</h2>
+                        <button onclick="navigate('admin-issue-view')" class="text-sm font-bold text-indigo-600 dark:text-indigo-400 hover:underline">View All</button>
+                    </div>
+                    <div id="dash-active-issues" class="space-y-3 text-sm max-h-64 overflow-y-auto pr-2"></div>
+                </div>
+            </div>
+
+            <div class="glass-panel rounded-3xl p-6 shadow-xl">
+                <h2 class="text-xl font-black mb-4">Quick Actions</h2>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <button onclick="navigate('admin-add-book-view'); resetAddBookForm();" class="bg-indigo-600 text-white p-4 rounded-2xl font-black text-sm flex flex-col items-center justify-center gap-2 hover:bg-indigo-700 transition"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg> Add Book</button>
+                    <button onclick="navigate('admin-issue-view')" class="bg-amber-500 text-white p-4 rounded-2xl font-black text-sm flex flex-col items-center justify-center gap-2 hover:bg-amber-600 transition"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg> Issue / Return</button>
+                    <button onclick="navigate('admin-users-view')" class="bg-green-500 text-white p-4 rounded-2xl font-black text-sm flex flex-col items-center justify-center gap-2 hover:bg-green-600 transition"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg> Readers</button>
+                    <button onclick="navigate('admin-bulk-view')" class="bg-purple-500 text-white p-4 rounded-2xl font-black text-sm flex flex-col items-center justify-center gap-2 hover:bg-purple-600 transition"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> Bulk Import</button>
+                </div>
             </div>
         </div>
 
@@ -485,7 +518,7 @@
             </div>
         </div>
 
-        <!-- 5. Admin View: Bulk Import -->
+        <!-- 5. Admin View: Bulk Import (Now with PapaParse) -->
         <div id="admin-bulk-view" class="view-section hidden-tab fade-in h-full flex flex-col items-center">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 h-full w-full max-w-6xl">
                 <div class="glass-panel p-8 md:p-10 rounded-3xl border-t-4 border-t-indigo-500 flex flex-col shadow-2xl h-[calc(100vh-100px)]">
@@ -550,7 +583,7 @@
                             </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2" data-i18n="readerNameLbl">Reader Name</label>
+                            <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2" data-i18n="readerNameLbl">Student / Reader Name</label>
                             <input type="text" id="issue-name" required class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3.5 focus:ring-2 focus:ring-indigo-500 outline-none font-bold dark:text-white transition-colors text-start">
                         </div>
                         <div class="relative">
@@ -602,7 +635,7 @@
                             <input type="tel" id="u-phone" required pattern="[0-9]{10}" class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white text-start font-medium tracking-wide">
                         </div>
                         <div>
-                            <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1" data-i18n="fullNameLbl">Full Name</label>
+                            <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1" data-i18n="fullNameLbl">Student / Reader Name</label>
                             <input type="text" id="u-name" required class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none dark:text-white text-start font-bold">
                         </div>
                         <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white rounded-xl py-4 text-sm font-black shadow-lg shadow-green-500/30 transition-transform hover:-translate-y-0.5 mt-6" data-i18n="createAccBtn">Create Account</button>
@@ -643,7 +676,7 @@
                     </div>
                     <div>
                         <h2 class="text-3xl font-black text-gray-900 dark:text-white">Library Settings</h2>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Update global information, logos, and contact details.</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Update global information, logos, and notifications.</p>
                     </div>
                 </div>
 
@@ -664,16 +697,6 @@
                         <input type="text" id="s-subtitle" placeholder="Short subtitle shown under library name" class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-gray-800 dark:text-white transition-shadow text-start">
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Email Address</label>
-                        <input type="email" id="s-email" placeholder="library@example.com" class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-gray-800 dark:text-white transition-shadow text-start">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Short Description</label>
-                        <textarea id="s-desc" rows="3" placeholder="A short description about the library..." class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-gray-800 dark:text-white transition-shadow text-start"></textarea>
-                    </div>
-
                     <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-6 bg-white/20 dark:bg-gray-800/20">
                         <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Library Logo</label>
                         <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">Upload a square logo (JPG/PNG). Max 150KB.</p>
@@ -682,14 +705,14 @@
                         <div id="s-logo-preview" class="mt-4 flex"></div>
                     </div>
 
+                    <!-- Notification & Integrations Block -->
                     <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-6 bg-white/20 dark:bg-gray-800/20">
-                        <h3 class="text-lg font-black text-gray-800 dark:text-white mb-4">Social Media Links</h3>
+                        <h3 class="text-lg font-black text-gray-800 dark:text-white mb-2">Notifications & API Integration</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">Configure automatic SMS/WhatsApp messages via Twilio or Meta.</p>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div><label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">WhatsApp Channel</label><input type="url" id="s-whatsapp" placeholder="https://whatsapp.com/channel/..." class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-gray-800 dark:text-white text-start"></div>
-                            <div><label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Instagram</label><input type="url" id="s-instagram" placeholder="https://instagram.com/..." class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-gray-800 dark:text-white text-start"></div>
-                            <div><label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">YouTube</label><input type="url" id="s-youtube" placeholder="https://youtube.com/..." class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-gray-800 dark:text-white text-start"></div>
-                            <div><label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Facebook</label><input type="url" id="s-facebook" placeholder="https://facebook.com/..." class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-gray-800 dark:text-white text-start"></div>
-                            <div class="md:col-span-2"><label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Website</label><input type="url" id="s-website" placeholder="https://example.com" class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-gray-800 dark:text-white text-start"></div>
+                            <div><label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Twilio Account SID (SMS)</label><input type="text" id="s-twilio-sid" placeholder="ACxxxxxxxxx" class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-gray-800 dark:text-white text-start"></div>
+                            <div><label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Twilio Auth Token</label><input type="password" id="s-twilio-token" placeholder="••••••••••••" class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-gray-800 dark:text-white text-start"></div>
+                            <div class="md:col-span-2"><label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Meta WhatsApp Business Token</label><input type="password" id="s-wa-token" placeholder="EAAxxxxxxxxx" class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-gray-800 dark:text-white text-start"></div>
                         </div>
                     </div>
 
@@ -741,7 +764,7 @@
         let allUsers = [];
         let allTransactions = [];
         let parsedCSVData = [];
-        let unsubBooks, unsubUsers, unsubTransactions;
+        let booksChartInstance = null; // Chart.js instance
 
         // Custom Confirm Logic
         window.showConfirm = function(title, message) {
@@ -780,6 +803,7 @@
             if (viewId === 'profile-view') renderProfile();
             if (viewId === 'admin-registry-view' && currentUserData?.role === 'admin') renderAdminBooks();
             if (viewId === 'admin-users-view' && currentUserData?.role === 'admin') renderAdminUsers();
+            if (viewId === 'admin-dashboard-view' && currentUserData?.role === 'admin') updateAdminDashboard();
         };
 
         window.toggleSidebar = () => {
@@ -839,28 +863,22 @@
                 const brandImg = document.getElementById('brand-logo-img');
                 const subtitle = document.getElementById('brand-subtitle');
 
-                // Update Name
                 if(s.libraryName) {
                     titleElements.forEach(el => el.innerText = s.libraryName);
                     document.title = s.libraryName + " - Admin";
-                    // Populate Settings form if in view
                     document.getElementById('s-name').value = s.libraryName || '';
                 }
 
                 if(s.subtitle) { subtitle.innerText = s.subtitle; subtitle.classList.remove('hidden'); } else { subtitle.classList.add('hidden'); }
 
-                // Populate other settings fields
                 document.getElementById('s-subtitle').value = s.subtitle || '';
-                document.getElementById('s-desc').value = s.description || '';
                 document.getElementById('s-phone').value = s.phone || '';
-                document.getElementById('s-email').value = s.email || '';
-                document.getElementById('s-whatsapp').value = s.socialLinks?.whatsapp || '';
-                document.getElementById('s-instagram').value = s.socialLinks?.instagram || '';
-                document.getElementById('s-youtube').value = s.socialLinks?.youtube || '';
-                document.getElementById('s-facebook').value = s.socialLinks?.facebook || '';
-                document.getElementById('s-website').value = s.socialLinks?.website || '';
+                
+                // Populate Notifications fields
+                document.getElementById('s-twilio-sid').value = s.integrations?.twilioSid || '';
+                document.getElementById('s-twilio-token').value = s.integrations?.twilioToken || '';
+                document.getElementById('s-wa-token').value = s.integrations?.metaToken || '';
 
-                // Update Logo (no dummy icon; show only uploaded logo)
                 if(s.logo) {
                     brandImg.src = s.logo; brandImg.classList.remove('hidden');
                     document.getElementById('s-logo-base64').value = s.logo;
@@ -883,23 +901,19 @@
             const settingsData = {
                 libraryName: document.getElementById('s-name').value.trim(),
                 subtitle: document.getElementById('s-subtitle').value.trim(),
-                description: document.getElementById('s-desc').value.trim(),
                 phone: document.getElementById('s-phone').value.trim(),
-                email: document.getElementById('s-email').value.trim(),
                 logo: document.getElementById('s-logo-base64').value || null,
-                socialLinks: {
-                    whatsapp: document.getElementById('s-whatsapp').value.trim(),
-                    instagram: document.getElementById('s-instagram').value.trim(),
-                    youtube: document.getElementById('s-youtube').value.trim(),
-                    facebook: document.getElementById('s-facebook').value.trim(),
-                    website: document.getElementById('s-website').value.trim()
+                integrations: {
+                    twilioSid: document.getElementById('s-twilio-sid').value.trim(),
+                    twilioToken: document.getElementById('s-twilio-token').value.trim(),
+                    metaToken: document.getElementById('s-wa-token').value.trim(),
                 },
                 updatedAt: serverTimestamp()
             };
 
             try {
                 await setDoc(doc(db, "settings", "general"), settingsData, { merge: true });
-                showToast("Settings updated successfully!");
+                showToast("Settings & Integrations updated successfully!");
             } catch (error) {
                 console.error(error);
                 showToast("Failed to update settings.", "error");
@@ -911,7 +925,6 @@
         // --- Authentication & Protection Logic ---
         onAuthStateChanged(auth, async (user) => {
             if (!user) {
-                // Kick out unauthenticated users to index.html
                 window.location.href = "index.html";
                 return;
             }
@@ -931,17 +944,12 @@
 
                     authGroup.classList.remove('hidden'); authGroup.classList.add('flex');
 
-                    // Global Data Fetch
-                    unsubBooks = onSnapshot(query(collection(db, "books")), (snapshot) => {
+                    onSnapshot(query(collection(db, "books")), (snapshot) => {
                         allBooks = []; snapshot.forEach(d => allBooks.push({ id: d.id, ...d.data() }));
                         if(currentUserData.role === 'admin' && !document.getElementById('admin-registry-view').classList.contains('hidden-tab')) renderAdminBooks();
-                        updateAdminDashboard();
+                        if(currentUserData.role === 'admin') updateAdminDashboard();
                         if(currentUserData.role === 'admin') populateIssueBookSelect();
                         setAppStatus('active', 'App Active');
-                    }, (error) => {
-                        console.error('Books listener:', error);
-                        setAppStatus('offline', 'Sync Error');
-                        showToast(t('msgError'), 'error');
                     });
 
                     if (currentUserData.role === 'admin') {
@@ -1003,28 +1011,6 @@
             reader.readAsDataURL(file);
         };
 
-        // --- Book Details Modal ---
-        window.openBookDetails = (bookId) => {
-            const b = allBooks.find(book => book.id === bookId); if(!b) return;
-            document.getElementById('modal-b-title').innerText = b.title; document.getElementById('modal-b-author').innerText = b.author || 'Unknown Author';
-            document.getElementById('modal-b-id').innerText = b.id; document.getElementById('modal-b-callno').innerText = b.callNumber || '-';
-            document.getElementById('modal-b-shelf').innerText = b.shelfLocation || '-'; document.getElementById('modal-b-section').innerText = b.sectionCode || '-';
-
-            const statusBadge = document.getElementById('modal-b-status'); statusBadge.innerText = b.status;
-            statusBadge.className = `font-bold px-2 py-0.5 rounded text-xs inline-block ${b.status === 'Available' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
-
-            document.getElementById('modal-b-publisher').innerText = b.publisher || '-'; document.getElementById('modal-b-yearedition').innerText = `${b.year || '-'} / ${b.edition || '-'}`;
-            document.getElementById('modal-b-lang').innerText = b.language || '-'; document.getElementById('modal-b-category').innerText = b.category || '-'; document.getElementById('modal-b-isbn').innerText = b.isbn || '-';
-            document.getElementById('modal-b-condition').innerText = b.condition || '-'; document.getElementById('modal-b-verifydate').innerText = b.verificationDate || '-'; document.getElementById('modal-b-verifiedby').innerText = b.verifiedBy || '-';
-
-            const photosContainer = document.getElementById('modal-b-photos'); photosContainer.innerHTML = ''; let hasPhotos = false;
-            if(b.photo1) { photosContainer.innerHTML += `<img src="${b.photo1}" class="h-20 w-16 object-cover rounded shadow border border-gray-200 cursor-pointer hover:opacity-80" onclick="window.open('${b.photo1}', '_blank')">`; hasPhotos = true; }
-            if(b.photo2) { photosContainer.innerHTML += `<img src="${b.photo2}" class="h-20 w-16 object-cover rounded shadow border border-gray-200 cursor-pointer hover:opacity-80" onclick="window.open('${b.photo2}', '_blank')">`; hasPhotos = true; }
-            if(b.photo3) { photosContainer.innerHTML += `<img src="${b.photo3}" class="h-20 w-16 object-cover rounded shadow border border-gray-200 cursor-pointer hover:opacity-80" onclick="window.open('${b.photo3}', '_blank')">`; hasPhotos = true; }
-            if(!hasPhotos) photosContainer.innerHTML = '<span class="text-sm text-gray-500">No photos available.</span>';
-            document.getElementById('book-details-modal').classList.remove('hidden');
-        };
-        window.closeBookDetailsModal = () => document.getElementById('book-details-modal').classList.add('hidden');
 
         // --- Admin Form Reset & Load ---
         window.resetAddBookForm = () => {
@@ -1064,33 +1050,62 @@
             if(b.photo3) { document.getElementById('b-photo3-base64').value = b.photo3; renderBookImagePreview('b-photo3-base64', 'b-photo3-preview', 'Photo 3', b.photo3); }
         };
 
-        // --- Admin Listeners ---
+        // --- Admin Listeners & Dashboard Analytics ---
         const updateAdminDashboard = () => {
             if (!currentUserData || currentUserData.role !== 'admin') return;
-            document.getElementById('dash-total-books').innerText = allBooks.length;
-            document.getElementById('dash-available-books').innerText = allBooks.filter(b => b.status === 'Available').length;
-            document.getElementById('dash-issued-books').innerText = allBooks.filter(b => b.status === 'Issued').length;
+            
+            const totalBooks = allBooks.length;
+            const availableBooks = allBooks.filter(b => b.status === 'Available').length;
+            const issuedBooks = allBooks.filter(b => b.status === 'Issued').length;
+            
+            document.getElementById('dash-total-books').innerText = totalBooks;
+            document.getElementById('dash-available-books').innerText = availableBooks;
+            document.getElementById('dash-issued-books').innerText = issuedBooks;
             document.getElementById('dash-readers').innerText = allUsers.filter(u => u.role !== 'admin' && u.status !== 'blocked').length;
+            
             const box = document.getElementById('dash-active-issues');
             if (box) {
                 box.innerHTML = allTransactions.length ? allTransactions.slice(0, 8).map(t => `<div class="p-3 rounded-xl bg-white/50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700"><b>${t.bookTitle || t.bookId}</b><br><span class="text-gray-500">${t.userName || t.userPhone} · ${formatDate(t.issueDate)}</span></div>`).join('') : '<p class="text-gray-500 font-bold">No active issued books.</p>';
             }
+
+            // Initialize or Update Chart.js
+            const ctx = document.getElementById('booksChart');
+            if(ctx) {
+                if (booksChartInstance) {
+                    booksChartInstance.data.datasets[0].data = [availableBooks, issuedBooks];
+                    booksChartInstance.update();
+                } else {
+                    booksChartInstance = new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Available', 'Issued'],
+                            datasets: [{
+                                data: [availableBooks, issuedBooks],
+                                backgroundColor: ['#22c55e', '#f59e0b'],
+                                borderWidth: 0,
+                                hoverOffset: 4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: { position: 'bottom', labels: { color: currentTheme === 'dark' ? '#fff' : '#333' } }
+                            }
+                        }
+                    });
+                }
+            }
         };
 
         const setupAdminListeners = () => {
-            unsubUsers = onSnapshot(collection(db, "users"), (snapshot) => {
+            onSnapshot(collection(db, "users"), (snapshot) => {
                 allUsers = []; snapshot.forEach(doc => allUsers.push(doc.data()));
                 if(!document.getElementById('admin-users-view').classList.contains('hidden-tab')) renderAdminUsers();
                 updateAdminDashboard();
-                setAppStatus('active', 'App Active');
-            }, (error) => {
-                console.error('Users listener:', error);
-                setAppStatus('offline', 'Sync Error');
-                showToast(t('msgError'), 'error');
             });
 
             const qTrans = query(collection(db, "transactions"), where("status", "==", "Active"));
-            unsubTransactions = onSnapshot(qTrans, (snapshot) => {
+            onSnapshot(qTrans, (snapshot) => {
                 allTransactions = []; const ul = document.getElementById('active-issues-list'); ul.innerHTML = '';
                 snapshot.forEach(docSnap => {
                     const tData = { id: docSnap.id, ...docSnap.data() }; allTransactions.push(tData);
@@ -1101,11 +1116,6 @@
                 if(allTransactions.length === 0) document.getElementById('no-active-issues').classList.remove('hidden');
                 else document.getElementById('no-active-issues').classList.add('hidden');
                 updateAdminDashboard();
-                setAppStatus('active', 'App Active');
-            }, (error) => {
-                console.error('Transactions listener:', error);
-                setAppStatus('offline', 'Sync Error');
-                showToast(t('msgError'), 'error');
             });
         };
 
@@ -1151,7 +1161,7 @@
             filtered.forEach(b => {
                 const statusClass = b.status === 'Available' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400';
                 const condClass = b.condition === 'Poor' || b.condition === 'Damaged' ? 'text-red-500 font-bold' : 'text-gray-500 dark:text-gray-400';
-                tbody.innerHTML += `<tr class="hover:bg-white/30 dark:hover:bg-gray-800/30"><td class="px-6 py-4 whitespace-nowrap text-xs font-black text-indigo-600 dark:text-indigo-400 cursor-pointer hover:underline" onclick="openBookDetails('${b.id}')">${b.id}</td><td class="px-6 py-4 whitespace-nowrap cursor-pointer" onclick="openBookDetails('${b.id}')"><div class="text-sm font-bold text-gray-900 dark:text-white truncate max-w-[200px]">${b.title}</div><div class="text-xs text-gray-500 truncate max-w-[200px]">${b.author || '-'}</div></td><td class="px-6 py-4 whitespace-nowrap text-xs text-gray-600 dark:text-gray-400 font-bold">${b.category||'-'}</td><td class="px-6 py-4 whitespace-nowrap text-xs ${condClass}">${b.condition||'-'}</td><td class="px-6 py-4 whitespace-nowrap text-xs font-black ${statusClass}">${b.status === 'Available' ? t('statusAvailable') : t('statusIssued')}</td><td class="px-6 py-4 whitespace-nowrap text-end flex justify-end gap-2"><button onclick="loadBookForEdit('${b.id}')" class="text-indigo-500 hover:text-indigo-700 bg-indigo-100 dark:bg-indigo-900/30 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors">Edit</button><button onclick="deleteBook('${b.id}')" class="text-red-500 hover:text-red-700 bg-red-100 dark:bg-red-900/30 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors">Del</button></td></tr>`;
+                tbody.innerHTML += `<tr class="hover:bg-white/30 dark:hover:bg-gray-800/30"><td class="px-6 py-4 whitespace-nowrap text-xs font-black text-indigo-600 dark:text-indigo-400">${b.id}</td><td class="px-6 py-4 whitespace-nowrap"><div class="text-sm font-bold text-gray-900 dark:text-white truncate max-w-[200px]">${b.title}</div><div class="text-xs text-gray-500 truncate max-w-[200px]">${b.author || '-'}</div></td><td class="px-6 py-4 whitespace-nowrap text-xs text-gray-600 dark:text-gray-400 font-bold">${b.category||'-'}</td><td class="px-6 py-4 whitespace-nowrap text-xs ${condClass}">${b.condition||'-'}</td><td class="px-6 py-4 whitespace-nowrap text-xs font-black ${statusClass}">${b.status === 'Available' ? t('statusAvailable') : t('statusIssued')}</td><td class="px-6 py-4 whitespace-nowrap text-end flex justify-end gap-2"><button onclick="loadBookForEdit('${b.id}')" class="text-indigo-500 hover:text-indigo-700 bg-indigo-100 dark:bg-indigo-900/30 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors">Edit</button><button onclick="deleteBook('${b.id}')" class="text-red-500 hover:text-red-700 bg-red-100 dark:bg-red-900/30 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors">Del</button></td></tr>`;
             });
         };
         document.getElementById('admin-book-search').addEventListener('input', renderAdminBooks);
@@ -1203,32 +1213,37 @@
             } catch (error) { if(error.code === 'auth/email-already-in-use') showToast(t('msgUserExists'), "error"); else showToast(t('msgError'), "error"); } finally { btn.disabled = false; }
         });
 
-        // --- Bulk Import CSV ---
+        // --- Bulk Import CSV (Using PapaParse) ---
         window.downloadCSVTemplate = () => {
-            const headers = "Serial No,Accession No (ID),Call No,Section,Book Title,Author,Publisher,Year,Edition,Language,Category,ISBN,Price,Purchase Date,Budget Head,Vendor,Shelf No,Condition\n";
+            const headers = "Serial No,Accession No,Call No,Section,Book Title,Author,Publisher,Year,Edition,Language,Category,ISBN,Price,Purchase Date,Budget Head,Vendor,Shelf No,Condition\n";
             const sampleData = "1,B001,808.8,FIC,Malayalam Grammar,John Doe,DC Books,2020,1st,Malayalam,Education,978-3-16-148410-0,150,2023-01-15,Govt Grant,Book House,A1,Good\n";
             const blob = new Blob([headers + sampleData], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = "library_books_full_template.csv"; link.style.visibility = 'hidden'; document.body.appendChild(link); link.click(); document.body.removeChild(link);
         };
 
-        const parseCSV = (text) => {
-            const lines = text.split('\n'); const result = [];
-            for (let i = 1; i < lines.length; i++) {
-                if (!lines[i].trim()) continue;
-                const cols = lines[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || []; const clean = cols.map(c => c.replace(/^"|"$/g, '').trim());
-                if (clean.length >= 5 && clean[1]) {
-                    result.push({
-                        serialNo: clean[0] || '', id: clean[1].toUpperCase(), callNumber: clean[2] || '', sectionCode: clean[3] || '', title: clean[4] || '', author: clean[5] || '', publisher: clean[6] || '',
-                        year: clean[7] || '', edition: clean[8] || '', language: clean[9] || '', category: clean[10] || '', isbn: clean[11] || '', price: parseFloat(clean[12]) || 0,
-                        purchaseDate: clean[13] || '', budgetHead: clean[14] || '', vendor: clean[15] || '', shelfLocation: clean[16] || '', condition: clean[17] || 'Good', status: 'Available'
-                    });
-                }
-            } return result;
-        };
-
         window.handleFileSelect = (event) => {
-            const file = event.target.files[0]; if (!file) return;
-            document.getElementById('file-name-display').innerText = file.name; document.getElementById('file-name-display').classList.remove('hidden');
-            const reader = new FileReader(); reader.onload = (e) => { parsedCSVData = parseCSV(e.target.result); renderCSVPreview(); }; reader.readAsText(file);
+            const file = event.target.files[0]; 
+            if (!file) return;
+            document.getElementById('file-name-display').innerText = file.name; 
+            document.getElementById('file-name-display').classList.remove('hidden');
+            
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    parsedCSVData = [];
+                    results.data.forEach(row => {
+                        const id = (row['Accession No'] || '').trim().toUpperCase();
+                        if(id) {
+                            parsedCSVData.push({
+                                serialNo: row['Serial No'] || '', id: id, callNumber: row['Call No'] || '', sectionCode: row['Section'] || '', title: row['Book Title'] || '', author: row['Author'] || '', publisher: row['Publisher'] || '',
+                                year: row['Year'] || '', edition: row['Edition'] || '', language: row['Language'] || '', category: row['Category'] || '', isbn: row['ISBN'] || '', price: parseFloat(row['Price']) || 0,
+                                purchaseDate: row['Purchase Date'] || '', budgetHead: row['Budget Head'] || '', vendor: row['Vendor'] || '', shelfLocation: row['Shelf No'] || '', condition: row['Condition'] || 'Good', status: 'Available'
+                            });
+                        }
+                    });
+                    renderCSVPreview();
+                }
+            });
         };
 
         const renderCSVPreview = () => {
@@ -1249,8 +1264,17 @@
             const overlay = document.getElementById('bulk-processing-overlay'); overlay.classList.remove('hidden'); overlay.style.display = 'flex';
             try {
                 const batch = writeBatch(db); const adminSignature = `${currentUserData.name} (Bulk Import) at ${new Date().toISOString()}`;
-                newBooks.forEach(book => { const docRef = doc(db, "books", book.id); book.dateAdded = serverTimestamp(); book.verifiedBy = adminSignature; batch.set(docRef, book); });
-                await batch.commit(); showToast(t('msgBulkSuccess'));
+                
+                // Firestore batch limits to 500 operations. We will slice it if it's too large, but for MVP assuming < 500.
+                let count = 0;
+                newBooks.forEach(book => { 
+                    if(count < 490) { // Safety margin
+                        const docRef = doc(db, "books", book.id); book.dateAdded = serverTimestamp(); book.verifiedBy = adminSignature; batch.set(docRef, book); 
+                        count++;
+                    }
+                });
+                
+                await batch.commit(); showToast(`Success: ${count} books imported!`);
                 document.getElementById('csv-file-input').value = ""; document.getElementById('file-name-display').classList.add('hidden'); parsedCSVData = [];
                 document.getElementById('csv-preview-list').innerHTML = `<tr><td colspan="3" class="px-5 py-10 text-center text-gray-500 font-medium" data-i18n="noPreviewMsg">${t('noPreviewMsg')}</td></tr>`;
                 document.getElementById('btn-process-csv').classList.add('hidden');
@@ -1320,10 +1344,6 @@
                     });
                 } document.getElementById('reader-total-books').innerText = count;
                 setAppStatus('active', 'App Active');
-            }, (error) => {
-                console.error('Reader history listener:', error);
-                setAppStatus('offline', 'Sync Error');
-                showToast(t('msgError'), "error");
             });
         };
     </script>
