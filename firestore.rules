@@ -1,0 +1,48 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // യൂസർ ലോഗിൻ ചെയ്തിട്ടുണ്ടോ എന്ന് പരിശോധിക്കാൻ
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // ലോഗിൻ ചെയ്ത യൂസർ 'Admin' ആണോ എന്ന് പരിശോധിക്കാൻ
+    function isAdmin() {
+      return isAuthenticated() && 
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // 1. Users കളക്ഷൻ (വായനക്കാർ)
+    match /users/{userId} {
+      // അഡ്മിന് എല്ലാ യൂസേഴ്സിനെയും കാണാം. സാധാരണ വായനക്കാർക്ക് അവരുടെ സ്വന്തം വിവരങ്ങൾ മാത്രം കാണാം.
+      allow read: if isAdmin() || (isAuthenticated() && request.auth.uid == userId);
+      // പുതിയ യൂസറെ ചേർക്കാനും തിരുത്താനും അഡ്മിന് മാത്രം അനുമതി.
+      allow write: if isAdmin();
+    }
+
+    // 2. Books കളക്ഷൻ (പുസ്തകങ്ങൾ)
+    match /books/{bookId} {
+      // പബ്ലിക് പോർട്ടലിൽ പുസ്തകങ്ങൾ തിരയാൻ എല്ലാവർക്കും (ലോഗിൻ ചെയ്യാത്തവർക്കും) അനുമതി നൽകുന്നു.
+      allow read: if true;
+      // പുസ്തകങ്ങൾ ചേർക്കാനും, തിരുത്താനും, ഡിലീറ്റ് ചെയ്യാനും അഡ്മിന് മാത്രം അനുമതി.
+      allow write: if isAdmin();
+    }
+
+    // 3. Transactions കളക്ഷൻ (ഇഷ്യൂ / റിട്ടേൺ)
+    match /transactions/{transactionId} {
+      // അഡ്മിന് എല്ലാ ഇടപാടുകളും കാണാം. വിദ്യാർത്ഥികൾക്ക്/വായനക്കാർക്ക് അവരുടെ ഫോൺ നമ്പർ വെച്ചുള്ള ഹിസ്റ്ററി മാത്രം കാണാം.
+      allow read: if isAdmin() || (isAuthenticated() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.phone == resource.data.userPhone);
+      // പുസ്തകം നൽകാനും തിരിച്ചെടുക്കാനും അഡ്മിന് മാത്രം അനുമതി.
+      allow write: if isAdmin();
+    }
+
+    // 4. Settings കളക്ഷൻ (ലൈബ്രറി വിവരങ്ങൾ)
+    match /settings/{docId} {
+      // ലൈബ്രറിയുടെ പേരും ലോഗോയും പബ്ലിക് പോർട്ടലിൽ കാണിക്കാൻ എല്ലാവർക്കും റീഡ് ആക്സസ് നൽകുന്നു.
+      allow read: if true; 
+      // സെറ്റിംഗ്സ് മാറ്റാൻ അഡ്മിന് മാത്രം അനുമതി.
+      allow write: if isAdmin();
+    }
+  }
+}
