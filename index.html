@@ -183,24 +183,50 @@
 
         <!-- 2. DEDICATED BOOK DETAILS PAGE (Amazon E-Commerce Style) -->
         <div id="book-details-page" class="view-section hidden-tab fade-in flex flex-col w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 mb-10">
-            <!-- Back Button -->
-            <button onclick="navigate('public-view')" class="mb-6 w-fit inline-flex items-center text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 font-bold transition-colors bg-white/50 dark:bg-gray-800/50 px-4 py-2 rounded-xl border border-indigo-100 dark:border-gray-700 shadow-sm hover:shadow-md">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg> Back to Search
-            </button>
+            <!-- Top Search Bar (Replaces Back Button) -->
+            <div class="mb-6 lg:w-3/4 mx-auto w-full relative z-[5]">
+                <div class="relative group">
+                    <div class="absolute inset-y-0 start-0 ps-4 flex items-center pointer-events-none">
+                        <svg class="w-5 h-5 text-indigo-400 group-focus-within:text-indigo-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                    <input type="text" id="details-search-input" data-i18n-placeholder="searchPlaceholder" placeholder="Search for another book..." class="w-full ps-11 pe-4 py-3 rounded-xl bg-white/70 dark:bg-gray-800/70 border border-white/50 dark:border-gray-600 shadow-sm text-sm text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-medium backdrop-blur-sm" autocomplete="off">
+                    
+                    <!-- Search Results Dropdown -->
+                    <div id="details-search-results" class="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-100 dark:border-gray-700 max-h-64 overflow-y-auto hidden flex-col z-10 p-2 gap-1 text-sm font-medium">
+                        <!-- Search results injected here -->
+                    </div>
+                </div>
+            </div>
 
             <!-- Book Info Container (Grid Layout) -->
             <div class="glass-panel rounded-3xl overflow-hidden shadow-2xl border border-white/40 dark:border-gray-700/50 mb-12 p-6 sm:p-10">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 items-start">
                     
-                    <!-- Left Section: Images (5 columns) -->
-                    <div class="lg:col-span-5 flex flex-col sm:flex-row-reverse gap-4 items-start">
-                         <!-- Main Large Image -->
-                         <div class="w-full aspect-[3/4] sm:aspect-auto sm:h-[450px] bg-white dark:bg-gray-800 rounded-2xl shadow-inner border border-gray-200 dark:border-gray-700 overflow-hidden relative flex items-center justify-center shrink-0 group p-2">
-                              <img id="bp-main-image" src="" class="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105 cursor-pointer" alt="Book Cover" onclick="if(this.src && !this.src.includes('data:image/svg')) window.open(this.src, '_blank')">
-                         </div>
-                         <!-- Thumbnails Gallery -->
-                         <div id="bp-thumbnails" class="flex sm:flex-col gap-3 overflow-x-auto sm:overflow-y-auto hide-scrollbar sm:h-[450px] sm:w-24 shrink-0 w-full snap-x">
-                              <!-- Thumbnails injected via JS -->
+                    <!-- Left Section: Images Slider (5 columns) -->
+                    <div class="lg:col-span-5 flex flex-col relative group">
+                        
+                         <!-- Status Badge (Absolute on top of image) -->
+                         <div id="bp-status-badge" class="absolute top-3 end-3 z-10 px-3 py-1 rounded-full text-xs font-black tracking-wide uppercase shadow-lg border"></div>
+
+                         <!-- Main Image Slider Container -->
+                         <div class="w-full aspect-[3/4] sm:aspect-auto sm:h-[450px] bg-white dark:bg-gray-800 rounded-2xl shadow-inner border border-gray-200 dark:border-gray-700 overflow-hidden relative flex items-center justify-center shrink-0 group/slider">
+                              
+                              <div id="bp-image-track" class="flex transition-transform duration-500 ease-out h-full w-full">
+                                  <!-- Images injected here -->
+                              </div>
+
+                              <!-- Slider Arrows -->
+                              <button id="bp-prev-img" class="absolute start-3 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/60 text-white p-2 rounded-full backdrop-blur-sm transition-all opacity-0 group-hover/slider:opacity-100 disabled:hidden">
+                                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+                              </button>
+                              <button id="bp-next-img" class="absolute end-3 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/60 text-white p-2 rounded-full backdrop-blur-sm transition-all opacity-0 group-hover/slider:opacity-100 disabled:hidden">
+                                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+                              </button>
+
+                              <!-- Slider Dots -->
+                              <div id="bp-image-dots" class="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5 z-10">
+                                  <!-- Dots injected here -->
+                              </div>
                          </div>
                     </div>
 
@@ -211,13 +237,8 @@
                         </div>
                         
                         <h2 id="bp-title" class="text-3xl sm:text-4xl font-black text-gray-900 dark:text-white mb-2 leading-tight">Book Title</h2>
-                        <p id="bp-author" class="text-lg font-bold text-indigo-600 dark:text-indigo-400 mb-6">Author Name</p>
+                        <p id="bp-author" class="text-lg font-bold text-indigo-600 dark:text-indigo-400 mb-8">Author Name</p>
                         
-                        <div class="flex items-center gap-3 mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-                            <span id="bp-status" class="text-xs font-black uppercase tracking-widest px-4 py-1.5 rounded-lg border">Status</span>
-                            <span class="text-sm font-medium text-gray-500 dark:text-gray-400" id="bp-status-text">Available in library</span>
-                        </div>
-
                         <!-- Important Library Info Cards -->
                         <div class="grid grid-cols-2 gap-4 mb-8">
                             <div class="bg-gray-50 dark:bg-gray-800/80 p-5 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col justify-center">
@@ -237,7 +258,7 @@
                         <div class="space-y-4 bg-white/50 dark:bg-gray-900/50 p-6 rounded-2xl border border-gray-100 dark:border-gray-800">
                             <h4 class="font-bold text-gray-900 dark:text-white pb-2 flex items-center gap-2 border-b border-gray-200 dark:border-gray-700 mb-4">
                                 <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                Product Details
+                                Book Details
                             </h4>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5 text-sm">
                                 <div class="flex flex-col"><span class="text-gray-500 dark:text-gray-400 text-xs font-bold uppercase mb-0.5">Publisher</span> <span class="font-bold text-gray-900 dark:text-white text-base" id="bp-publisher">-</span></div>
@@ -322,7 +343,12 @@
             setPublicActiveNav(viewId);
             ['public-view', 'book-details-page'].forEach(v => document.getElementById(v).classList.add('hidden-tab'));
             document.getElementById(viewId).classList.remove('hidden-tab');
-            if (viewId === 'public-view') filterAndPaginateBooks();
+            
+            if (viewId === 'public-view') {
+                filterAndPaginateBooks();
+                document.getElementById('details-search-input').value = ''; // clear search when going back
+                document.getElementById('details-search-results').classList.add('hidden');
+            }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
@@ -577,7 +603,62 @@
             }
         };
 
+        // --- Details Search Dropdown Logic ---
+        const detailsSearchInput = document.getElementById('details-search-input');
+        const detailsSearchResults = document.getElementById('details-search-results');
+
+        detailsSearchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase().trim();
+            detailsSearchResults.innerHTML = '';
+            
+            if (searchTerm.length === 0) {
+                detailsSearchResults.classList.add('hidden');
+                return;
+            }
+
+            const matchedBooks = allBooks.filter(b => {
+                const titleStr = b.title ? b.title.toLowerCase() : "";
+                const idStr = b.id ? b.id.toLowerCase() : "";
+                return titleStr.includes(searchTerm) || idStr.includes(searchTerm);
+            }).slice(0, 8); // Limit to 8 results
+
+            if (matchedBooks.length > 0) {
+                matchedBooks.forEach(b => {
+                    const el = document.createElement('div');
+                    el.className = 'px-4 py-3 hover:bg-indigo-50 dark:hover:bg-gray-700/50 cursor-pointer rounded-lg flex justify-between items-center transition-colors';
+                    el.innerHTML = `
+                        <div class="truncate pe-2">
+                            <p class="text-gray-900 dark:text-white font-bold truncate">${b.title}</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 truncate">${b.author || 'Unknown'}</p>
+                        </div>
+                        <span class="text-[10px] font-black uppercase px-2 py-1 rounded bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 shrink-0">${b.id}</span>
+                    `;
+                    el.onclick = () => {
+                        detailsSearchInput.value = '';
+                        detailsSearchResults.classList.add('hidden');
+                        openBookPage(b.id);
+                    };
+                    detailsSearchResults.appendChild(el);
+                });
+                detailsSearchResults.classList.remove('hidden');
+            } else {
+                detailsSearchResults.innerHTML = '<div class="px-4 py-4 text-center text-sm text-gray-500 dark:text-gray-400">No books found.</div>';
+                detailsSearchResults.classList.remove('hidden');
+            }
+        });
+
+        // Hide dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!detailsSearchInput.contains(e.target) && !detailsSearchResults.contains(e.target)) {
+                detailsSearchResults.classList.add('hidden');
+            }
+        });
+
+
         // --- FULL PAGE BOOK DETAILS (AMAZON STYLE) ---
+        let currentImageIndex = 0;
+        let currentBookImages = [];
+
         window.openBookPage = (bookId) => {
             const b = allBooks.find(book => book.id === bookId);
             if(!b) return;
@@ -595,46 +676,88 @@
             document.getElementById('bp-lang').innerText = b.language || '-';
             document.getElementById('bp-isbn').innerText = b.isbn || '-';
 
-            const statusBadge = document.getElementById('bp-status');
-            const statusText = document.getElementById('bp-status-text');
+            // Status Badge update
+            const statusBadge = document.getElementById('bp-status-badge');
             const isAvailable = b.status === 'Available';
-            
             statusBadge.innerText = isAvailable ? t('statusAvailable') : t('statusIssued');
-            statusBadge.className = `text-xs font-black uppercase tracking-widest px-4 py-1.5 rounded-lg border ${isAvailable ? 'bg-green-100 text-green-800 border-green-300 dark:bg-green-900/40 dark:text-green-300 dark:border-green-800' : 'bg-red-100 text-red-800 border-red-300 dark:bg-red-900/40 dark:text-red-300 dark:border-red-800'}`;
-            
-            if(statusText) {
-                statusText.innerText = isAvailable ? "Currently available in library" : "Currently checked out by a reader";
-            }
+            statusBadge.className = `absolute top-3 end-3 z-10 px-3 py-1.5 rounded-full text-xs font-black tracking-widest uppercase shadow-lg border ${isAvailable ? 'bg-green-100/90 text-green-800 border-green-300 dark:bg-green-900/80 dark:text-green-300 dark:border-green-800 backdrop-blur-sm' : 'bg-red-100/90 text-red-800 border-red-300 dark:bg-red-900/80 dark:text-red-300 dark:border-red-800 backdrop-blur-sm'}`;
 
-            const mainImg = document.getElementById('bp-main-image');
-            const thumbnailsContainer = document.getElementById('bp-thumbnails');
-            const images = [b.photo1, b.photo2, b.photo3].filter(Boolean);
-            
-            if(images.length > 0) {
-                mainImg.src = images[0];
-                
-                if(images.length > 1) {
-                    thumbnailsContainer.style.display = 'flex';
-                    thumbnailsContainer.innerHTML = images.map((img, index) => `
-                        <div class="w-16 h-16 sm:w-20 sm:h-24 shrink-0 rounded-xl border-2 ${index === 0 ? 'border-indigo-500' : 'border-gray-200 dark:border-gray-700'} overflow-hidden cursor-pointer hover:border-indigo-400 transition-colors snap-center bg-white dark:bg-gray-800" 
-                             onclick="document.getElementById('bp-main-image').src='${img}'; 
-                                      Array.from(this.parentElement.children).forEach(c => { c.classList.remove('border-indigo-500'); c.classList.add('border-gray-200', 'dark:border-gray-700'); });
-                                      this.classList.remove('border-gray-200', 'dark:border-gray-700'); this.classList.add('border-indigo-500');">
-                            <img src="${img}" class="w-full h-full object-cover">
-                        </div>
+            // Image Slider Setup
+            currentBookImages = [b.photo1, b.photo2, b.photo3].filter(Boolean);
+            currentImageIndex = 0;
+            const track = document.getElementById('bp-image-track');
+            const dots = document.getElementById('bp-image-dots');
+            const prevBtn = document.getElementById('bp-prev-img');
+            const nextBtn = document.getElementById('bp-next-img');
+
+            if(currentBookImages.length > 0) {
+                // Populate Images
+                track.innerHTML = currentBookImages.map(img => `
+                    <div class="w-full h-full flex-shrink-0 flex items-center justify-center p-2">
+                        <img src="${img}" class="max-w-full max-h-full object-contain cursor-pointer" onclick="window.open(this.src, '_blank')">
+                    </div>
+                `).join('');
+
+                // Populate Dots
+                if (currentBookImages.length > 1) {
+                    dots.innerHTML = currentBookImages.map((_, i) => `
+                        <button onclick="goToImage(${i})" class="w-2.5 h-2.5 rounded-full border border-white/40 shadow-sm transition-all ${i === 0 ? 'bg-indigo-600 scale-125' : 'bg-white/70 hover:bg-white'}"></button>
                     `).join('');
+                    prevBtn.disabled = false;
+                    nextBtn.disabled = false;
                 } else {
-                    thumbnailsContainer.style.display = 'none';
-                    thumbnailsContainer.innerHTML = '';
+                    dots.innerHTML = '';
+                    prevBtn.disabled = true;
+                    nextBtn.disabled = true;
                 }
+                updateSliderPosition();
             } else {
-                thumbnailsContainer.style.display = 'none';
-                thumbnailsContainer.innerHTML = '';
-                mainImg.src = noImageSvg;
+                track.innerHTML = `
+                    <div class="w-full h-full flex-shrink-0 flex items-center justify-center">
+                        <img src="${noImageSvg}" class="w-1/2 h-1/2 opacity-50">
+                    </div>
+                `;
+                dots.innerHTML = '';
+                prevBtn.disabled = true;
+                nextBtn.disabled = true;
             }
 
             renderSuggestions(b);
         };
+
+        // Slider Navigation Functions
+        window.goToImage = (index) => {
+            currentImageIndex = index;
+            updateSliderPosition();
+        };
+
+        document.getElementById('bp-prev-img').addEventListener('click', () => {
+            if (currentBookImages.length <= 1) return;
+            currentImageIndex = (currentImageIndex - 1 + currentBookImages.length) % currentBookImages.length;
+            updateSliderPosition();
+        });
+
+        document.getElementById('bp-next-img').addEventListener('click', () => {
+            if (currentBookImages.length <= 1) return;
+            currentImageIndex = (currentImageIndex + 1) % currentBookImages.length;
+            updateSliderPosition();
+        });
+
+        function updateSliderPosition() {
+            const track = document.getElementById('bp-image-track');
+            track.style.transform = `translateX(-${currentImageIndex * 100}%)`;
+            
+            // Update dots
+            const dots = document.getElementById('bp-image-dots').children;
+            Array.from(dots).forEach((dot, i) => {
+                if (i === currentImageIndex) {
+                    dot.className = "w-2.5 h-2.5 rounded-full border border-white/40 shadow-sm transition-all bg-indigo-600 scale-125";
+                } else {
+                    dot.className = "w-2.5 h-2.5 rounded-full border border-white/40 shadow-sm transition-all bg-white/70 hover:bg-white";
+                }
+            });
+        }
+
 
         // --- BOOK SUGGESTIONS WITH ARROW SCROLLING ---
         function renderSuggestions(currentBook) {
