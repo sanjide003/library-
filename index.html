@@ -30,19 +30,23 @@
         [dir="rtl"] { font-family: 'Tajawal', sans-serif; }
         
         .hidden-tab { display: none !important; }
-        /* Hide scrollbar for carousel but allow scrolling */
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Custom Dropdown Scrollbar */
+        .custom-dropdown-menu::-webkit-scrollbar { width: 5px; }
+        .custom-dropdown-menu::-webkit-scrollbar-thumb { background: #a5b4fc; border-radius: 5px; }
+        .dark .custom-dropdown-menu::-webkit-scrollbar-thumb { background: #4f46e5; }
     </style>
 </head>
-<body class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-indigo-950 dark:to-gray-900 text-gray-800 dark:text-gray-100 antialiased min-h-screen flex flex-col">
+<body class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-indigo-950 dark:to-gray-900 text-gray-800 dark:text-gray-100 antialiased h-screen flex flex-col overflow-hidden">
 
     <!-- Navigation Bar -->
-    <nav class="glass-panel shadow-lg z-20 sticky top-0 border-b border-white/20 dark:border-gray-700/50 shrink-0">
+    <nav class="glass-panel shadow-lg z-40 sticky top-0 border-b border-white/20 dark:border-gray-700/50 shrink-0">
         <div class="w-full mx-auto px-4 sm:px-6 lg:px-8 relative">
             <div class="flex justify-between h-24 items-center">
                 <div class="flex items-center gap-2">
-                    <button id="public-home-nav" data-public-nav="public-view" onclick="navigate('public-view')" class="public-nav-item active-nav flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-black transition border bg-indigo-600 text-white border-indigo-500 shadow-md">
+                    <button id="public-home-nav" data-public-nav="public-view" onclick="navigate('public-view')" class="public-nav-item active-nav flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-black transition border bg-indigo-600 text-white border-indigo-500 shadow-md hover:bg-indigo-700 hover:shadow-lg transform hover:-translate-y-0.5">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                         <span data-i18n="navHome">Home</span>
                     </button>
@@ -59,19 +63,28 @@
 
                 <div class="flex items-center gap-2 sm:gap-4">
                     <!-- Controls (Theme & Lang) -->
-                    <div class="flex items-center bg-white/50 dark:bg-gray-800/50 rounded-2xl p-1 shadow-inner border border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center gap-1 bg-white/50 dark:bg-gray-800/50 rounded-2xl p-1 shadow-inner border border-gray-200 dark:border-gray-700">
                         <button onclick="toggleTheme()" class="p-2 rounded-xl hover:bg-white dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 transition-all">
                             <svg id="theme-icon-light" class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                             <svg id="theme-icon-dark" class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                         </button>
-                        <select id="lang-selector" onchange="changeLanguage(this.value)" class="bg-transparent border-none text-sm font-bold text-gray-700 dark:text-gray-200 focus:ring-0 cursor-pointer outline-none pe-8 ps-2 py-2">
-                            <option value="en" class="text-gray-900">EN</option>
-                            <option value="ml" class="text-gray-900">ML</option>
-                            <option value="ar" class="text-gray-900">AR</option>
-                        </select>
+                        
+                        <!-- Custom Language Dropdown -->
+                        <div class="relative custom-dropdown" id="lang-dropdown">
+                            <button type="button" onclick="toggleDropdown('lang-menu')" class="flex items-center gap-1.5 px-3 py-1.5 text-sm font-bold text-gray-700 dark:text-gray-200 hover:bg-white/50 dark:hover:bg-gray-700/50 rounded-xl transition-colors outline-none">
+                                <span id="lang-display">EN</span>
+                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                            <div id="lang-menu" class="absolute right-0 top-full mt-2 w-36 bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl border border-gray-100 dark:border-gray-700 rounded-2xl shadow-2xl hidden z-[70] flex-col p-1.5 gap-0.5">
+                                <button onclick="selectLang('en')" class="px-4 py-2.5 text-sm font-bold hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-xl text-start transition-colors text-gray-700 dark:text-gray-200">EN - English</button>
+                                <button onclick="selectLang('ml')" class="px-4 py-2.5 text-sm font-bold hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-xl text-start transition-colors text-gray-700 dark:text-gray-200">ML - മലയാളം</button>
+                                <button onclick="selectLang('ar')" class="px-4 py-2.5 text-sm font-bold hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-xl text-start transition-colors text-gray-700 dark:text-gray-200">AR - العربية</button>
+                            </div>
+                        </div>
                     </div>
+                    
                     <!-- Login Button -->
-                    <button id="public-login-nav" data-public-nav="login" onclick="openLoginModal()" class="public-nav-item flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl text-sm font-bold transition border bg-white/40 dark:bg-gray-800/40 text-gray-700 dark:text-gray-200 border-gray-200 dark:border-gray-700">
+                    <button id="public-login-nav" data-public-nav="login" onclick="openLoginModal()" class="public-nav-item flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl text-sm font-bold transition border bg-white/40 dark:bg-gray-800/40 text-gray-700 dark:text-gray-200 border-gray-200 dark:border-gray-700 hover:bg-white dark:hover:bg-gray-700 shadow-sm">
                         <svg class="w-5 h-5 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
                         <span data-i18n="navLogin">Login</span>
                     </button>
@@ -88,7 +101,7 @@
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
             <div class="mb-8 text-center">
-                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 mb-4 shadow-inner">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 mb-4 shadow-inner border border-indigo-200 dark:border-indigo-800">
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8V7a4 4 0 00-8 0v4h8z"></path></svg>
                 </div>
                 <h2 class="text-3xl font-black text-gray-900 dark:text-white" data-i18n="loginTitle">Sign In</h2>
@@ -96,13 +109,13 @@
             <form id="login-form" class="space-y-6">
                 <div>
                     <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Phone No / Username</label>
-                    <input type="text" id="login-username" required class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-shadow text-start">
+                    <input type="text" id="login-username" required class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-shadow text-start font-medium">
                 </div>
                 <div>
                     <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2" data-i18n="passwordLbl">Password</label>
                     <input type="password" id="login-password" required class="block w-full bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-shadow text-start">
                 </div>
-                <button type="submit" id="login-submit-btn" class="w-full flex justify-center py-3.5 px-4 rounded-xl shadow-lg text-sm font-black text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500/50 transition-all transform hover:-translate-y-0.5">
+                <button type="submit" id="login-submit-btn" class="w-full flex justify-center py-3.5 px-4 rounded-xl shadow-lg text-base font-black text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500/50 transition-all transform hover:-translate-y-0.5">
                     <span data-i18n="loginBtn">Login</span>
                 </button>
             </form>
@@ -110,18 +123,18 @@
     </div>
 
     <!-- Main Content Area -->
-    <main class="flex-grow w-full mx-auto relative flex flex-col">
+    <main class="flex-grow w-full mx-auto overflow-y-auto relative flex flex-col">
         
         <!-- 1. PUBLIC VIEW (Search, Filters & Grid) -->
-        <div id="public-view" class="view-section fade-in flex-grow flex flex-col">
+        <div id="public-view" class="view-section fade-in flex-grow flex flex-col relative z-20">
             <!-- Hero Search Section -->
-            <div class="w-full px-4 sm:px-6 lg:px-8 py-10 pb-6 shrink-0">
+            <div class="w-full px-4 sm:px-6 lg:px-8 py-10 pb-6 shrink-0 z-30 relative">
                 <div class="text-center mb-8">
                     <h1 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 drop-shadow-sm mb-4" data-i18n="searchTitle">Search Books</h1>
                     <p class="max-w-2xl mx-auto text-lg text-gray-600 dark:text-gray-400 font-medium" data-i18n="searchSubtitle">Find available books and their shelf numbers here</p>
                 </div>
                 
-                <div class="w-full lg:w-3/4 mx-auto mb-6">
+                <div class="w-full lg:w-3/4 mx-auto mb-6 relative z-30">
                     <div class="relative group">
                         <div class="absolute inset-y-0 start-0 ps-5 flex items-center pointer-events-none">
                             <svg class="w-6 h-6 text-indigo-400 group-focus-within:text-indigo-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
@@ -130,31 +143,57 @@
                     </div>
                 </div>
 
-                <!-- Filters -->
-                <div class="w-full lg:w-3/4 mx-auto flex flex-wrap gap-4 items-center justify-center bg-white/30 dark:bg-gray-800/30 p-4 rounded-2xl border border-white/40 dark:border-gray-700/50 shadow-sm">
+                <!-- Custom Dropdown Filters -->
+                <div class="w-full lg:w-3/4 mx-auto flex flex-wrap gap-4 items-center justify-center bg-white/30 dark:bg-gray-800/30 p-4 rounded-2xl border border-white/40 dark:border-gray-700/50 shadow-sm relative z-20">
                     <div class="flex items-center gap-2">
                         <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
-                        <span class="text-sm font-bold text-gray-600 dark:text-gray-300">Filters:</span>
+                        <span class="text-sm font-bold text-gray-600 dark:text-gray-300 hidden sm:block">Filters:</span>
                     </div>
-                    <select id="filter-category" class="bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                        <option value="">All Categories</option>
-                        <!-- Injected dynamically -->
-                    </select>
-                    <select id="filter-status" class="bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                        <option value="">All Statuses</option>
-                        <option value="Available" data-i18n="statusAvailable">Available</option>
-                        <option value="Issued" data-i18n="statusIssued">Issued</option>
-                    </select>
-                    <select id="filter-language" class="bg-white/60 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-600 rounded-xl px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                        <option value="">All Languages</option>
-                        <!-- Injected dynamically -->
-                    </select>
-                    <button onclick="clearFilters()" class="text-sm text-red-500 hover:text-red-700 font-bold px-3 py-2 bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-100 dark:border-red-800/50 transition-colors">Clear All</button>
+
+                    <!-- Custom Category Filter -->
+                    <div class="relative custom-dropdown" id="filter-category-dropdown">
+                        <button type="button" onclick="toggleDropdown('category-menu')" class="flex items-center justify-between w-[140px] sm:w-44 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-2.5 text-sm font-bold text-gray-700 dark:text-gray-200 hover:border-indigo-400 focus:outline-none transition-all shadow-sm">
+                            <span id="category-display" class="truncate">All Categories</span>
+                            <svg class="w-4 h-4 shrink-0 ms-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div id="category-menu" class="custom-dropdown-menu absolute left-0 top-full mt-2 w-full min-w-[200px] bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl border border-gray-100 dark:border-gray-700 rounded-2xl shadow-2xl hidden z-50 max-h-60 overflow-y-auto p-1.5 flex-col gap-0.5">
+                            <!-- Injected dynamically -->
+                        </div>
+                        <input type="hidden" id="filter-category" value="">
+                    </div>
+
+                    <!-- Custom Status Filter -->
+                    <div class="relative custom-dropdown" id="filter-status-dropdown">
+                        <button type="button" onclick="toggleDropdown('status-menu')" class="flex items-center justify-between w-[140px] sm:w-40 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-2.5 text-sm font-bold text-gray-700 dark:text-gray-200 hover:border-indigo-400 focus:outline-none transition-all shadow-sm">
+                            <span id="status-display" class="truncate">All Statuses</span>
+                            <svg class="w-4 h-4 shrink-0 ms-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div id="status-menu" class="custom-dropdown-menu absolute left-0 top-full mt-2 w-full min-w-[160px] bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl border border-gray-100 dark:border-gray-700 rounded-2xl shadow-2xl hidden z-50 p-1.5 flex-col gap-0.5">
+                            <button onclick="selectFilter('status', '', 'All Statuses')" class="w-full text-start px-4 py-2 text-sm font-bold hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-xl text-gray-700 dark:text-gray-200 transition-colors">All Statuses</button>
+                            <button onclick="selectFilter('status', 'Available', t('statusAvailable'))" class="w-full text-start px-4 py-2 text-sm font-bold hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-xl text-gray-700 dark:text-gray-200 transition-colors" data-i18n="statusAvailable">Available</button>
+                            <button onclick="selectFilter('status', 'Issued', t('statusIssued'))" class="w-full text-start px-4 py-2 text-sm font-bold hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-xl text-gray-700 dark:text-gray-200 transition-colors" data-i18n="statusIssued">Issued</button>
+                        </div>
+                        <input type="hidden" id="filter-status" value="">
+                    </div>
+
+                    <!-- Custom Language Filter -->
+                    <div class="relative custom-dropdown" id="filter-language-dropdown">
+                        <button type="button" onclick="toggleDropdown('language-menu')" class="flex items-center justify-between w-[140px] sm:w-44 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-2.5 text-sm font-bold text-gray-700 dark:text-gray-200 hover:border-indigo-400 focus:outline-none transition-all shadow-sm">
+                            <span id="language-display" class="truncate">All Languages</span>
+                            <svg class="w-4 h-4 shrink-0 ms-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div id="language-menu" class="custom-dropdown-menu absolute left-0 top-full mt-2 w-full min-w-[200px] bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl border border-gray-100 dark:border-gray-700 rounded-2xl shadow-2xl hidden z-50 max-h-60 overflow-y-auto p-1.5 flex-col gap-0.5">
+                            <!-- Injected dynamically -->
+                        </div>
+                        <input type="hidden" id="filter-language" value="">
+                    </div>
+
+                    <button onclick="clearFilters()" class="text-sm text-red-500 hover:text-red-700 font-bold px-4 py-2.5 bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-100 dark:border-red-800/50 transition-colors hover:shadow-sm">Clear All</button>
                 </div>
             </div>
 
             <!-- Books Grid Layout -->
-            <div class="w-full px-4 sm:px-6 lg:px-8 pb-12 flex-grow flex flex-col">
+            <div class="w-full px-4 sm:px-6 lg:px-8 pb-12 flex-grow flex flex-col relative z-10">
                 <!-- Loading Indicator -->
                 <div id="public-loading" class="text-center py-20 hidden flex flex-col items-center">
                     <svg class="animate-spin h-10 w-10 text-indigo-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
@@ -175,31 +214,35 @@
                 <!-- Pagination Controls -->
                 <div id="pagination-controls" class="mt-10 flex justify-center items-center gap-4 hidden">
                     <button id="btn-prev-page" onclick="prevPage()" class="px-5 py-2.5 bg-white/60 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-600 rounded-xl text-sm font-bold text-gray-700 dark:text-gray-200 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Previous</button>
-                    <span class="text-sm font-bold text-gray-600 dark:text-gray-400 bg-white/40 dark:bg-gray-800/40 px-4 py-2.5 rounded-xl border border-gray-100 dark:border-gray-700">Page <span id="current-page-display">1</span> of <span id="total-pages-display">1</span></span>
-                    <button id="btn-next-page" onclick="nextPage()" class="px-5 py-2.5 bg-indigo-600 text-white border border-transparent rounded-xl text-sm font-bold hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md">Next</button>
+                    <span class="text-sm font-bold text-gray-600 dark:text-gray-400 bg-white/40 dark:bg-gray-800/40 px-4 py-2.5 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm">Page <span id="current-page-display">1</span> of <span id="total-pages-display">1</span></span>
+                    <button id="btn-next-page" onclick="nextPage()" class="px-5 py-2.5 bg-indigo-600 text-white border border-transparent rounded-xl text-sm font-bold hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md transform hover:-translate-y-0.5">Next</button>
                 </div>
             </div>
         </div>
 
-        <!-- 2. DEDICATED BOOK DETAILS PAGE (Amazon E-Commerce Style) -->
+        <!-- 2. DEDICATED BOOK DETAILS PAGE -->
         <div id="book-details-page" class="view-section hidden-tab fade-in flex flex-col w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 mb-10">
             <!-- Top Search Bar (Replaces Back Button) -->
-            <div class="mb-6 lg:w-3/4 mx-auto w-full relative z-[5]">
+            <div class="mb-6 lg:w-3/4 mx-auto w-full relative z-[30]">
                 <div class="relative group">
                     <div class="absolute inset-y-0 start-0 ps-4 flex items-center pointer-events-none">
                         <svg class="w-5 h-5 text-indigo-400 group-focus-within:text-indigo-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </div>
                     <input type="text" id="details-search-input" data-i18n-placeholder="searchPlaceholder" placeholder="Search for another book..." class="w-full ps-11 pe-4 py-3 rounded-xl bg-white/70 dark:bg-gray-800/70 border border-white/50 dark:border-gray-600 shadow-sm text-sm text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-medium backdrop-blur-sm" autocomplete="off">
                     
+                    <button onclick="navigate('public-view')" class="absolute inset-y-0 end-0 pe-4 flex items-center text-xs font-black text-gray-500 hover:text-indigo-600 uppercase tracking-widest transition-colors">
+                        Close
+                    </button>
+
                     <!-- Search Results Dropdown -->
-                    <div id="details-search-results" class="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-100 dark:border-gray-700 max-h-64 overflow-y-auto hidden flex-col z-10 p-2 gap-1 text-sm font-medium">
+                    <div id="details-search-results" class="custom-dropdown-menu absolute top-full left-0 right-0 mt-2 bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 max-h-64 overflow-y-auto hidden flex-col z-50 p-2 gap-1 text-sm font-medium">
                         <!-- Search results injected here -->
                     </div>
                 </div>
             </div>
 
             <!-- Book Info Container (Grid Layout) -->
-            <div class="glass-panel rounded-3xl overflow-hidden shadow-2xl border border-white/40 dark:border-gray-700/50 mb-12 p-6 sm:p-10">
+            <div class="glass-panel rounded-3xl overflow-hidden shadow-2xl border border-white/40 dark:border-gray-700/50 mb-12 p-6 sm:p-10 relative z-10">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 items-start">
                     
                     <!-- Left Section: Images Slider (5 columns) -->
@@ -272,7 +315,7 @@
             </div>
 
             <!-- Suggestions Section (Below Amazon details) -->
-            <div id="bp-suggestions-container" class="space-y-12 pb-10 w-full">
+            <div id="bp-suggestions-container" class="space-y-12 pb-10 w-full relative z-0">
                 <!-- Suggestion rows injected here -->
             </div>
         </div>
@@ -280,7 +323,7 @@
     </main>
 
     <!-- Global Footer -->
-    <footer class="mt-auto glass-panel border-t border-white/20 dark:border-gray-700/50 py-8 shrink-0 w-full z-10 relative">
+    <footer class="mt-auto glass-panel border-t border-white/20 dark:border-gray-700/50 py-8 shrink-0 w-full relative z-[5]">
         <div class="w-full mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
             <div class="text-center md:text-start">
                 <h3 id="footer-brand-title" class="text-xl font-black text-indigo-900 dark:text-white mb-2 tracking-wide">Library Register</h3>
@@ -295,7 +338,7 @@
     </footer>
 
     <!-- Premium Toast Container -->
-    <div id="toast-container" class="fixed bottom-6 end-6 sm:bottom-10 sm:end-10 z-[70] flex flex-col gap-3"></div>
+    <div id="toast-container" class="fixed bottom-6 end-6 sm:bottom-10 sm:end-10 z-[80] flex flex-col gap-3"></div>
 
     <!-- Javascript Logic -->
     <script type="module">
@@ -310,16 +353,40 @@
         const applyTheme = () => { currentTheme === 'dark' ? document.documentElement.classList.add('dark') : document.documentElement.classList.remove('dark'); };
         window.toggleTheme = () => { currentTheme = currentTheme === 'light' ? 'dark' : 'light'; localStorage.setItem('appTheme', currentTheme); applyTheme(); };
 
+        // Custom Dropdown Logic
+        window.toggleDropdown = (menuId) => {
+            // Close other dropdowns
+            document.querySelectorAll('.custom-dropdown > div').forEach(el => {
+                if (el.id !== menuId) el.classList.add('hidden');
+            });
+            const menu = document.getElementById(menuId);
+            if (menu) menu.classList.toggle('hidden');
+        };
+
+        // Close dropdowns on outside click
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.custom-dropdown')) {
+                document.querySelectorAll('.custom-dropdown > div').forEach(el => el.classList.add('hidden'));
+            }
+        });
+
         // Language Logic
         window.t = (key) => i18n[currentLang][key] || key;
 
+        window.selectLang = (lang) => {
+            document.getElementById('lang-display').innerText = lang.toUpperCase();
+            document.getElementById('lang-menu').classList.add('hidden');
+            changeLanguage(lang);
+        };
+
         window.changeLanguage = (lang) => {
-            currentLang = lang; localStorage.setItem('appLang', lang); document.getElementById('lang-selector').value = lang;
+            currentLang = lang; localStorage.setItem('appLang', lang); 
+            document.getElementById('lang-display').innerText = lang.toUpperCase();
             document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr'); document.documentElement.setAttribute('lang', lang);
             document.querySelectorAll('[data-i18n]').forEach(el => el.innerText = i18n[lang][el.getAttribute('data-i18n')]);
             document.querySelectorAll('[data-i18n-placeholder]').forEach(el => el.setAttribute('placeholder', i18n[lang][el.getAttribute('data-i18n-placeholder')]));
             
-            // Re-render filters when language changes
+            // Re-render filters when language changes to translate 'Available'/'Issued'
             populateFilters();
             filterAndPaginateBooks();
         };
@@ -329,13 +396,13 @@
         // UI Navigation
         const setPublicActiveNav = (viewId) => {
             document.querySelectorAll('.public-nav-item').forEach(el => {
-                el.classList.remove('active-nav', 'bg-indigo-600', 'text-white', 'border-indigo-500', 'shadow-md');
-                el.classList.add('bg-white/40', 'dark:bg-gray-800/40', 'text-gray-700', 'dark:text-gray-200', 'border-gray-200', 'dark:border-gray-700');
+                el.classList.remove('active-nav', 'bg-indigo-600', 'text-white', 'border-indigo-500', 'shadow-md', 'hover:bg-indigo-700');
+                el.classList.add('bg-white/40', 'dark:bg-gray-800/40', 'text-gray-700', 'dark:text-gray-200', 'border-gray-200', 'dark:border-gray-700', 'hover:bg-white');
             });
             const active = document.querySelector(`[data-public-nav="${viewId}"]`);
             if(active) {
-                active.classList.add('active-nav', 'bg-indigo-600', 'text-white', 'border-indigo-500', 'shadow-md');
-                active.classList.remove('bg-white/40', 'dark:bg-gray-800/40', 'text-gray-700', 'dark:text-gray-200', 'border-gray-200', 'dark:border-gray-700');
+                active.classList.add('active-nav', 'bg-indigo-600', 'text-white', 'border-indigo-500', 'shadow-md', 'hover:bg-indigo-700');
+                active.classList.remove('bg-white/40', 'dark:bg-gray-800/40', 'text-gray-700', 'dark:text-gray-200', 'border-gray-200', 'dark:border-gray-700', 'hover:bg-white');
             }
         };
 
@@ -346,7 +413,7 @@
             
             if (viewId === 'public-view') {
                 filterAndPaginateBooks();
-                document.getElementById('details-search-input').value = ''; // clear search when going back
+                document.getElementById('details-search-input').value = ''; 
                 document.getElementById('details-search-results').classList.add('hidden');
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -358,7 +425,7 @@
         const showToast = (message, type = 'success') => {
             const container = document.getElementById('toast-container'); const toast = document.createElement('div');
             const color = type === 'success' ? 'bg-green-500/90 dark:bg-green-600/90 border-green-400' : 'bg-red-500/90 dark:bg-red-600/90 border-red-400';
-            toast.className = `${color} backdrop-blur-md text-white px-6 py-3 rounded-2xl shadow-xl border-t border-s transform transition-all duration-300 translate-y-0 opacity-100 font-bold text-sm flex items-center gap-2 z-[70]`;
+            toast.className = `${color} backdrop-blur-md text-white px-6 py-3 rounded-2xl shadow-xl border-t border-s transform transition-all duration-300 translate-y-0 opacity-100 font-bold text-sm flex items-center gap-2 z-[80]`;
             toast.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${type==='success'?'M5 13l4 4L19 7':'M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'}"></path></svg> ${message}`;
             container.appendChild(toast); setTimeout(() => { toast.classList.add('opacity-0', 'translate-y-4'); setTimeout(() => toast.remove(), 300); }, 3000);
         };
@@ -388,7 +455,7 @@
             });
         };
 
-        // --- Global Settings Fetch ---
+        // --- Global Settings Fetch (Library Name, Logo, Footer) ---
         onSnapshot(doc(db, "settings", "general"), (docSnap) => {
             if(docSnap.exists()) {
                 const s = docSnap.data();
@@ -410,7 +477,7 @@
 
         // --- Authentication & Redirect ---
         onAuthStateChanged(auth, (user) => {
-            if (user) { window.location.href = "admin.html"; } 
+            if (user) { window.location.href = "admin.html"; } // Auto redirect to admin/reader portal
         });
 
         document.getElementById('login-form').addEventListener('submit', async (e) => {
@@ -437,7 +504,7 @@
             }
         });
 
-        // --- Public Book View Logic ---
+        // --- Public Book View Logic (E-Commerce Cards, Filtering, Pagination) ---
         let allBooks = [];
         let filteredBooks = [];
         let currentPage = 1;
@@ -456,7 +523,15 @@
         };
         fetchPublicBooks();
 
-        // Filter Logic
+        // 1. Filter Logic
+        window.selectFilter = (type, value, text) => {
+            document.getElementById(`filter-${type}`).value = value;
+            document.getElementById(`${type}-display`).innerText = text || `All ${type.charAt(0).toUpperCase() + type.slice(1)}s`;
+            document.getElementById(`${type}-menu`).classList.add('hidden');
+            currentPage = 1;
+            filterAndPaginateBooks();
+        };
+
         const populateFilters = () => {
             const categories = new Set();
             const languages = new Set();
@@ -466,20 +541,28 @@
                 if(b.language) languages.add(b.language);
             });
 
-            const catSelect = document.getElementById('filter-category');
-            catSelect.innerHTML = '<option value="">All Categories</option>';
-            Array.from(categories).sort().forEach(c => catSelect.innerHTML += `<option value="${c}">${c}</option>`);
+            const catMenu = document.getElementById('category-menu');
+            catMenu.innerHTML = `<button onclick="selectFilter('category', '', 'All Categories')" class="w-full text-start px-4 py-2 text-sm font-bold hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-xl text-gray-700 dark:text-gray-200 transition-colors">All Categories</button>`;
+            Array.from(categories).sort().forEach(c => {
+                catMenu.innerHTML += `<button onclick="selectFilter('category', '${c}', '${c}')" class="w-full text-start px-4 py-2 text-sm font-bold hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-xl text-gray-700 dark:text-gray-200 transition-colors">${c}</button>`;
+            });
 
-            const langSelect = document.getElementById('filter-language');
-            langSelect.innerHTML = '<option value="">All Languages</option>';
-            Array.from(languages).sort().forEach(l => langSelect.innerHTML += `<option value="${l}">${l}</option>`);
+            const langMenu = document.getElementById('language-menu');
+            langMenu.innerHTML = `<button onclick="selectFilter('language', '', 'All Languages')" class="w-full text-start px-4 py-2 text-sm font-bold hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-xl text-gray-700 dark:text-gray-200 transition-colors">All Languages</button>`;
+            Array.from(languages).sort().forEach(l => {
+                langMenu.innerHTML += `<button onclick="selectFilter('language', '${l}', '${l}')" class="w-full text-start px-4 py-2 text-sm font-bold hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-xl text-gray-700 dark:text-gray-200 transition-colors">${l}</button>`;
+            });
         };
 
         window.clearFilters = () => {
             document.getElementById('public-search-input').value = '';
             document.getElementById('filter-category').value = '';
+            document.getElementById('category-display').innerText = 'All Categories';
             document.getElementById('filter-status').value = '';
+            document.getElementById('status-display').innerText = 'All Statuses';
             document.getElementById('filter-language').value = '';
+            document.getElementById('language-display').innerText = 'All Languages';
+            
             currentPage = 1;
             filterAndPaginateBooks();
         };
@@ -491,9 +574,7 @@
             const langFilter = document.getElementById('filter-language').value;
 
             filteredBooks = allBooks.filter(b => {
-                const titleStr = b.title ? b.title.toLowerCase() : "";
-                const authorStr = b.author ? b.author.toLowerCase() : "";
-                const matchSearch = titleStr.includes(searchTerm) || authorStr.includes(searchTerm);
+                const matchSearch = b.title.toLowerCase().includes(searchTerm) || (b.author && b.author.toLowerCase().includes(searchTerm));
                 const matchCat = catFilter === '' || b.category === catFilter;
                 const matchStatus = statusFilter === '' || b.status === statusFilter;
                 const matchLang = langFilter === '' || b.language === langFilter;
@@ -502,6 +583,7 @@
             });
         };
 
+        // 2. Pagination Logic
         window.filterAndPaginateBooks = () => {
             applyFilters();
             
@@ -538,12 +620,10 @@
         };
 
         document.getElementById('public-search-input').addEventListener('input', () => { currentPage = 1; filterAndPaginateBooks(); });
-        document.getElementById('filter-category').addEventListener('change', () => { currentPage = 1; filterAndPaginateBooks(); });
-        document.getElementById('filter-status').addEventListener('change', () => { currentPage = 1; filterAndPaginateBooks(); });
-        document.getElementById('filter-language').addEventListener('change', () => { currentPage = 1; filterAndPaginateBooks(); });
 
         const noImageSvg = `data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%239ca3af' viewBox='0 0 24 24'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253'/%3E%3C/svg%3E`;
 
+        // 3. Render Grid
         const renderBooksGrid = (books) => {
             const grid = document.getElementById('public-books-grid');
             const noRes = document.getElementById('public-no-results');
@@ -581,7 +661,7 @@
                     card.onclick = () => openBookPage(b.id);
                     
                     card.innerHTML = `
-                        <div class="relative h-48 sm:h-56 w-full bg-gray-100 dark:bg-gray-800 overflow-hidden shrink-0 border-b border-gray-100 dark:border-gray-700">
+                        <div class="relative h-48 sm:h-56 w-full bg-gray-100 dark:bg-gray-800 overflow-hidden shrink-0 border-b border-gray-100 dark:border-gray-700 flex items-center justify-center">
                             ${carouselHtml}
                             <div class="absolute top-2 end-2 px-2.5 py-1 rounded-full text-[9px] font-black shadow-md ${statusClass} tracking-wide uppercase border border-white/20 z-10">${statusText}</div>
                         </div>
@@ -620,7 +700,7 @@
                 const titleStr = b.title ? b.title.toLowerCase() : "";
                 const idStr = b.id ? b.id.toLowerCase() : "";
                 return titleStr.includes(searchTerm) || idStr.includes(searchTerm);
-            }).slice(0, 8); // Limit to 8 results
+            }).slice(0, 8); 
 
             if (matchedBooks.length > 0) {
                 matchedBooks.forEach(b => {
@@ -647,7 +727,6 @@
             }
         });
 
-        // Hide dropdown when clicking outside
         document.addEventListener('click', (e) => {
             if (!detailsSearchInput.contains(e.target) && !detailsSearchResults.contains(e.target)) {
                 detailsSearchResults.classList.add('hidden');
@@ -676,13 +755,11 @@
             document.getElementById('bp-lang').innerText = b.language || '-';
             document.getElementById('bp-isbn').innerText = b.isbn || '-';
 
-            // Status Badge update
             const statusBadge = document.getElementById('bp-status-badge');
             const isAvailable = b.status === 'Available';
             statusBadge.innerText = isAvailable ? t('statusAvailable') : t('statusIssued');
             statusBadge.className = `absolute top-3 end-3 z-10 px-3 py-1.5 rounded-full text-xs font-black tracking-widest uppercase shadow-lg border ${isAvailable ? 'bg-green-100/90 text-green-800 border-green-300 dark:bg-green-900/80 dark:text-green-300 dark:border-green-800 backdrop-blur-sm' : 'bg-red-100/90 text-red-800 border-red-300 dark:bg-red-900/80 dark:text-red-300 dark:border-red-800 backdrop-blur-sm'}`;
 
-            // Image Slider Setup
             currentBookImages = [b.photo1, b.photo2, b.photo3].filter(Boolean);
             currentImageIndex = 0;
             const track = document.getElementById('bp-image-track');
@@ -691,14 +768,12 @@
             const nextBtn = document.getElementById('bp-next-img');
 
             if(currentBookImages.length > 0) {
-                // Populate Images
                 track.innerHTML = currentBookImages.map(img => `
                     <div class="w-full h-full flex-shrink-0 flex items-center justify-center p-2">
                         <img src="${img}" class="max-w-full max-h-full object-contain cursor-pointer" onclick="window.open(this.src, '_blank')">
                     </div>
                 `).join('');
 
-                // Populate Dots
                 if (currentBookImages.length > 1) {
                     dots.innerHTML = currentBookImages.map((_, i) => `
                         <button onclick="goToImage(${i})" class="w-2.5 h-2.5 rounded-full border border-white/40 shadow-sm transition-all ${i === 0 ? 'bg-indigo-600 scale-125' : 'bg-white/70 hover:bg-white'}"></button>
@@ -725,7 +800,6 @@
             renderSuggestions(b);
         };
 
-        // Slider Navigation Functions
         window.goToImage = (index) => {
             currentImageIndex = index;
             updateSliderPosition();
@@ -747,7 +821,6 @@
             const track = document.getElementById('bp-image-track');
             track.style.transform = `translateX(-${currentImageIndex * 100}%)`;
             
-            // Update dots
             const dots = document.getElementById('bp-image-dots').children;
             Array.from(dots).forEach((dot, i) => {
                 if (i === currentImageIndex) {
@@ -757,7 +830,6 @@
                 }
             });
         }
-
 
         // --- BOOK SUGGESTIONS WITH ARROW SCROLLING ---
         function renderSuggestions(currentBook) {
@@ -775,13 +847,11 @@
             const currentCat = currentBook.category || 'General';
             let rowCount = 0;
 
-            // Show books from the same category first
             if(categories[currentCat] && categories[currentCat].length > 0) {
                 container.appendChild(createSuggestionRow(`More in ${currentCat}`, categories[currentCat]));
                 rowCount++;
             }
 
-            // Show other categories
             for(const [cat, books] of Object.entries(categories)) {
                 if(cat === currentCat) continue;
                 if(books.length > 0 && rowCount < 4) {
@@ -795,7 +865,6 @@
             const row = document.createElement('div');
             row.className = 'w-full relative mb-8';
 
-            // Unique ID for the slider to link arrow buttons
             const sliderId = 'slider-' + Math.random().toString(36).substring(2, 9);
             
             const header = document.createElement('div');
@@ -803,23 +872,19 @@
             header.innerHTML = `<h3 class="text-xl sm:text-2xl font-black text-gray-900 dark:text-white capitalize tracking-wide border-s-4 border-indigo-500 ps-3">${title}</h3>`;
             row.appendChild(header);
 
-            // Wrapper for slider and arrows
             const wrapper = document.createElement('div');
             wrapper.className = 'relative group w-full';
 
-            // Left Arrow
             const leftBtn = document.createElement('button');
             leftBtn.className = 'absolute start-0 top-1/2 -translate-y-1/2 -translate-x-3 z-10 bg-white dark:bg-gray-700 p-2 sm:p-3 rounded-full shadow-xl border border-gray-200 dark:border-gray-600 opacity-0 group-hover:opacity-100 transition-all hover:scale-110 hidden sm:block';
             leftBtn.innerHTML = '<svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>';
             leftBtn.onclick = () => document.getElementById(sliderId).scrollBy({ left: -400, behavior: 'smooth' });
 
-            // Right Arrow
             const rightBtn = document.createElement('button');
             rightBtn.className = 'absolute end-0 top-1/2 -translate-y-1/2 translate-x-3 z-10 bg-white dark:bg-gray-700 p-2 sm:p-3 rounded-full shadow-xl border border-gray-200 dark:border-gray-600 opacity-0 group-hover:opacity-100 transition-all hover:scale-110 hidden sm:block';
             rightBtn.innerHTML = '<svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>';
             rightBtn.onclick = () => document.getElementById(sliderId).scrollBy({ left: 400, behavior: 'smooth' });
 
-            // Slider track
             const slider = document.createElement('div');
             slider.id = sliderId;
             slider.className = 'flex overflow-x-auto gap-4 sm:gap-6 pb-6 pt-2 hide-scrollbar snap-x px-2 scroll-smooth';
