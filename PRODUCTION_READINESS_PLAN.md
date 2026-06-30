@@ -15,6 +15,9 @@ The repository currently contains a static Firebase-based application with:
 - Shared Firebase initialization and translations (`public/js/config.js`).
 - Firestore security rules (`firestore.rules`).
 - Firebase Hosting/Functions deployment config (`firebase.json`).
+- Vercel static deployment config (`vercel.json`).
+- GitHub Pages workflow (`.github/workflows/deploy-github-pages.yml`).
+- Deployment guide (`DEPLOYMENT.md`).
 - Draft Firebase scheduled reminder function (`functions/index.js`).
 
 ## How to Use This Document
@@ -36,7 +39,7 @@ The repository currently contains a static Firebase-based application with:
 | Area | Status | Priority | Notes |
 | --- | --- | --- | --- |
 | Production roadmap documentation | [x] Completed | Critical | This document creates the execution plan and tracking system. |
-| Firebase Hosting deployment plan | [x] Completed | Critical | `firebase.json` and `.firebaserc.example` added; real project IDs still need to be filled locally. |
+| Deployment plan | [x] Completed | Critical | Vercel, GitHub Pages, and Firebase Hosting paths documented; config files added. |
 | First admin bootstrap process | [ ] Not started | Critical | Required because Firestore rules allow admin writes only to admins. |
 | Password/authentication hardening | [ ] Not started | Critical | Current reader password strategy uses phone number. Must be changed. |
 | Firestore rules hardening | [ ] Not started | Critical | Need schema validation and stronger user-based transaction access. |
@@ -509,6 +512,10 @@ Use this checklist before every production release.
   - Purpose: Add `firebase.json`, `.firebaserc.example`, `functions/index.js`, and `functions/package.json`.
   - Verification: Config files created and committed.
   - Remaining risk: `.firebaserc` must be created locally with real Firebase project IDs before deployment.
+- [x] Added Vercel and GitHub Pages publishing support.
+  - Purpose: Let the static app be published through existing Vercel or GitHub Pages workflows while keeping Firebase Hosting available.
+  - Verification: `vercel.json`, `.github/workflows/deploy-github-pages.yml`, and `DEPLOYMENT.md` added.
+  - Remaining risk: deployed domains must be added to Firebase Authentication authorized domains.
 
 ## Open Questions
 

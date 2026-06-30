@@ -27,8 +27,11 @@ This application is intended to manage the full daily workflow of a library:
 | `functions/index.js` | Draft Firebase scheduled function for overdue reminders. |
 | `functions/package.json` | Cloud Functions package metadata and dependencies. |
 | `firebase.json` | Firebase Hosting, Firestore rules, and Functions deployment configuration. |
+| `vercel.json` | Vercel static deployment configuration using `public/` as output directory. |
+| `.github/workflows/deploy-github-pages.yml` | GitHub Pages workflow that publishes the `public/` directory. |
 | `.firebaserc.example` | Template for staging/production Firebase project aliases. |
 | `PRODUCTION_READINESS_PLAN.md` | Production roadmap, task tracker, and launch checklist. |
+| `DEPLOYMENT.md` | Step-by-step publishing guide for Vercel, GitHub Pages, and Firebase Hosting. |
 
 ## Current Status
 
@@ -95,7 +98,13 @@ Opening files directly with `file://` may not work correctly because browser mod
 
 ## Deployment Recommendation
 
-Firebase Hosting is the recommended deployment target because the app already uses Firebase Auth and Firestore. The repository now includes `firebase.json`, so the deployable static root is `public/`. Copy `.firebaserc.example` to `.firebaserc` and fill in your staging/production project IDs before deploying.
+The deployable static root is `public/`. This repository now supports three deployment paths:
+
+- **Vercel** using `vercel.json`.
+- **GitHub Pages** using `.github/workflows/deploy-github-pages.yml`.
+- **Firebase Hosting** using `firebase.json`.
+
+Read `DEPLOYMENT.md` for exact step-by-step publishing instructions. Firebase Hosting is the best long-term fit because the app already uses Firebase Auth and Firestore, but Vercel or GitHub Pages can be used for the fastest static launch.
 
 Future recommended structure:
 
