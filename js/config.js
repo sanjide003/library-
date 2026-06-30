@@ -2,16 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebas
 import { getAuth } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-// --- Firebase Configuration ---
-const firebaseConfig = {
-    apiKey: "AIzaSyAAvxaW7bL7S_oD_xrElO4-XvuxnhfJKxc",
-    authDomain: "noorul-islam-91eae.firebaseapp.com",
-    projectId: "noorul-islam-91eae",
-    storageBucket: "noorul-islam-91eae.firebasestorage.app",
-    messagingSenderId: "1034149016792",
-    appId: "1:1034149016792:web:befc9bf1eadcf2bd8653ad",
-    measurementId: "G-ZFSQDL9MTB"
-};
+import { firebaseConfig } from './firebase-config.js';
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
