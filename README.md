@@ -18,12 +18,16 @@ This application is intended to manage the full daily workflow of a library:
 
 | File | Purpose |
 | --- | --- |
-| `index.html` | Public portal and login entry point. |
-| `admin.html` | Admin dashboard, book management, reader management, issue/return, CSV import, settings. |
-| `reader.html` | Reader dashboard, catalog, profile, reading history, analytics. |
-| `config.js` | Firebase initialization and translation dictionary. |
+| `public/index.html` | Public portal and login entry point. |
+| `public/admin.html` | Admin dashboard, book management, reader management, issue/return, CSV import, settings. |
+| `public/reader.html` | Reader dashboard, catalog, profile, reading history, analytics. |
+| `public/js/firebase-config.js` | Firebase web app configuration, separated for environment-specific deployment. |
+| `public/js/config.js` | Firebase initialization and translation dictionary. |
 | `firestore.rules` | Firestore access-control rules. |
-| `Node.js` | Draft Firebase scheduled function for overdue reminders. |
+| `functions/index.js` | Draft Firebase scheduled function for overdue reminders. |
+| `functions/package.json` | Cloud Functions package metadata and dependencies. |
+| `firebase.json` | Firebase Hosting, Firestore rules, and Functions deployment configuration. |
+| `.firebaserc.example` | Template for staging/production Firebase project aliases. |
 | `PRODUCTION_READINESS_PLAN.md` | Production roadmap, task tracker, and launch checklist. |
 
 ## Current Status
@@ -78,7 +82,7 @@ Because the app is currently static HTML/JS, it can be served with any local sta
 Example:
 
 ```bash
-python3 -m http.server 8080
+python3 -m http.server 8080 --directory public
 ```
 
 Then open:
@@ -91,7 +95,7 @@ Opening files directly with `file://` may not work correctly because browser mod
 
 ## Deployment Recommendation
 
-Firebase Hosting is the recommended deployment target because the app already uses Firebase Auth and Firestore.
+Firebase Hosting is the recommended deployment target because the app already uses Firebase Auth and Firestore. The repository now includes `firebase.json`, so the deployable static root is `public/`. Copy `.firebaserc.example` to `.firebaserc` and fill in your staging/production project IDs before deploying.
 
 Future recommended structure:
 
@@ -100,12 +104,14 @@ public/
   index.html
   admin.html
   reader.html
-  config.js
+  js/
+    firebase-config.js
+    config.js
 functions/
   package.json
   index.js
 firebase.json
-.firebaserc
+.firebaserc.example
 ```
 
 ## Production Tracking

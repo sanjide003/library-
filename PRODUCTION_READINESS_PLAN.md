@@ -8,12 +8,14 @@
 
 The repository currently contains a static Firebase-based application with:
 
-- Public book search portal (`index.html`).
-- Admin portal for books, users, issue/return, bulk import, and settings (`admin.html`).
-- Reader portal for profile, current books, history, and analytics (`reader.html`).
-- Shared Firebase initialization and translations (`config.js`).
+- Public book search portal (`public/index.html`).
+- Admin portal for books, users, issue/return, bulk import, and settings (`public/admin.html`).
+- Reader portal for profile, current books, history, and analytics (`public/reader.html`).
+- Firebase web app configuration (`public/js/firebase-config.js`).
+- Shared Firebase initialization and translations (`public/js/config.js`).
 - Firestore security rules (`firestore.rules`).
-- Draft Firebase scheduled reminder function (`Node.js`).
+- Firebase Hosting/Functions deployment config (`firebase.json`).
+- Draft Firebase scheduled reminder function (`functions/index.js`).
 
 ## How to Use This Document
 
@@ -34,12 +36,12 @@ The repository currently contains a static Firebase-based application with:
 | Area | Status | Priority | Notes |
 | --- | --- | --- | --- |
 | Production roadmap documentation | [x] Completed | Critical | This document creates the execution plan and tracking system. |
-| Firebase Hosting deployment plan | [~] In progress | Critical | Basic deployment recommendation documented in `README.md`; Firebase project files still pending. |
+| Firebase Hosting deployment plan | [x] Completed | Critical | `firebase.json` and `.firebaserc.example` added; real project IDs still need to be filled locally. |
 | First admin bootstrap process | [ ] Not started | Critical | Required because Firestore rules allow admin writes only to admins. |
 | Password/authentication hardening | [ ] Not started | Critical | Current reader password strategy uses phone number. Must be changed. |
 | Firestore rules hardening | [ ] Not started | Critical | Need schema validation and stronger user-based transaction access. |
 | Secret management | [ ] Not started | Critical | SMS/WhatsApp credentials must move out of Firestore. |
-| Cloud Functions deployment structure | [ ] Not started | Critical | Current reminder code is a draft file, not a deployable functions package. |
+| Cloud Functions deployment structure | [~] In progress | Critical | Reminder code moved to `functions/index.js` with `functions/package.json`; secrets and provider config still pending. |
 | Backup/restore strategy | [ ] Not started | Critical | Required before production. |
 | Automated tests | [ ] Not started | High | Firestore rules and core workflows need tests. |
 | Code modularization/build system | [ ] Not started | High | Large inline JS should move to modules or a modern build setup. |
@@ -82,9 +84,9 @@ Goal: Get the app deployable in a controlled staging environment.
   - [ ] production
 - [ ] Enable Firebase Authentication Email/Password provider.
 - [ ] Enable Firestore in production mode.
-- [ ] Configure Firebase Hosting.
+- [x] Configure Firebase Hosting.
 - [ ] Configure authorized domains.
-- [ ] Deploy static files to staging.
+- [ ] Deploy static files to staging after filling `.firebaserc`.
 - [ ] Deploy Firestore rules to staging.
 - [ ] Test public portal from deployed staging URL.
 - [ ] Test admin login from deployed staging URL.
@@ -279,9 +281,9 @@ The reminder implementation is a draft and includes placeholders. It should not 
 
 ### Tasks
 
-- [ ] Move reminder code into Firebase Functions structure:
-  - [ ] `functions/package.json`
-  - [ ] `functions/index.js`
+- [x] Move reminder code into Firebase Functions structure:
+  - [x] `functions/package.json`
+  - [x] `functions/index.js`
 - [ ] Use Firebase Secrets for provider tokens:
   - [ ] Twilio SID
   - [ ] Twilio token
@@ -495,6 +497,18 @@ Use this checklist before every production release.
   - Purpose: Prevent local editor files, logs, dependencies, build output, and secrets from being committed.
   - Verification: File created and committed.
   - Remaining risk: Update if future tooling adds additional generated files.
+- [x] Reorganized the static app into a deployable `public/` directory.
+  - Purpose: Make Firebase Hosting deployment and future frontend modularization cleaner.
+  - Verification: HTML import paths updated to use `./js/config.js`.
+  - Remaining risk: Manual browser smoke testing is still needed with a configured Firebase project.
+- [x] Split Firebase web configuration into `public/js/firebase-config.js`.
+  - Purpose: Keep environment-specific Firebase settings separate from initialization and translations.
+  - Verification: `public/js/config.js` imports `firebaseConfig` from the dedicated file.
+  - Remaining risk: Production project values still need to be confirmed.
+- [x] Added Firebase deployment structure.
+  - Purpose: Add `firebase.json`, `.firebaserc.example`, `functions/index.js`, and `functions/package.json`.
+  - Verification: Config files created and committed.
+  - Remaining risk: `.firebaserc` must be created locally with real Firebase project IDs before deployment.
 
 ## Open Questions
 
@@ -513,7 +527,7 @@ Before implementing the next phase, confirm these decisions:
 ### Sprint 1 — Production Foundation
 
 - [x] Add `README.md` setup guide.
-- [ ] Add Firebase Hosting setup files.
+- [x] Add Firebase Hosting setup files.
 - [ ] Add first admin bootstrap instructions or script.
 - [x] Add `.gitignore`.
 - [ ] Fix password policy for new readers.

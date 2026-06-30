@@ -19,6 +19,7 @@ dist/
 build/
 coverage/
 .firebase/
+.firebaserc
 .firebaserc.local
 
 # Environment/secrets
