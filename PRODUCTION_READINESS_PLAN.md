@@ -14,11 +14,9 @@ The repository currently contains a static Firebase-based application with:
 - Firebase web app configuration (`js/firebase-config.js`).
 - Shared Firebase initialization and translations (`js/config.js`).
 - Firestore security rules (`firestore.rules`).
-- Firebase Hosting/Functions deployment config (`firebase.json`).
 - Vercel static deployment config (`vercel.json`).
 - GitHub Pages workflow (`.github/workflows/deploy-github-pages.yml`).
 - Deployment guide (`DEPLOYMENT.md`).
-- Draft Firebase scheduled reminder function (`functions/index.js`).
 
 ## How to Use This Document
 
@@ -39,12 +37,12 @@ The repository currently contains a static Firebase-based application with:
 | Area | Status | Priority | Notes |
 | --- | --- | --- | --- |
 | Production roadmap documentation | [x] Completed | Critical | This document creates the execution plan and tracking system. |
-| Deployment plan | [x] Completed | Critical | Vercel, GitHub Pages, and Firebase Hosting paths documented; config files added. |
+| Deployment plan | [x] Completed | Critical | Vercel and GitHub Pages paths documented; unused Firebase Hosting files removed. |
 | First admin bootstrap process | [ ] Not started | Critical | Required because Firestore rules allow admin writes only to admins. |
 | Password/authentication hardening | [ ] Not started | Critical | Current reader password strategy uses phone number. Must be changed. |
 | Firestore rules hardening | [ ] Not started | Critical | Need schema validation and stronger user-based transaction access. |
 | Secret management | [ ] Not started | Critical | SMS/WhatsApp credentials must move out of Firestore. |
-| Cloud Functions deployment structure | [~] In progress | Critical | Reminder code moved to `functions/index.js` with `functions/package.json`; secrets and provider config still pending. |
+| Cloud Functions deployment structure | [ ] Not started | Critical | Removed unused draft functions files; add a clean Functions package only when reminders are implemented. |
 | Backup/restore strategy | [ ] Not started | Critical | Required before production. |
 | Automated tests | [ ] Not started | High | Firestore rules and core workflows need tests. |
 | Code modularization/build system | [ ] Not started | High | Large inline JS should move to modules or a modern build setup. |
@@ -75,9 +73,9 @@ Goal: Make the project understandable and trackable before changing app behavior
 - The setup path is documented from Firebase project creation to deployment.
 - Remaining tasks are visible and trackable.
 
-## Phase 1 — Firebase Project Setup and Deployment
+## Phase 1 — Static Publishing and Firebase Backend Setup
 
-Goal: Get the app deployable in a controlled staging environment.
+Goal: Publish the static app through Vercel or GitHub Pages and connect it safely to Firebase Auth/Firestore.
 
 ### Tasks
 
@@ -87,10 +85,10 @@ Goal: Get the app deployable in a controlled staging environment.
   - [ ] production
 - [ ] Enable Firebase Authentication Email/Password provider.
 - [ ] Enable Firestore in production mode.
-- [x] Configure Firebase Hosting.
-- [ ] Configure authorized domains.
-- [ ] Deploy static files to staging after filling `.firebaserc`.
-- [ ] Deploy Firestore rules to staging.
+- [x] Configure Vercel/GitHub Pages static publishing.
+- [ ] Configure Firebase Authentication authorized domains.
+- [ ] Deploy static files to Vercel or GitHub Pages.
+- [ ] Deploy Firestore rules from Firebase Console or CLI when ready.
 - [ ] Test public portal from deployed staging URL.
 - [ ] Test admin login from deployed staging URL.
 - [ ] Test reader login from deployed staging URL.
@@ -280,13 +278,13 @@ Goal: Make overdue reminders production-ready.
 
 ### Current Risk
 
-The reminder implementation is a draft and includes placeholders. It should not be deployed as-is.
+The previous draft reminder files were removed because they were not production-ready. Add a clean Functions package only when reminders are implemented with Firebase Secrets and proper provider configuration.
 
 ### Tasks
 
-- [x] Move reminder code into Firebase Functions structure:
-  - [x] `functions/package.json`
-  - [x] `functions/index.js`
+- [ ] Create Firebase Functions structure when reminders are implemented:
+  - [ ] `functions/package.json`
+  - [ ] `functions/index.js`
 - [ ] Use Firebase Secrets for provider tokens:
   - [ ] Twilio SID
   - [ ] Twilio token
@@ -433,7 +431,7 @@ If the goal is to launch as fast as possible, follow this order:
 1. Complete documentation and Firebase setup.
 2. Create first admin bootstrap guide/process.
 3. Fix password policy.
-4. Deploy to staging Firebase Hosting.
+4. Deploy to Vercel or GitHub Pages staging/preview.
 5. Harden Firestore rules enough for production.
 6. Test add book, add reader, issue, return, reader dashboard, public search.
 7. Enable backups.
@@ -508,14 +506,14 @@ Use this checklist before every production release.
   - Purpose: Keep environment-specific Firebase settings separate from initialization and translations.
   - Verification: `js/config.js` imports `firebaseConfig` from the dedicated file.
   - Remaining risk: Production project values still need to be confirmed.
-- [x] Added Firebase deployment structure.
-  - Purpose: Add `firebase.json`, `.firebaserc.example`, `functions/index.js`, and `functions/package.json`.
-  - Verification: Config files created and committed.
-  - Remaining risk: `.firebaserc` must be created locally with real Firebase project IDs before deployment.
 - [x] Added Vercel and GitHub Pages publishing support.
-  - Purpose: Let the root-level static app be published through existing Vercel or GitHub Pages workflows while keeping Firebase Hosting available.
+  - Purpose: Let the root-level static app be published through existing Vercel or GitHub Pages workflows.
   - Verification: `vercel.json`, `.github/workflows/deploy-github-pages.yml`, and `DEPLOYMENT.md` added.
   - Remaining risk: deployed domains must be added to Firebase Authentication authorized domains.
+- [x] Removed unused Firebase Hosting and draft Functions scaffold.
+  - Purpose: Keep the repository focused on the current static publishing approach and avoid confusing unused files.
+  - Verification: Removed `firebase.json`, `.firebaserc.example`, `functions/index.js`, and `functions/package.json`.
+  - Remaining risk: If reminders are needed later, add a clean production-ready Functions package with secrets.
 
 ## Open Questions
 
@@ -534,7 +532,7 @@ Before implementing the next phase, confirm these decisions:
 ### Sprint 1 — Production Foundation
 
 - [x] Add `README.md` setup guide.
-- [x] Add Firebase Hosting setup files.
+- [x] Add Vercel/GitHub Pages publishing setup files.
 - [ ] Add first admin bootstrap instructions or script.
 - [x] Add `.gitignore`.
 - [ ] Fix password policy for new readers.

@@ -24,14 +24,10 @@ This application is intended to manage the full daily workflow of a library:
 | `js/firebase-config.js` | Firebase web app configuration, separated for environment-specific deployment. |
 | `js/config.js` | Firebase initialization and translation dictionary. |
 | `firestore.rules` | Firestore access-control rules. |
-| `functions/index.js` | Draft Firebase scheduled function for overdue reminders. |
-| `functions/package.json` | Cloud Functions package metadata and dependencies. |
-| `firebase.json` | Firebase Hosting, Firestore rules, and Functions deployment configuration. |
 | `vercel.json` | Vercel static deployment configuration from the repository root. |
 | `.github/workflows/deploy-github-pages.yml` | GitHub Pages workflow that publishes the repository root. |
-| `.firebaserc.example` | Template for staging/production Firebase project aliases. |
 | `PRODUCTION_READINESS_PLAN.md` | Production roadmap, task tracker, and launch checklist. |
-| `DEPLOYMENT.md` | Step-by-step publishing guide for Vercel, GitHub Pages, and Firebase Hosting. |
+| `DEPLOYMENT.md` | Step-by-step publishing guide for Vercel and GitHub Pages. |
 
 ## Current Status
 
@@ -42,7 +38,7 @@ This project is currently an MVP/prototype. It has the main functional flows, bu
 1. Create Firebase development, staging, and production projects.
 2. Enable Firebase Authentication with Email/Password.
 3. Enable Firestore.
-4. Deploy the current static app to Firebase Hosting staging.
+4. Deploy the current static app with Vercel or GitHub Pages.
 5. Create the first admin account safely.
 6. Replace phone-number-as-password with a safer authentication flow.
 7. Harden Firestore rules.
@@ -98,13 +94,12 @@ Opening files directly with `file://` may not work correctly because browser mod
 
 ## Deployment Recommendation
 
-The deployable static root is now the repository root, so `index.html` is available directly at `/` like a normal GitHub Pages/static website. This repository now supports three deployment paths:
+The deployable static root is now the repository root, so `index.html` is available directly at `/` like a normal GitHub Pages/static website. This repository now supports two deployment paths:
 
 - **Vercel** using `vercel.json`.
 - **GitHub Pages** using `.github/workflows/deploy-github-pages.yml`.
-- **Firebase Hosting** using `firebase.json`.
 
-Read `DEPLOYMENT.md` for exact step-by-step publishing instructions. Firebase Hosting is the best long-term fit because the app already uses Firebase Auth and Firestore, but Vercel or GitHub Pages can be used for the fastest static launch.
+Read `DEPLOYMENT.md` for exact step-by-step publishing instructions. Vercel or GitHub Pages are the current supported publishing paths for this static site.
 
 Future recommended structure:
 
@@ -115,11 +110,6 @@ reader.html
 js/
   firebase-config.js
   config.js
-functions/
-  package.json
-  index.js
-firebase.json
-.firebaserc.example
 ```
 
 ## Production Tracking

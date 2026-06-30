@@ -2,17 +2,14 @@
 
 This app is currently a static Firebase-powered frontend. The deployable website root is the repository root, so `index.html` is available directly at `/` like a normal GitHub Pages/static website.
 
-You can publish the app in three practical ways:
+You can publish the app in two practical ways:
 
 1. **Vercel** — easiest if you already use Vercel.
 2. **GitHub Pages** — easiest free static hosting directly from GitHub.
-3. **Firebase Hosting** — best long-term fit because the app already uses Firebase Auth, Firestore, Firestore rules, and future Cloud Functions.
 
 ## Recommended Choice
 
 For the fastest launch, use **Vercel** or **GitHub Pages**.
-
-For the most complete Firebase-based production setup, use **Firebase Hosting** after you are ready to deploy Firestore rules and Cloud Functions together.
 
 ## Important Firebase Note
 
@@ -83,48 +80,6 @@ The action deploys the repository root, so URLs should be:
 
 If you use a custom domain, configure it in GitHub Pages and add that custom domain in Firebase Authentication too.
 
-## Option 3 — Firebase Hosting Deployment
-
-The repository includes `firebase.json` with the repository root as the hosting root.
-
-### Firebase Steps
-
-1. Install Firebase CLI:
-
-```bash
-npm i -g firebase-tools
-```
-
-2. Login:
-
-```bash
-firebase login
-```
-
-3. Copy project alias example:
-
-```bash
-cp .firebaserc.example .firebaserc
-```
-
-4. Edit `.firebaserc` and replace placeholders with real Firebase project IDs.
-
-5. Deploy hosting and rules:
-
-```bash
-firebase deploy --only hosting,firestore:rules
-```
-
-6. Deploy functions only after secrets and provider IDs are configured:
-
-```bash
-firebase deploy --only functions
-```
-
-### Firebase Result
-
-Firebase Hosting serves root-level `index.html`, `admin.html`, `reader.html`, and `js/`, while Firestore rules can be deployed from the same repository.
-
 ## Which One Should We Use Now?
 
 Use this decision table:
@@ -133,7 +88,6 @@ Use this decision table:
 | --- | --- | --- |
 | Vercel | Fastest deploy with your existing workflow | Ready: root `index.html` + `vercel.json` |
 | GitHub Pages | Free GitHub-based static publishing | Ready: root `index.html` + GitHub Actions workflow |
-| Firebase Hosting | Best Firebase-integrated production setup | Ready for hosting; functions need secrets before production |
 
 ## Required After Any Deployment
 
@@ -143,8 +97,7 @@ Whichever hosting platform you choose, do these Firebase Console steps:
 2. Open **Authentication → Settings → Authorized domains**.
 3. Add your deployed domain:
    - Vercel domain, or
-   - GitHub Pages domain, or
-   - Firebase Hosting domain/custom domain.
+   - GitHub Pages domain.
 4. Confirm Firestore rules are deployed.
 5. Test login, public search, admin redirect, and reader redirect.
 
